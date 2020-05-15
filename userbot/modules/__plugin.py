@@ -11,12 +11,11 @@ import logging
 import userbot
 import re
 import os
-from telethon.tl.types import DocumentAttributeFilename, InputMessagesFilterDocument
+from telethon.tl.types import DocumentAttributeFilename
 import importlib
 
-from userbot import CMD_HELP, SILINEN_PLUGIN, bot, tgbot, PLUGIN_CHANNEL_ID
+from userbot import CMD_HELP, SILINEN_PLUGIN, bot, tgbot
 from userbot.events import register
-
 
 # Plugin Porter - UniBorg
 @register(outgoing=True, pattern="^.pport")
@@ -106,25 +105,6 @@ async def pport(event):
     else:
         await event.edit("`UniBorg plugini tespit edilmedi.`")
 
-@register(outgoing=True, pattern="^.plist")
-async def plist(event):
-    if PLUGIN_CHANNEL_ID != None:
-        await event.edit("`Pluginler getiriliyor...`")
-        async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-            dosya = await event.client.download_media(plugin, os.getcwd() + "/userbot/modules/")
-            try:
-                spec = importlib.util.spec_from_file_location(dosya, dosya)
-                mod = importlib.util.module_from_spec(spec)
-
-                spec.loader.exec_module(mod)
-            except Exception as e:
-                await event.client.send_message("me", f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
-                os.remove(os.getcwd() + "/userbot/modules/" + dosya)
-                continue
-            await event.client.send_message(PLUGIN_CHANNEL_ID, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
-        await event.client.send_message(PLUGIN_CHANNEL_ID, f"`Pluginler Yüklendi\n\Dosya: {dosya}`")
-    else:
-        event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
 @register(outgoing=True, pattern="^.pinstall")
 async def pins(event):
     if event.is_reply:
@@ -137,11 +117,6 @@ async def pins(event):
     await event.edit("`Dosya indiriliyor...`")
     dosya = await event.client.download_media(data, os.getcwd() + "/userbot/modules/")
     
-    if PLUGIN_CHANNEL_ID != None:
-        await reply_message.forward_to(PLUGIN_CHANNEL_ID)
-    else:
-        event.reply("`Pluginlerin kalıcı olması için Id ayarlamamışsınız. Pluginleriniz yeniden başlatınca silinebilir!`")
-
     try:
         spec = importlib.util.spec_from_file_location(dosya, dosya)
         mod = importlib.util.module_from_spec(spec)
@@ -153,21 +128,10 @@ async def pins(event):
         return
 
     dosy = open(dosya, "r").read()
-    if "@tgbot.on" in dosy:
-        komu = re.findall(r"(pattern=\")(.*)(\")(\))", dosy)
-        komutlar = ""
-        i = 0
-        while i < len(komu):
-            komut = komu[i][1]
-            CMD_HELP[komut] = f"Bu plugin dışarıdan botunuz için yüklenmiştir. Kullanım: {komut}"
-            komutlar += komut + " "
-            i += 1
-        await event.edit(f"`Modül başarıyla yüklendi! {komutlar} ile kullanmaya başlayabilirsiniz.`")
-    else:
-        komu = str(re.findall(r"(pattern=\")(.*)(\")(\))", dosy)[0][1]).replace("^", "").replace(".", "")
+    komu = str(re.findall(r"(pattern=\")(.*)(\")(\))", dosy)[0][1]).replace("^", "").replace(".", "")
 
-        CMD_HELP[komu] = f"Bu plugin dışarıdan yüklenmiştir. Kullanım: .{komu}"
-        await event.edit(f"`Modül başarıyla yüklendi! .{komu} ile kullanmaya başlayabilirsiniz.`")
+    CMD_HELP[komu] = f"Bu plugin dışarıdan yüklenmiştir. Kullanım: .{komu}"
+    await event.edit(f"`Modül başarıyla yüklendi! .{komu} ile kullanmaya başlayabilirsiniz.`")
 
 @register(outgoing=True, pattern="^.premove ?(.*)")
 async def premove(event):
@@ -181,20 +145,6 @@ async def premove(event):
     bot.remove_event_handler(modul)
 
     await event.edit("`Plugin başarıyla silindi!`")
-
-@register(outgoing=True, pattern="^.psend ?(.*)")
-async def psend(event):
-    modul = event.pattern_match.group(1).lower()
-    if len(modul) < 1:
-        await event.edit("`Lütfen komutun yanına bir plugin belirtin.`")
-        return
-
-    dosya = os.getcwd() + "/userbot/modules/" + modul + ".py"
-    if os.path.isfile(dosya):
-        await event.client.send_file(event.chat_id, f"{dosya}", caption="Bu bir [Asena](https://t.me/AsenaUserBot) pluginidir.")
-        await event.delete()
-    else:
-        await event.edit("`Böyle bir plugin belki vardı, belki de yoktu. Ama şu an olmadığı kesin.`")
 
 async def check_media(reply_message):
     if reply_message and reply_message.media:

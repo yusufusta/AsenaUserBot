@@ -23,10 +23,6 @@
       "description": "Bu değeri my.telegram.org adresinden alın.",
       "required": true
     },
-    "PLUGIN_CHANNEL_ID": {
-      "description": "Pluginleri yeniden yüklemek için bu değer lazımdır. Almak için Telegramın arama kısmına @AsenaKaliciPlugin Yazın.",
-      "required": true
-    },
     "STRING_SESSION": {
       "description": "python3 GenerateStringSession.py dosyasını yerel olarak çalıştırarak bu değeri alın.",
       "required": true
@@ -79,7 +75,7 @@
       "required": false
     },
     "BOTLOG": {
-      "description": "# DOKUNMA #",
+      "description": "Günlüğe kaydetmeyi açmak istiyorsanız, bunu True olarak ayarlayın",
       "value": "False"
     },
     "BOT_USERNAME": {
@@ -89,6 +85,10 @@
     "BOT_TOKEN": {
       "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun tokenini yazmanız lazım. Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
       "required": false    
+    },
+    "GENIUS_API_TOKEN": {
+      "description": "Genius API Key, 'https://genius.com/developers' adresinden alın.",
+      "required": false
     },
     "GENIUS": {
       "description": "Buraya aldığınız Genius API Token'i yazın.",

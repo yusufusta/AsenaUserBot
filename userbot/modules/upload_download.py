@@ -18,7 +18,6 @@
 
 import json
 import os
-import zipfile
 import subprocess
 import time
 import math
@@ -31,15 +30,6 @@ from telethon.tl.types import DocumentAttributeVideo
 
 from userbot import LOGS, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
-
-def get_lst_of_files(input_directory, output_lst):
-    filesinfolder = os.listdir(input_directory)
-    for file_name in filesinfolder:
-        current_file_name = os.path.join(input_directory, file_name)
-        if os.path.isdir(current_file_name):
-            return get_lst_of_files(current_file_name, output_lst)
-        output_lst.append(current_file_name)
-    return output_lst
 
 
 async def progress(current, total, event, start, type_of_ps, file_name=None):
@@ -270,89 +260,6 @@ async def upload(u_event):
     else:
         await u_event.edit("404: Dosya bulunamadı")
 
-@register(pattern=r".unzip", outgoing=True)  
-async def zip(event):
-    if event.fwd_from:
-        return
-    mone = await event.edit("Dosya indiriliyor...")
-    extracted = TEMP_DOWNLOAD_DIRECTORY + "extracted/"
-    thumb_image_path = TEMP_DOWNLOAD_DIRECTORY + "/thumb_image.jpg"
-    if not os.path.isdir(extracted):
-        os.makedirs(extracted)
-    if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
-        os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
-    if event.reply_to_msg_id:
-        start = time.time()
-        reply_message = await event.get_reply_message()
-        try:
-            c_time = time.time()
-            downloaded_file_name = await event.client.download_media(
-                reply_message,
-                TEMP_DOWNLOAD_DIRECTORY,
-                progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                    progress(d, t, mone, c_time, "`İndiriliyor...`")
-                )
-            )
-        except Exception as e:  # pylint:disable=C0103,W0703
-            await mone.edit(str(e))
-        else:
-            end = time.time()
-            ms = end - start
-            await mone.edit("`{}, {} saniyede indirildi.`".format(downloaded_file_name, ms))
-
-        with zipfile.ZipFile(downloaded_file_name, 'r') as zip_ref:
-            zip_ref.extractall(extracted)
-        filename = sorted(get_lst_of_files(extracted, []))
-        #filename = filename + "/"
-        await event.edit("`İndirme başarılı! Dosya Zipten Çıkarılıyor!`")
-        # r=root, d=directories, f = files
-        for single_file in filename:
-            if os.path.exists(single_file):
-                # https://stackoverflow.com/a/678242/4723940
-                caption_rts = os.path.basename(single_file)
-                force_document = False
-                supports_streaming = True
-                document_attributes = []
-                if single_file.endswith((".mp4", ".mp3", ".flac", ".webm")):
-                    metadata = extractMetadata(createParser(single_file))
-                    duration = 0
-                    width = 0
-                    height = 0
-                    if metadata.has("duration"):
-                        duration = metadata.get('duration').seconds
-                    if os.path.exists(thumb_image_path):
-                        metadata = extractMetadata(createParser(thumb_image_path))
-                        if metadata.has("width"):
-                            width = metadata.get("width")
-                        if metadata.has("height"):
-                            height = metadata.get("height")
-                    document_attributes = [
-                        DocumentAttributeVideo(
-                            duration=duration,
-                            w=width,
-                            h=height,
-                            round_message=False,
-                            supports_streaming=True
-                        )
-                    ]
-                
-                await event.client.send_file(
-                    event.chat_id,
-                    single_file,
-                    caption=f"`{caption_rts}`",
-                    force_document=force_document,
-                    supports_streaming=supports_streaming,
-                    allow_cache=False,
-                    reply_to=event.message.id,
-                    attributes=document_attributes,
-                    progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                        progress(d, t, event, c_time, "trying to upload")
-                    )
-                )
-                os.remove(single_file)
-        os.remove(downloaded_file_name)
-    else:
-        await event.edit("`Lütfen bir Zip'e yanıt verin!`")
 
 def get_video_thumb(file, output=None, width=90):
     """ Video kapak resmini gösterir """
