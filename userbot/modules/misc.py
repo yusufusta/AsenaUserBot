@@ -91,19 +91,18 @@ async def restart(event):
 @register(outgoing=True, pattern="^.support$")
 async def bot_support(wannahelp):
     """ .support komutu destek grubumuzu verir. """
-    await wannahelp.edit("[Buradan](http://t.me/SedenUserBotSupport) destek grubumuza ulaşabilirsiniz.")
+    await wannahelp.edit("[Buradan](http://t.me/AsenaSupport) destek grubumuza ulaşabilirsiniz.")
 
 
 @register(outgoing=True, pattern="^.creator$")
 async def creator(e):
     await e.edit("Bu bot \n"
-                 "[NaytSeyd](https://t.me/NightShade) tarafından geliştirilip \n"
-                 "[Sedenogen](https://t.me/CiyanogenOneTeams) tarafından sevgi ile düzenlenmiştir.")
+                 "[Yusuf Usta](https://t.me/Qulec) tarafından geliştirilmiştir. \n")
 
 
 @register(outgoing=True, pattern="^.readme$")
 async def reedme(e):
-    await e.edit("[Seden README.md](https://github.com/TeamDerUntergang/Telegram-UserBot/blob/seden/README.md)")
+    await e.edit("[Asena README.md](https://github.com/quiec/AsenaUserBot/blob/seden/README.md)")
 
 
 # Copyright (c) Gegham Zakaryan | 2019
@@ -124,7 +123,7 @@ async def repeat(rep):
 @register(outgoing=True, pattern="^.repo$")
 async def repo_is_here(wannasee):
     """ .repo komutunun tek yaptığı şey GitHub repomuzun bağlantısını vermek. """
-    await wannasee.edit("[Seden Repo](https://github.com/TeamDerUntergang/Telegram-UserBot)")
+    await wannasee.edit("[Asena Repo](https://github.com/quiec/asenauserbot)")
 
 
 @register(outgoing=True, pattern="^.raw$")

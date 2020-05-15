@@ -23,11 +23,13 @@ from sys import version_info
 from logging import basicConfig, getLogger, INFO, DEBUG
 from distutils.util import strtobool as sb
 from math import ceil
+import importlib
 
 from pylast import LastFMNetwork, md5
 from pySmartDL import SmartDL
 from dotenv import load_dotenv
 from requests import get
+from telethon.tl.types import InputMessagesFilterDocument
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.sync import TelegramClient, custom, events
 from telethon.sessions import StringSession
@@ -138,6 +140,9 @@ AUTO_PP = os.environ.get("AUTO_PP", None)
 # Chrome sürücüsü ve Google Chrome dosyaları
 CHROME_DRIVER = os.environ.get("CHROME_DRIVER", None)
 GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN", None)
+
+# Plugin İçin
+PLUGIN_CHANNEL_ID = int(os.environ.get("PLUGIN_CHANNEL_ID", None))
 
 # OpenWeatherMap API Key
 OPEN_WEATHER_MAP_APPID = os.environ.get("OPEN_WEATHER_MAP_APPID", None)
@@ -252,24 +257,34 @@ async def check_botlog_chatid():
         quit(1)
 
 
+tgbot = TelegramClient(
+    "TG_BOT_TOKEN",
+    api_id=API_KEY,
+    api_hash=API_HASH
+).start(bot_token=BOT_TOKEN)
+
 with bot:
-    @bot.on(events.NewMessage)
-    async def cremove(event):
-        if event.out == True:
-            if event.text in SILINEN_PLUGIN:
-                await event.edit("Bu Plugin Kaldırıldı!")
-                return
+    if PLUGIN_CHANNEL_ID != None:
+        print("Pluginler Yükleniyor")
+        for plugin in bot.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
+            dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
+            try:
+                spec = importlib.util.spec_from_file_location(dosya, dosya)
+                mod = importlib.util.module_from_spec(spec)
+
+                spec.loader.exec_module(mod)
+            except Exception as e:
+                bot.send_message("me", f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
+                os.remove(os.getcwd() + "/userbot/modules/" + dosya)
+                continue
+            bot.send_message(PLUGIN_CHANNEL_ID, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
+        bot.send_message(PLUGIN_CHANNEL_ID, f"`Pluginler Yüklendi`")
+    else:
+        bot.send_message("me", f"`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
 
     try:
         bot(JoinChannelRequest("@AsenaUserBot"))
         bot(JoinChannelRequest("@AsenaSupport"))
-
-        tgbot = TelegramClient(
-            "TG_BOT_TOKEN",
-            api_id=API_KEY,
-            api_hash=API_HASH
-        ).start(bot_token=BOT_TOKEN)
-
         moduller = CMD_HELP
         me = bot.get_me()
         uid = me.id

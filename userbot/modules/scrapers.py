@@ -130,6 +130,32 @@ async def carbon_api(e):
     # Karşıya yüklemenin ardından carbon.png kaldırılıyor
     await e.delete()  # Mesaj siliniyor
 
+@register(outgoing=True, pattern="^.ceviri")
+async def ceviri(e):
+    # http://www.tamga.org/2016/01/web-tabanl-gokturkce-cevirici-e.html #
+    await e.edit("`Çeviriliyor...`")
+    textx = await e.get_reply_message()
+    pcode = e.text
+    if pcode[8:]:
+        pcode = str(pcode[8:])
+    elif textx:
+        pcode = str(textx.message)  # Girilen metin, modüle aktarılıyor.
+    code = quote_plus(pcode)  # Çözülmüş url'ye dönüştürülüyor.
+    url = "http://www.tamga.org/2016/01/web-tabanl-gokturkce-cevirici-e.html"
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.binary_location = GOOGLE_CHROME_BIN
+    chrome_options.add_argument("--window-size=1920x1080")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-gpu")
+    driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
+                              options=chrome_options)
+    driver.get(url)
+    Latin = driver.find_element_by_name("Latin_Metin").send_keys(pcode)
+    Turk = driver.find_element_by_name("Göktürk_Metin").get_attribute("value")
+    e.edit(Turk)
+
 
 @register(outgoing=True, pattern="^.img (.*)")
 async def img_sampler(event):
