@@ -23,7 +23,7 @@ import os
 
 from telethon.tl.types import InputMessagesFilterDocument
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
-from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID
+from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 
 DB = connect("learning-data-root.check")
@@ -41,19 +41,42 @@ try:
     bot.start()
     if PLUGIN_CHANNEL_ID != None:
         print("Pluginler Yükleniyor")
-        for plugin in bot.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-            dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
+        try:
+            KanalId = bot.get_entity(PLUGIN_CHANNEL_ID)
+            DOGRU = 1
+        except:
+            KanalId = "me"
+            bot.send_message("me", f"`Plugin_Channel_Id'iniz geçersiz. Pluginler kalıcı olmuyacak.`")
+            DOGRU = 0
+
+        for plugin in bot.iter_messages(KanalId, filter=InputMessagesFilterDocument):
+            if DOGRU == 0:
+                break
+            dosyaa = plugin.file.name
+            print(dosyaa)
+            if not os.path.exists(os.getcwd() + "/userbot/modules/" + dosyaa):
+                dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
+            else:
+                print("Bu Plugin Zaten Yüklü " + dosyaa)
+                dosya = dosyaa
             try:
                 spec = importlib.util.spec_from_file_location(dosya, dosya)
                 mod = importlib.util.module_from_spec(spec)
 
                 spec.loader.exec_module(mod)
             except Exception as e:
-                bot.send_message("me", f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
-                os.remove(os.getcwd() + "/userbot/modules/" + dosya)
+                bot.send_message(KanalId, f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
+                plugin.delete()
+
+                if os.path.exists(os.getcwd() + "/userbot/modules/" + dosya):
+                    os.remove(os.getcwd() + "/userbot/modules/" + dosya)
                 continue
-            bot.send_message(PLUGIN_CHANNEL_ID, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
-        bot.send_message(PLUGIN_CHANNEL_ID, f"`Pluginler Yüklendi`")
+            
+            ndosya = dosya.replace(".py", "")
+            CMD_HELP[ndosya] = "Bu Plugin Dışarıdan Yüklenmiştir"
+            bot.send_message(KanalId, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
+        if KanalId != "me":
+            bot.send_message(KanalId, f"`Pluginler Yüklendi`")
     else:
         bot.send_message("me", f"`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
 
