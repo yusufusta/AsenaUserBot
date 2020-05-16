@@ -255,7 +255,7 @@ async def check_botlog_chatid():
             "Hesabınızın BOTLOG_CHATID grubuna mesaj gönderme yetkisi yoktur. "
             "Grup ID'sini doğru yazıp yazmadığınızı kontrol edin.")
         quit(1)
-if BOT_TOKEN != none:
+if BOT_TOKEN != None:
     tgbot = TelegramClient(
         "TG_BOT_TOKEN",
         api_id=API_KEY,
