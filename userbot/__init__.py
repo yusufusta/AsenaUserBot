@@ -256,38 +256,21 @@ async def check_botlog_chatid():
             "Grup ID'sini doğru yazıp yazmadığınızı kontrol edin.")
         quit(1)
 
+tgbot = TelegramClient(
+    "TG_BOT_TOKEN",
+    api_id=API_KEY,
+    api_hash=API_HASH
+).start(bot_token=BOT_TOKEN)
+
 
 with bot:
     try:
         bot(JoinChannelRequest("@AsenaUserBot"))
         bot(JoinChannelRequest("@AsenaSupport"))
+
         moduller = CMD_HELP
         me = bot.get_me()
         uid = me.id
-        
-        if PLUGIN_CHANNEL_ID != None:
-            print("Pluginler Yükleniyor")
-            for plugin in bot.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-                dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
-                try:
-                    spec = importlib.util.spec_from_file_location(dosya, dosya)
-                    mod = importlib.util.module_from_spec(spec)
-
-                    spec.loader.exec_module(mod)
-                except Exception as e:
-                    bot.send_message("me", f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
-                    os.remove(os.getcwd() + "/userbot/modules/" + dosya)
-                    continue
-                bot.send_message(PLUGIN_CHANNEL_ID, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
-            bot.send_message(PLUGIN_CHANNEL_ID, f"`Pluginler Yüklendi`")
-        else:
-            bot.send_message("me", f"`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
-
-        tgbot = TelegramClient(
-            "TG_BOT_TOKEN",
-            api_id=API_KEY,
-            api_hash=API_HASH
-        ).start(bot_token=BOT_TOKEN)
 
 
         @tgbot.on(events.NewMessage(pattern='/start'))

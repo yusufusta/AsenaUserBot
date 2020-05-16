@@ -15,13 +15,15 @@
 #
 
 """ UserBot başlangıç noktası """
-
+import importlib
 from importlib import import_module
 from sqlite3 import connect
 from sys import argv
+import os
 
+from telethon.tl.types import InputMessagesFilterDocument
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
-from . import BRAIN_CHECKER, LOGS, bot
+from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID
 from .modules import ALL_MODULES
 
 DB = connect("learning-data-root.check")
@@ -37,6 +39,24 @@ for i in ALL_ROWS:
 connect("learning-data-root.check").close()
 try:
     bot.start()
+    if PLUGIN_CHANNEL_ID != None:
+        print("Pluginler Yükleniyor")
+        for plugin in bot.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
+            dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
+            try:
+                spec = importlib.util.spec_from_file_location(dosya, dosya)
+                mod = importlib.util.module_from_spec(spec)
+
+                spec.loader.exec_module(mod)
+            except Exception as e:
+                bot.send_message("me", f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
+                os.remove(os.getcwd() + "/userbot/modules/" + dosya)
+                continue
+            bot.send_message(PLUGIN_CHANNEL_ID, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
+        bot.send_message(PLUGIN_CHANNEL_ID, f"`Pluginler Yüklendi`")
+    else:
+        bot.send_message("me", f"`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
+
 except PhoneNumberInvalidError:
     print(INVALID_PH)
     exit(1)
@@ -46,7 +66,7 @@ for module_name in ALL_MODULES:
 
 LOGS.info("Botunuz çalışıyor! Herhangi bir sohbete .alive yazarak Test edin."
           " Yardıma ihtiyacınız varsa, Destek grubumuza gelin t.me/AsenaSupport")
-LOGS.info("Bot sürümünüz Asena v1.2")
+LOGS.info("Bot sürümünüz Asena v1.3")
 
 """
 if len(argv) not in (1, 3, 4):
