@@ -25,7 +25,7 @@
     },
     "PLUGIN_CHANNEL_ID": {
       "description": "İsteğe bağlıdır, almak için @AsenaKaliciPlugin",
-      "required": true
+      "required": false
     },
     "STRING_SESSION": {
       "description": "python3 GenerateStringSession.py dosyasını yerel olarak çalıştırarak bu değeri alın.",
