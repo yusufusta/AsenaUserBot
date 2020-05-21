@@ -31,12 +31,8 @@ Herhangi bir istek & şikâyet & öneri varsa [destek grubuna](https://t.me/Asen
 
 ```
     Userbottan dolayı; Telegram hesabınız yasaklanabilir.
-    Botun yanlış kullanımından sorumlu değilim sorumluluk size aittir.
-    Bu bot grupları verimli bir şekilde yönetmenin yanı sıra,
-    eğlenmek amacıyla tasarlanmıştır.
-    Grupları spamlayarak eğleneceğinizi düşünüyorsanız yanılıyorsunuz.
-    Herhangi bir spam ban yeme durumunda eğer gelipte hesabım banlandı diye yazarsanız
-    sadece size güleceğim.
+    Bu bir açık kaynaklı projedir, yaptığınız her işlemden kendiniz sorumlusunuz. Kesinlikle Asena yöneticileri sorumluluk kabul etmemektedir.
+    Asenayı kurarak bu sorumlulukları kabul etmiş sayılırsınız.
 ```
 
 ## Credit

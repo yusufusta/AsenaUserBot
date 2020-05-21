@@ -1,4 +1,4 @@
-# Copyright (C) 2020 TeamDerUntergang.
+# Copyright (C) 2020 Yusuf Usta.
 #
 # Licensed under the Raphielscape Public License, Version 1.c (the "License");
 # you may not use this file except in compliance with the License.
@@ -110,21 +110,12 @@ async def pport(event):
 async def plist(event):
     if PLUGIN_CHANNEL_ID != None:
         await event.edit("`Pluginler getiriliyor...`")
+        yuklenen = "**İşte Yüklenen Pluginler:**\n\n"
         async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-            dosya = await event.client.download_media(plugin, os.getcwd() + "/userbot/modules/")
-            try:
-                spec = importlib.util.spec_from_file_location(dosya, dosya)
-                mod = importlib.util.module_from_spec(spec)
-
-                spec.loader.exec_module(mod)
-            except Exception as e:
-                await event.client.send_message("me", f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
-                os.remove(os.getcwd() + "/userbot/modules/" + dosya)
-                continue
-            await event.client.send_message(PLUGIN_CHANNEL_ID, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
-        await event.client.send_message(PLUGIN_CHANNEL_ID, f"`Pluginler Yüklendi\n\Dosya: {dosya}`")
+            yuklenen += f"▶️ {plugin.file.name}"
+        await event.edit(yuklenen)
     else:
-        event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
+        await event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
 @register(outgoing=True, pattern="^.pinstall")
 async def pins(event):
     if event.is_reply:
@@ -177,10 +168,18 @@ async def premove(event):
         return
 
     await event.edit("`Plugin Siliniyor...`")
-    SILINEN_PLUGIN[modul] = "0"
-    bot.remove_event_handler(modul)
+    i = 0
+    async for message in event.client.iter_messages("me", search=modul):
+        await message.delete()
+        i += 1
 
-    await event.edit("`Plugin başarıyla silindi!`")
+        if i > 1:
+            break
+
+    if i == 0:
+        await event.edit("`Böyle bir plugin belki vardı, belki de yoktu. Ama şu an olmadığı kesin.`")
+    else:
+        await event.edit("`Plugin başarıyla silindi!` **İşlemlerin uygulanabilmesi için yeniden başlatmanız gerekmetedir.**")
 
 @register(outgoing=True, pattern="^.psend ?(.*)")
 async def psend(event):

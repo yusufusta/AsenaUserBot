@@ -24,7 +24,7 @@
       "required": true
     },
     "PLUGIN_CHANNEL_ID": {
-      "description": "Pluginleri yeniden yüklemek için bu değer lazımdır. Almak için Telegramın arama kısmına @AsenaKaliciPlugin Yazın.",
+      "description": "İsteğe bağlıdır, almak için @AsenaKaliciPlugin",
       "required": true
     },
     "STRING_SESSION": {

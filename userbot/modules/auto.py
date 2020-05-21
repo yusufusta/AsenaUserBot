@@ -1,4 +1,9 @@
 
+# Copyright (C) 2020 Yusuf Usta.
+# Copyright (C) 2020 RaphielGang.
+# Copyright (C) 2020 AsenaUserBot.
+
+
 import os
 import asyncio
 import random
@@ -63,3 +68,6 @@ async def auto(event):
             await asyncio.sleep(60)
         except:
             return
+
+
+CMD_HELP.update({"auto": ".auto isim (ya da) bio Kullanım: Otomatik saate göre değiştirir",})

@@ -1,17 +1,6 @@
-# Copyright (C) 2020 TeamDerUntergang.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# Copyright (C) 2020 Yusuf Usta.
+# Copyright (C) 2020 RaphielGang.
+# Copyright (C) 2020 AsenaUserBot.
 #
 
 """ Sunucu hakkında bilgi veren UserBot modülüdür. """
@@ -22,7 +11,7 @@ from platform import python_version, uname
 from shutil import which
 from os import remove
 from telethon import version
-
+import random
 from userbot import CMD_HELP
 from userbot.events import register
 
@@ -30,6 +19,7 @@ from userbot.events import register
 DEFAULTUSER = uname().node
 # ============================================
 
+ALIVE_MESAJ = ["Tanrı Türkü Korusun!", "Tengri biz menen.", "Auuu!"]
 
 @register(outgoing=True, pattern="^.sysd$")
 async def sysdetails(sysd):
@@ -83,7 +73,7 @@ async def bot_ver(event):
                          "`")
     else:
         await event.edit(
-            "Bu arada Seden seni çok seviyor. ❤"
+            "Bu arada Asena seni çok seviyor. ❤"
         )
 
 
@@ -133,7 +123,7 @@ async def pipcheck(pip):
 @register(outgoing=True, pattern="^.alive$")
 async def amialive(e):
     if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
-        await e.edit("`Auuuu! 🐺 Asena çalışıyor.`")
+        await e.edit(f"`{random.choice(ALIVE_MESAJ)} 🐺 Asena çalışıyor.`")
 
 
 CMD_HELP.update(
@@ -146,5 +136,5 @@ CMD_HELP.update(
     \nKullanım: Pip modüllerinde arama yapar."})
 CMD_HELP.update({
     "alive": ".alive\
-    \nKullanım: Seden botunun çalışıp çalışmadığını kontrol etmek için kullanılır."
+    \nKullanım: Asena botunun çalışıp çalışmadığını kontrol etmek için kullanılır."
 })

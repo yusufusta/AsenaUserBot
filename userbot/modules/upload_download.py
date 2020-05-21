@@ -1,17 +1,6 @@
-# Copyright (C) 2020 TeamDerUntergang.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# Copyright (C) 2020 Yusuf Usta.
+# Copyright (C) 2020 RaphielGang.
+# Copyright (C) 2020 AsenaUserBot.
 #
 
 """ Sunucuya dosya indirme/yükleme yapmayı sağlayan UserBot modülüdür. """
@@ -22,6 +11,7 @@ import zipfile
 import subprocess
 import time
 import math
+import re
 
 from pySmartDL import SmartDL
 import asyncio
@@ -29,7 +19,7 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from telethon.tl.types import DocumentAttributeVideo
 
-from userbot import LOGS, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
+from userbot import LOGS, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, BOT_USERNAME
 from userbot.events import register
 
 def get_lst_of_files(input_directory, output_lst):
@@ -354,6 +344,85 @@ async def zip(event):
     else:
         await event.edit("`Lütfen bir Zip'e yanıt verin!`")
 
+
+@register(pattern="^.wupload ?(.+?|) (.*)")
+async def wupload(event):
+    await event.edit("`Dosya indiriliyor...`")
+    PROCESS_RUN_TIME = 100
+    input_str = event.pattern_match.group(1)
+    selected_transfer = event.pattern_match.group(2)
+    bas = time.time()
+    if input_str:
+        file_name = input_str
+    else:
+        HOST = ["anonfiles", "transfer", "filebin", "tmpninja", "anonymousfiles", "megaupload", "bayfiles", "tempsh", "letsupload"]
+        if selected_transfer in HOST:
+            reply = await event.get_reply_message()
+            file_name = await event.client.download_media(
+                reply.media,
+                TEMP_DOWNLOAD_DIRECTORY
+            )
+        else:
+            await event.edit("`Belirtilen host bulunamadı! Bulunan hostlar: anonfiles|transfer|filebin|tmpninja|anonymousfiles|megaupload|bayfiles|letsupload|vshare`")
+            return
+    await event.edit("`Dosya indirme işlemi başarılı. Yükleniyor...`")
+    CMD_WEB = {
+        "anonfiles": "curl -F \"file=@{full_file_path}\" https://anonfiles.com/api/upload",
+        "transfer": "curl --upload-file \"{full_file_path}\" https://transfer.sh/{bare_local_name}",
+        "tmpninja": "curl -F file=@\"{full_file_path}\" https://tmp.ninja/api.php?d=upload-tool",
+        "filebin": "curl -X POST --data-binary \"@{full_file_path}\" -H \"filename: {bare_local_name}\" \"https://filebin.net\"",
+        "anonymousfiles": "curl -F file=\"@{full_file_path}\" https://api.anonymousfiles.io/",
+        "megaupload": "curl -F \"file=@{full_file_path}\" https://megaupload.is/api/upload",
+        "tempsh": "curl -T \"{full_file_path}\" https://temp.sh",
+        "bayfiles": "curl -F \"file=@{full_file_path}\" https://bayfiles.com/api/upload",
+        "letsupload": "curl -F \"file=@{full_file_path}\" https://api.letsupload.cc/upload",
+        "vshare": "curl -F \"file=@{full_file_path}\" https://api.vshare.is/upload"
+    }
+    filename = os.path.basename(file_name)
+    try:
+        selected_one = CMD_WEB[selected_transfer].format(
+            full_file_path=file_name,
+                        bare_local_name=filename
+        )
+    except KeyError:
+        await event.edit("`Bilinmeyen host sitesi. Yüklenebilir siteler: ` anonfiles|transfer|filebin|tmpninja|anonymousfiles|megaupload|bayfiles|letsupload|vshare")
+        return
+    cmd = selected_one
+    process = await asyncio.create_subprocess_shell(
+        cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    e_response = stderr.decode().strip()
+    t_response = stdout.decode().strip()
+
+    zaman = time.time() - bas
+    await event.edit("`Başarılı bir şekilde yüklendi. Link alınıyor...`")
+    if t_response:
+        try:
+            t_response = json.dumps(json.loads(t_response), sort_keys=True, indent=4)
+        except Exception as e:
+            pass
+        
+        try:
+            urll = re.findall(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", t_response)[0]
+        except:
+            urll = t_response
+            await event.edit(urll)
+            return
+        if BOT_USERNAME != None:
+            results = await event.client.inline_query(
+                BOT_USERNAME,
+                f"{urll} {zaman} {selected_transfer}"
+            )
+            await results[0].click(
+                event.chat_id,
+                reply_to=event.reply_to_msg_id,
+                hide_via=True
+            )
+            await event.delete()
+        else:
+            await event.edit(urll)
+
 def get_video_thumb(file, output=None, width=90):
     """ Video kapak resmini gösterir """
     metadata = extractMetadata(createParser(file))
@@ -504,5 +573,6 @@ CMD_HELP.update({
     ".download <bağlantı-dosya adı> (ya da bir şeye cevap vererek)\
 \nKullanım: Sunucuya dosyayı indirir.\
 \n\n.upload <sunucudaki dosya yolu>\
-\nKullanım: Sunucunuzdaki bir dosyayı sohbete upload eder."
+\nKullanım: Sunucunuzdaki bir dosyayı sohbete upload eder.",
 })
+CMD_HELP["wupload"] = "Kullanım: <dosyaya yanıt verin> anonfiles|transfer|filebin|tmpninja|anonymousfiles|megaupload|bayfiles|letsupload|vshare"

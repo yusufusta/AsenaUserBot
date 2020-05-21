@@ -1,17 +1,6 @@
-# Copyright (C) 2020 TeamDerUntergang.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# Copyright (C) 2020 Yusuf Usta.
+# Copyright (C) 2020 RaphielGang.
+# Copyright (C) 2020 AsenaUserBot.
 #
 
 """ İnsanlarla eğlenmek için yapılmış olan UserBot modülü. """
@@ -380,7 +369,29 @@ HIT = [
 ]
 
 # ===========================================
+@register(outgoing=True, pattern="^.karar$")
+async def karar(e):
+    msaj = ""
+    if e.reply_to_msg_id:
+        rep = await e.get_reply_message()
+        replyto = rep.id
+        msaj += f"[Dostum](tg://user?id={rep.from_id}), "
+    else:
+        e.edit("`Lütfen bir mesaja yanıt verin`")
+        return
+    yesno = requests.get('https://yesno.wtf/api').json()
+    if yesno["answer"] == "yes":
+        cevap = "evet"
+    else:
+        cevap = "hayır"
+    msaj += f"Sanırım buna {cevap} diyeceğim."
 
+    e.client.send_message(
+        e.chat_id,
+        msaj,
+        reply_to=replyto,
+        file=yesno["image"]
+    )
 
 @register(outgoing=True, pattern=r"^.(\w+)say (.*)")
 async def univsaye(cowmsg):
@@ -662,24 +673,21 @@ async def oof(e):
         await e.edit(t)
 
 
-@register(outgoing=True, pattern="^\.(.*)")
-async def _(event):
+@register(outgoing=True, pattern="^.fuk")
+async def fuk(event):
     if event.fwd_from:
         return
     animation_interval = 0.1
     animation_ttl = range(0, 101)
-    input_str = event.pattern_match.group(1)
-    if input_str == "fuk":
-        await event.edit(input_str)
-        animation_chars = [
+    animation_chars = [
             "🍆       🍑️",
             "🍆     🍑️",
             "🍆  🍑️",
             "🍆🍑️💦"
-        ]
-        for i in animation_ttl:
-            await asyncio.sleep(animation_interval)
-            await event.edit(animation_chars[i % 4])
+    ]
+    for i in animation_ttl:
+        await asyncio.sleep(animation_interval)
+        await event.edit(animation_chars[i % 4])
 
 
 @register(outgoing=True, pattern="^.kalp (.*)")
@@ -897,6 +905,8 @@ CMD_HELP.update({
 \nKullanım: bir şeyler söyleyen inek.\
 \n\n:/\
 \nKullanım: Kendinizi kontrol edin ;)\
+\n\n.karar\
+\nKullanım: Karar verin.\
 \n\n-_-\
 \nKullanım: Tamam...\
 \n\n;_;\

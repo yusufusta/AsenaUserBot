@@ -1,17 +1,6 @@
-# Copyright (C) 2020 TeamDerUntergang.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# Copyright (C) 2020 Yusuf Usta.
+# Copyright (C) 2020 RaphielGang.
+# Copyright (C) 2020 AsenaUserBot.
 #
 
 """ Diğer kategorilere uymayan fazlalık komutların yer aldığı modül. """
@@ -56,6 +45,88 @@ from userbot.google_images_download import googleimagesdownload
 CARBONLANG = "auto"
 TTS_LANG = "tr"
 TRT_LANG = "tr"
+
+
+from telethon import events
+import subprocess
+from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotModifiedError
+import io
+import asyncio
+import time
+from userbot.events import register
+import glob
+import os
+
+@register(outgoing=True, pattern="^.song(?: |$)(.*)")
+async def port_song(event):
+    if event.fwd_from:
+        return
+    
+    cmd = event.pattern_match.group(1)
+    if len(cmd) < 1:
+        await event.edit("`Kullanım: .song şarkı ismi/youtube url/spotify url`") 
+
+    reply_to_id = event.message.id
+    if event.reply_to_msg_id:
+        reply_to_id = event.reply_to_msg_id
+        
+    await event.edit("`Şarkı aranıyor ve indiriliyor lütfen bekleyin!`")  
+    dosya = os.getcwd() 
+    os.system(f"spotdl --song {cmd} -f {dosya}")
+    await event.edit("`İndirme işlemi başarılı lütfen bekleyiniz.`")    
+
+    l = glob.glob("*.mp3")
+    if l[0]:
+        await event.edit("Şarkı yükleniyor!")
+        await event.client.send_file(
+            event.chat_id,
+            l[0],
+            force_document=True,
+            allow_cache=False,
+            reply_to=reply_to_id
+        )
+        await event.delete()
+    else:
+        await event.edit("`Aradığınız şarkı bulunamadı! Üzgünüm.`")   
+        return 
+    os.system("rm -rf *.mp3")
+    subprocess.check_output("rm -rf *.mp3",shell=True)
+
+@register(outgoing=True, pattern="^.songpl ?(.*)")
+async def songpl(event):
+    if event.fwd_from:
+        return
+    DELAY_BETWEEN_EDITS = 0.3
+    PROCESS_RUN_TIME = 100
+    cmd = event.pattern_match.group(1)
+
+    if len(cmd) < 1:
+        await event.edit("Kullanım: .songpl spotify playlist url")    
+
+    reply_to_id = event.message.id
+    if event.reply_to_msg_id:
+        reply_to_id = event.reply_to_msg_id
+    await event.edit("`Playlist aranıyor ve indiriliyor lütfen bekleyin!`")    
+    sonuc = os.system(f"spotdl --playlist {cmd}")
+    await event.edit("`İndirme başarılı! Şimdi yükleniyor.`")
+    l = glob.glob("*.mp3")
+    i = 0
+    if l[0]:
+        while i < len(l):
+            await event.reply("Şarkı gönderiliyor! Şarkı: " + l[i])
+            await event.client.send_file(
+                event.chat_id,
+                l[i],
+                force_document=True,
+                allow_cache=False,
+                caption=cmd,
+                reply_to=reply_to_id
+            )
+    else:
+        await event.edit("`Aradığınız şarkı bulunamadı! Üzgünüm.`")   
+        return 
+    os.system("rm -rf *.mp3")
+    subprocess.check_output("rm -rf *.mp3",shell=True)
 
 
 @register(outgoing=True, pattern="^.crblang (.*)")
@@ -731,6 +802,7 @@ CMD_HELP.update({
     '.currency <miktar> <dönüştürülecek birim> <dönüşecek birim>\
         \nKullanım: Yusufun Türk Lirası Botu gibi, ama boş kaldığında kızlara yazmıyor.'
 })
+
 CMD_HELP.update({
     'carbon':
     '.carbon <metin>\
@@ -757,6 +829,12 @@ CMD_HELP.update({
 })
 CMD_HELP.update({'yt': '.yt <metin>\
         \nKullanım: YouTube üzerinde bir arama yapar.'})
+CMD_HELP.update({'song': 
+    '.song <youtube/spotify/şarkı>\
+        \nKullanım: Şarkı indirir.\
+    .songpl <spotify playlist url>\
+        \nKullanım: Spotify playlist indirir.'})
+
 CMD_HELP.update(
     {"imdb": ".imdb <film>\nKullanım: Film hakkında bilgi verir."})
 CMD_HELP.update({

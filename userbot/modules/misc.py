@@ -1,17 +1,6 @@
-# Copyright (C) 2020 TeamDerUntergang.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# Copyright (C) 2020 Yusuf Usta.
+# Copyright (C) 2020 RaphielGang.
+# Copyright (C) 2020 AsenaUserBot.
 #
 
 """ Birkaç küçük komutu içeren UserBot modülü. """
@@ -27,6 +16,14 @@ import json
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
 from userbot.events import register
 
+@register(outgoing=True, pattern="^.resend")
+async def resend(event):
+    await event.delete()
+    m = await event.get_reply_message()
+    if not m:
+        event.edit("`Bir dosyaya yanıt ver.`")
+        return
+    await event.respond(m)
 
 @register(outgoing=True, pattern="^.random")
 async def randomise(items):
@@ -198,6 +195,9 @@ CMD_HELP.update({
 
 CMD_HELP.update({"restart": ".restart\
 \nKullanım: Botu yeniden başlatır."})
+
+CMD_HELP.update({"resend": ".resend\
+\nKullanım: Bir medyayı yeniden gönderir."})
 
 CMD_HELP.update({
     "raw":

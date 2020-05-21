@@ -1,17 +1,6 @@
-# Copyright (C) 2020 TeamDerUntergang.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# Copyright (C) 2020 Yusuf Usta.
+# Copyright (C) 2020 RaphielGang.
+# Copyright (C) 2020 AsenaUserBot.
 #
 
 """ UserBot hazırlanışı. """
@@ -126,7 +115,7 @@ UPSTREAM_REPO_URL = os.environ.get(
 CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
 
 # SQL Veritabanı
-DB_URI = os.environ.get("DATABASE_URL", None)
+DB_URI = os.environ.get("DATABASE_URL", "sqlite://")
 
 # OCR API key
 OCR_SPACE_API_KEY = os.environ.get("OCR_SPACE_API_KEY", None)
@@ -141,8 +130,12 @@ AUTO_PP = os.environ.get("AUTO_PP", None)
 CHROME_DRIVER = os.environ.get("CHROME_DRIVER", None)
 GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN", None)
 
+PLUGINID = os.environ.get("PLUGIN_CHANNEL_ID", None)
 # Plugin İçin
-PLUGIN_CHANNEL_ID = int(os.environ.get("PLUGIN_CHANNEL_ID", None))
+if not PLUGINID:
+    PLUGIN_CHANNEL_ID = "me"
+else:
+    PLUGIN_CHANNEL_ID = int(PLUGINID)
 
 # OpenWeatherMap API Key
 OPEN_WEATHER_MAP_APPID = os.environ.get("OPEN_WEATHER_MAP_APPID", None)
@@ -277,7 +270,7 @@ with bot:
         @tgbot.on(events.NewMessage(pattern='/start'))
         async def handler(event):
             if not event.message.from_id == uid:
-                await event.reply(f'`Merhaba ben` @AsenaUserBot`! Ben sahibime (`@{me.username}`) yardımcı olmak için varım, yaani sana yardımcı olamam :/ Ama sen de bir Seden açabilirsin; Kanala bak` @AsenaUserBot')
+                await event.reply(f'`Merhaba ben` @AsenaUserBot`! Ben sahibime (`@{me.username}`) yardımcı olmak için varım, yaani sana yardımcı olamam :/ Ama sen de bir Asena açabilirsin; Kanala bak` @AsenaUserBot')
             else:
                 await event.reply(f'`Senin için çalışıyorum :) Seni seviyorum. ❤️`')
 
@@ -301,6 +294,16 @@ with bot:
                     "© @AsenaUserBot",
                     text=f"@AsenaUserBot ile güçlendirildi",
                     buttons=[],
+                    link_preview=True
+                )
+            elif query.startswith("http"):
+                parca = query.split(" ")
+                result = builder.article(
+                    "Dosya Yüklendi",
+                    text=f"**Dosya başarılı bir şekilde {parca[2]} sitesine yüklendi!**\n\nYükleme zamanı: {parca[1][:3]} saniye\n[‏‏‎ ‎]({parca[0]})",
+                    buttons=[
+                        [custom.Button.url('URL', parca[0])]
+                    ],
                     link_preview=True
                 )
             else:

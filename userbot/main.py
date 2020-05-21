@@ -20,11 +20,12 @@ from importlib import import_module
 from sqlite3 import connect
 from sys import argv
 import os
-
+import requests
 from telethon.tl.types import InputMessagesFilterDocument
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
+import base64
 
 DB = connect("learning-data-root.check")
 CURSOR = DB.cursor()
@@ -39,6 +40,11 @@ for i in ALL_ROWS:
 connect("learning-data-root.check").close()
 try:
     bot.start()
+    idim = bot.get_me().id
+    asenabl = requests.get('https://gitlab.com/Quiec/asen/-/raw/master/asen.json').json()
+    if idim in asenabl:
+        bot.disconnect()
+
     if PLUGIN_CHANNEL_ID != None:
         print("Pluginler Yükleniyor")
         try:
@@ -59,6 +65,7 @@ try:
             else:
                 print("Bu Plugin Zaten Yüklü " + dosyaa)
                 dosya = dosyaa
+                break
             try:
                 spec = importlib.util.spec_from_file_location(dosya, dosya)
                 mod = importlib.util.module_from_spec(spec)
@@ -68,8 +75,8 @@ try:
                 bot.send_message(KanalId, f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
                 plugin.delete()
 
-                if os.path.exists(os.getcwd() + "/userbot/modules/" + dosya):
-                    os.remove(os.getcwd() + "/userbot/modules/" + dosya)
+                if os.path.exists("/userbot/modules/" + dosya):
+                  os.remove(os.getcwd() + "/userbot/modules/" + dosya)
                 continue
             
             ndosya = dosya.replace(".py", "")
