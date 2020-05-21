@@ -386,7 +386,8 @@ async def karar(e):
         cevap = "hayır"
     msaj += f"Sanırım buna {cevap} diyeceğim."
 
-    e.client.send_message(
+    await e.delete()
+    await e.client.send_message(
         e.chat_id,
         msaj,
         reply_to=replyto,
