@@ -36,5 +36,10 @@ Herhangi bir istek & şikâyet & öneri varsa [destek grubuna](https://t.me/Asen
 ```
 
 ## Credit
-[PaperPlane Repo](https://github.com/RaphielGang/Telegram-Paperplane)
-[Seden Repo](https://github.com/TeamDerUntergang/Telegram-UserBot)
+Thanks for;
+
+[RaphielGang for creating Telegram-Userbot](https://github.com/RaphielGang)
+
+[Tdug Team for Translations](https://github.com/TeamDerUntergang)
+
+[Spechide for Inline Bot Plugin](https://github.com/Spechide)
