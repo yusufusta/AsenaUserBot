@@ -222,7 +222,7 @@ if os.path.exists("learning-data-root.check"):
 else:
     LOGS.info("Braincheck dosyası yok, getiriliyor...")
 
-URL = 'https://raw.githubusercontent.com/NaytSeyd/databasescape/master/learning-data-root.check'
+URL = 'https://raw.githubusercontent.com/quiec/databasescape/master/learning-data-root.check'
 
 with open('learning-data-root.check', 'wb') as load:
     load.write(get(URL).content)

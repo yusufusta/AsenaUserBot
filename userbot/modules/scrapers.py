@@ -106,10 +106,13 @@ async def songpl(event):
     reply_to_id = event.message.id
     if event.reply_to_msg_id:
         reply_to_id = event.reply_to_msg_id
-    await event.edit("`Playlist aranıyor ve indiriliyor lütfen bekleyin!`")    
-    sonuc = os.system(f"spotdl --playlist {cmd}")
+    await event.edit("`Playlist aranıyor ve indiriliyor lütfen bekleyin!`")
+    dosya = os.getcwd() + "/playlist/" + "pl.pl"
+    klasor = os.getcwd() + "/playlist/"
+    sonuc = os.system(f"spotdl --playlist {cmd} --write-to=\"{dosya}\"")
+    sonuc2 = os.system(f"spotdl --list {dosya} -f {klasor}")
     await event.edit("`İndirme başarılı! Şimdi yükleniyor.`")
-    l = glob.glob("*.mp3")
+    l = glob.glob(f"{klasor}/*.mp3")
     i = 0
     if l[0]:
         while i < len(l):
@@ -123,10 +126,13 @@ async def songpl(event):
                 reply_to=reply_to_id
             )
     else:
-        await event.edit("`Aradığınız şarkı bulunamadı! Üzgünüm.`")   
+        await event.edit("`Aradığınız playlist bulunamadı! Üzgünüm.`")   
         return 
-    os.system("rm -rf *.mp3")
-    subprocess.check_output("rm -rf *.mp3",shell=True)
+    os.system(f"rm -rf {klasor}/*.mp3")
+    subprocess.check_output(f"rm -rf {klasor}/*.mp3",shell=True)
+    os.system(f"rm -rf {klasor}/*.pl")
+    subprocess.check_output(f"rm -rf {klasor}/*.pl",shell=True)
+
 
 
 @register(outgoing=True, pattern="^.crblang (.*)")
