@@ -29,7 +29,7 @@ async def ezanvakti(event):
         await event.edit("`Lütfen komutun yanına bir şehir belirtin.`")
         return
 
-    url = f'http://67.158.54.51/namaz.php?il={konum}'
+    url = f'http://67.158.54.51/namaz2.php?il={konum}'
     request = requests.get(url)
     result = json.loads(request.text)
 
@@ -63,7 +63,7 @@ async def ramazan(event):
         await event.edit("`Lütfen komutun yanına bir şehir belirtin.`")
         return
     
-    url = f'http://67.158.54.51/ramazan.php?il={konum}'
+    url = f'http://67.158.54.51/ramazan2.php?il={konum}'
     request = requests.get(url)
     result = json.loads(request.text)
 
