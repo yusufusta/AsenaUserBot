@@ -64,7 +64,6 @@ async def addcf(event):
     reply_msg = await event.get_reply_message()
     if reply_msg:
         session = lydia.create_session()
-        session_id = session.id
         if reply_msg.from_id is None:
             return await event.edit("Geçersiz kullanıcı türü.")
         ACC_LYDIA.update({(event.chat_id & reply_msg.from_id): session})
@@ -89,14 +88,13 @@ async def remcf(event):
 
 @register(incoming=True, disable_edited=True)
 async def user(event):
-    user_text = event.text
     try:
         session = ACC_LYDIA[event.chat_id & event.from_id]
         msg = event.text
         async with event.client.action(event.chat_id, "typing"):
             text_rep = session.think_thought(msg)
             wait_time = 0
-            for i in range(len(text_rep)):
+            for _ in range(len(text_rep)):
                 wait_time = wait_time + 0.1
             await asyncio.sleep(wait_time)
             await event.reply(text_rep)

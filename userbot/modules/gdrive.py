@@ -75,8 +75,7 @@ async def gdrive_upload_function(dryb):
             now = time.time()
             diff = now - c_time
             percentage = downloader.get_progress() * 100
-            speed = downloader.get_speed()
-            elapsed_time = round(diff) * 1000
+            downloader.get_speed()
             progress_str = "[{0}{1}] {2}%".format(
                 ''.join(["▰" for i in range(math.floor(percentage / 10))]),
                 ''.join(["▱"
@@ -213,7 +212,6 @@ async def download(set):
     await set.edit("İşleniyor ...")
     input_str = set.pattern_match.group(1)
     if input_str:
-        parent_id = input_str
         await set.edit(
             "Özel Klasör ID'si başarıyla ayarlandı. Sonraki uploadlar şuraya uploadlanacak: {parent_id} (`.gsetclear` komutunu vermediğiniz sürece)"
         )
@@ -228,7 +226,6 @@ async def download(set):
 async def download(gclr):
     """ .gsetclear komutu özel dizini kaldırmanıza yarar. """
     await gclr.reply("İşleniyor ...")
-    parent_id = GDRIVE_FOLDER_ID
     await gclr.edit("Özel Klasör ID'si başarıyla temizlendi.")
 
 
@@ -375,10 +372,6 @@ async def DoTeskWithDir(http, input_directory, event, parent_id):
                                          current_dir_id)
         else:
             file_name, mime_type = file_ops(current_file_name)
-            # current_file_name tam dosya dizinine sahiptir.
-            g_drive_link = await upload_file(http, current_file_name,
-                                             file_name, mime_type, event,
-                                             parent_id)
             r_p_id = parent_id
     # Yapılacaklar: Burada bir bug var :(
     return r_p_id

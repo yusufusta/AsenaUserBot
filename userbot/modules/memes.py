@@ -468,7 +468,7 @@ async def slap(replied_user, event):
 async def lol(lel):
     """ Tamam... """
     okay = "-_-"
-    for i in range(10):
+    for _ in range(10):
         okay = okay[:-1] + "_-"
         await lel.edit(okay)
 
@@ -476,7 +476,7 @@ async def lol(lel):
 @register(outgoing=True, pattern="^;_;$", ignore_unsafe=True)
 async def fun(e):
     t = ";_;"
-    for j in range(10):
+    for _ in range(10):
         t = t[:-1] + "_;"
         await e.edit(t)
 
@@ -649,7 +649,7 @@ async def runner_lol(run):
 @register(outgoing=True, pattern="^oof$")
 async def oof(e):
     t = "oof"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "of"
         await e.edit(t)
 
@@ -657,7 +657,7 @@ async def oof(e):
 @register(outgoing=True, pattern="^Oof$")
 async def Oof(e):
     t = "Oof"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "of"
         await e.edit(t)
 
@@ -665,7 +665,7 @@ async def Oof(e):
 @register(outgoing=True, pattern="^skrrt$")
 async def oof(e):
     t = "skrrt"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "rt"
         await e.edit(t)
         
@@ -673,7 +673,7 @@ async def oof(e):
 @register(outgoing=True, pattern="^Skrrt$")
 async def oof(e):
     t = "Skrrt"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "rt"
         await e.edit(t)
 
@@ -755,7 +755,7 @@ async def mizahshow(e):
 async def moon(event):
     deq = deque(list("🌗🌘🌑🌒🌓🌔🌕🌖"))
     try:
-        for x in range(32):
+        for _ in range(32):
             await sleep(0.1)
             await event.edit("".join(deq))
             deq.rotate(1)
@@ -767,7 +767,7 @@ async def moon(event):
 async def clock(event):
     deq = deque(list("🕙🕘🕗🕖🕕🕔🕓🕒🕑🕐🕛"))
     try:
-        for x in range(32):
+        for _ in range(32):
             await sleep(0.1)
             await event.edit("".join(deq))
             deq.rotate(1)

@@ -109,7 +109,6 @@ async def remove_a_filter(r_handler):
 async def kick_marie_filter(event):
     """ .rmfilters komutu Marie'de (ya da onun tabanındaki botlarda) \
         kayıtlı olan notları silmeye yarar. """
-    cmd = event.text[0]
     bot_type = event.pattern_match.group(1).lower()
     if bot_type not in ["marie", "rose"]:
         await event.edit("`Bu bot henüz desteklenmiyor.`")

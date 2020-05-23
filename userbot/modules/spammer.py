@@ -54,7 +54,7 @@ async def bigspam(e):
         messageSplit = message.split(" ", 2)
         counter = int(messageSplit[1])
         spam_message = str(messageSplit[2])
-        for i in range(1, counter):
+        for _ in range(1, counter):
             await e.respond(spam_message)
         await e.delete()
         if BOTLOG:
@@ -72,7 +72,7 @@ async def tiny_pic_spam(e):
         text = message.split()
         counter = int(text[1])
         link = str(text[2])
-        for i in range(1, counter):
+        for _ in range(1, counter):
             await e.client.send_file(e.chat_id, link)
         await e.delete()
         if BOTLOG:
@@ -95,7 +95,7 @@ async def delayspammer(e):
         from userbot.events import register
         await e.delete()
         delaySpamEvent = threading.Event()
-        for i in range(1, counter):
+        for _ in range(1, counter):
             await e.respond(spam_message)
             delaySpamEvent.wait(spam_delay)
         if BOTLOG:

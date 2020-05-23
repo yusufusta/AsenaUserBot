@@ -100,8 +100,6 @@ async def port_song(event):
 async def songpl(event):
     if event.fwd_from:
         return
-    DELAY_BETWEEN_EDITS = 0.3
-    PROCESS_RUN_TIME = 100
     cmd = event.pattern_match.group(1)
 
     if len(cmd) < 1:
@@ -113,8 +111,8 @@ async def songpl(event):
     await event.edit("`Playlist aranıyor ve indiriliyor lütfen bekleyin!`")
     dosya = os.getcwd() + "/playlist/" + "pl.pl"
     klasor = os.getcwd() + "/playlist/"
-    sonuc = os.system(f"spotdl --playlist {cmd} --write-to=\"{dosya}\"")
-    sonuc2 = os.system(f"spotdl --list {dosya} -f {klasor}")
+    os.system(f"spotdl --playlist {cmd} --write-to=\"{dosya}\"")
+    os.system(f"spotdl --list {dosya} -f {klasor}")
     await event.edit("`İndirme başarılı! Şimdi yükleniyor.`")
     l = glob.glob(f"{klasor}/*.mp3")
     i = 0
@@ -186,7 +184,7 @@ async def carbon_api(e):
             'downloadPath': download_path
         }
     }
-    command_result = driver.execute("send_command", params)
+    driver.execute("send_command", params)
     driver.find_element_by_xpath("//button[contains(text(),'Export')]").click()
     # driver.find_element_by_xpath("//button[contains(text(),'4x')]").click()
     # driver.find_element_by_xpath("//button[contains(text(),'PNG')]").click()
@@ -221,7 +219,7 @@ async def ceviri(e):
         pcode = str(pcode[8:])
     elif textx:
         pcode = str(textx.message)  # Girilen metin, modüle aktarılıyor.
-    code = quote_plus(pcode)  # Çözülmüş url'ye dönüştürülüyor.
+    quote_plus(pcode)  # Çözülmüş url'ye dönüştürülüyor.
     url = "http://www.tamga.org/2016/01/web-tabanl-gokturkce-cevirici-e.html"
     chrome_options = Options()
     chrome_options.add_argument("--headless")
@@ -233,7 +231,7 @@ async def ceviri(e):
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
                               options=chrome_options)
     driver.get(url)
-    Latin = driver.find_element_by_name("Latin_Metin").send_keys(pcode)
+    driver.find_element_by_name("Latin_Metin").send_keys(pcode)
     Turk = driver.find_element_by_name("Göktürk_Metin").get_attribute("value")
     e.edit(Turk)
 
@@ -456,7 +454,7 @@ async def imdb(e):
         final_name = '+'.join(remove_space)
         page = get("https://www.imdb.com/find?ref_=nv_sr_fn&q=" + final_name +
                    "&s=all")
-        lnk = str(page.status_code)
+        str(page.status_code)
         soup = BeautifulSoup(page.content, 'lxml')
         odds = soup.findAll("tr", "odd")
         mov_title = odds[0].findNext('td').findNext('td').text

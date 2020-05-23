@@ -49,7 +49,6 @@ async def sangmata(event):
        await event.edit("`Mesaja cevap verin.`")
        return
     chat = "@SangMataInfo_bot"
-    sender = reply_message.sender
     if reply_message.sender.bot:
        await event.edit("`Botlara cevap veremezsiniz.`")
        return
@@ -88,10 +87,6 @@ async def memeyap(event):
        await event.edit("```Bir Fotoğraf/sticker/gif'e yanıt verin.```")
        return
     chat = "@MemeAutobot"
-    sender = reply_message.sender
-    file_ext_ns_ion = "@memetime.png"
-    file = await event.client.download_file(reply_message.media)
-    uploaded_gif = None
     if reply_message.sender.bot:
        await event.edit("```Gerçek bir kullanıcının mesajına yanıt verin.```")
        return
@@ -176,7 +171,6 @@ async def _(event):
        await event.edit("`Lütfen bir dosyaya yanıt verin.`")
        return
     chat = "@DrWebBot"
-    sender = reply_message.sender
     if reply_message.sender.bot:
        await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
        return
@@ -227,7 +221,6 @@ async def _(event):
        await event.edit("`Mesaja cevap verin.`")
        return
     chat = "@QuotLyBot"
-    sender = reply_message.sender
     if reply_message.sender.bot:
        await event.edit("`Botlara cevap veremezsiniz.`")
        return

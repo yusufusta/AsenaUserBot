@@ -49,7 +49,7 @@ async def pport(event):
         degistir = re.sub(r"(from uniborg).*", "from userbot.events import register", degistir)
         degistir = degistir.replace("def _(event):", "def port_" + komut + "(event):")
         degistir = degistir.replace("borg.", "event.client.")
-        ported = open(f'port_{dosya}', "w").write(degistir)
+        open(f'port_{dosya}', "w").write(degistir)
 
         await event.edit("`Port başarılı dosya yükleniyor...`")
 

@@ -30,7 +30,7 @@ async def on_new_message(event):
                 if re.search(pattern, name, flags=re.IGNORECASE):
                     try:
                         await event.delete()
-                    except Exception as e:
+                    except Exception:
                         await event.reply("Bu grupta mesaj silme yetkim yok. Küfür filtresi devre dışı.")
                         sql.rm_from_blacklist(event.chat_id, "kufur")
                     break

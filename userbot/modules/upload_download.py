@@ -352,7 +352,6 @@ async def zip(event):
 @register(pattern="^.wupload ?(.+?|) (.*)")
 async def wupload(event):
     await event.edit("`Dosya indiriliyor...`")
-    PROCESS_RUN_TIME = 100
     input_str = event.pattern_match.group(1)
     selected_transfer = event.pattern_match.group(2)
     bas = time.time()
@@ -396,7 +395,7 @@ async def wupload(event):
         cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await process.communicate()
-    e_response = stderr.decode().strip()
+    stderr.decode().strip()
     t_response = stdout.decode().strip()
 
     zaman = time.time() - bas
@@ -404,7 +403,7 @@ async def wupload(event):
     if t_response:
         try:
             t_response = json.dumps(json.loads(t_response), sort_keys=True, indent=4)
-        except Exception as e:
+        except Exception:
             pass
         
         try:

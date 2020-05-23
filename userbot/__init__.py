@@ -283,7 +283,6 @@ with bot:
             result = None
             query = event.text
             if event.query.user_id == uid and query == "@AsenaUserBot":
-                rev_text = query[::-1]
                 buttons = paginate_help(0, moduller, "helpme")
                 result = builder.article(
                     f"Lütfen Sadece .yardım Komutu İle Kullanın",
