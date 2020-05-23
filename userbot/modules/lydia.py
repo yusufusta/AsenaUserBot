@@ -22,7 +22,7 @@ logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s'
 
 
 try:
-    pass
+    from userbot.modules.sql_helper.lydia_sql import get_s, get_all_s, add_s, remove_s	
 except:
     logging.log(level=logging.WARNING,
                 msg="Lydia veritabanı bağlantısı başarısız oldu")
