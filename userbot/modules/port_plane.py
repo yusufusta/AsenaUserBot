@@ -1,8 +1,5 @@
 #By STARKTM1
-from telethon import events
 import asyncio
-import os
-import sys
 from userbot.events import register
 
 @register(outgoing=True, pattern="^.plane")

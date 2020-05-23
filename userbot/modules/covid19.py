@@ -9,7 +9,7 @@
 
 # @NaytSeyd tarafından portlanmıştır.
 
-from userbot import CMD_HELP, bot
+from userbot import CMD_HELP
 from userbot.events import register
 from urllib3 import PoolManager
 from json import loads as jsloads

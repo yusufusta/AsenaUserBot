@@ -10,7 +10,6 @@
 """ QR kodları ile ilgili komutları içeren UserBot modülü. """
 
 import os
-import asyncio
 
 import qrcode
 import barcode

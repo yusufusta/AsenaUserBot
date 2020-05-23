@@ -13,9 +13,6 @@ import requests
 
 from userbot import CMD_HELP
 from userbot.events import register
-from userbot.modules.admin import get_user_from_event
-
-from html.parser import HTMLParser
 from bs4 import BeautifulSoup
 
 def searchTureng_tr(word):

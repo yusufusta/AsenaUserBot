@@ -5,8 +5,6 @@ Available Commands:
 .emoji :/
 .emoji -_-"""
 
-from telethon import events
-
 import asyncio
 from userbot.events import register
 

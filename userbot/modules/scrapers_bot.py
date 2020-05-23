@@ -8,10 +8,8 @@
 # @Qulec tarafından yazılmıştır.
 #
 
-import datetime
 from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
-from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from userbot.events import register
 from userbot import bot, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from time import sleep

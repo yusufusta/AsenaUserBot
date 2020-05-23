@@ -10,23 +10,19 @@
 #
 
 from userbot.events import register
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
+from userbot import CMD_HELP
 from userbot import LYDIA_API_KEY
-import coffeehouse
-from time import time
-import io
 import coffeehouse as cf
 from coffeehouse.lydia import LydiaAI
 from coffeehouse.api import API
 import asyncio
-from telethon import events
 import logging
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
 
 try:
-    from userbot.modules.sql_helper.lydia_sql import get_s, get_all_s, add_s, remove_s
+    pass
 except:
     logging.log(level=logging.WARNING,
                 msg="Lydia veritabanı bağlantısı başarısız oldu")

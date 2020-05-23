@@ -12,7 +12,6 @@
 import re
 from sre_constants import error as sre_err
 from userbot import CMD_HELP
-from asyncio import sleep
 from userbot.events import register
 
 DELIMITERS = ("/", ":", "|", "_")
