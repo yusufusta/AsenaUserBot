@@ -116,7 +116,7 @@ async def singer(lyric):
             i += 1
         except:
             i += 1
-    await lyric.edit(f"🎙Çok güzel söyledim, değil mi?")
+    await lyric.edit("🎙Çok güzel söyledim, değil mi?")
 
     return
 

@@ -105,7 +105,7 @@ async def on_delete_blacklist(rmbl):
     for trigger in to_unblacklist:
         if sql.rm_from_blacklist(rmbl.chat_id, trigger.lower()):
             successful += 1
-    await rmbl.edit(f"**Kelime karalisteden kaldırıldı.**")
+    await rmbl.edit("**Kelime karalisteden kaldırıldı.**")
     
 CMD_HELP.update({
     "blacklist":

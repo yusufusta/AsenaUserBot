@@ -235,12 +235,12 @@ async def download(gclr):
 @register(pattern="^.gfolder$", outgoing=True)
 async def show_current_gdrove_folder(event):
     if parent_id:
-        folder_link = f"https://drive.google.com/drive/folders/" + parent_id
+        folder_link = "https://drive.google.com/drive/folders/" + parent_id
         await event.edit(
             f"UserBot'um dosyaları [şuraya]({folder_link}) uploadlıyor.")
     else:
         await event.edit(
-            f"UserBot'um dosyaları Google Drive'ın kök dizinine uploadlıyor.\
+            "UserBot'um dosyaları Google Drive'ın kök dizinine uploadlıyor.\
             \nUploadlanan dosyalar [burada](https://drive.google.com/drive/my-drive)"
         )
 

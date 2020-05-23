@@ -205,12 +205,12 @@ async def _(event):
 
 
       elif response.text.startswith("Still"):
-         await event.edit(f"`Dosya taranıyor...`")
+         await event.edit("`Dosya taranıyor...`")
 
          response = conv.wait_event(events.NewMessage(incoming=True,from_users=161163358))
          response = await response 
          if response.text.startswith("No threats"):
-            await event.edit(f"**Virüs taraması bitti. Bu dosya temiz. Geç!**")
+            await event.edit("**Virüs taraması bitti. Bu dosya temiz. Geç!**")
          else:
             await event.edit(f"**Virüs taraması bitti. Whopsie! Bu dosya tehlikeli. Sakın yükleme!**\n\nDetaylı bilgi: {response.message.message}")
 

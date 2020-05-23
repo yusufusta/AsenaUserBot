@@ -72,7 +72,7 @@ async def paste(pstl):
     if BOTLOG:
         await pstl.client.send_message(
             BOTLOG_CHATID,
-            f"Dogbine metin yapıştırma başarıyla yürütüldü",
+            "Dogbine metin yapıştırma başarıyla yürütüldü",
         )
 
 

@@ -44,7 +44,7 @@ try:
             DOGRU = 1
         except:
             KanalId = "me"
-            bot.send_message("me", f"`Plugin_Channel_Id'iniz geçersiz. Pluginler kalıcı olmuyacak.`")
+            bot.send_message("me", "`Plugin_Channel_Id'iniz geçersiz. Pluginler kalıcı olmuyacak.`")
             DOGRU = 0
 
         for plugin in bot.iter_messages(KanalId, filter=InputMessagesFilterDocument):
@@ -75,9 +75,9 @@ try:
             CMD_HELP[ndosya] = "Bu Plugin Dışarıdan Yüklenmiştir"
             bot.send_message(KanalId, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
         if KanalId != "me":
-            bot.send_message(KanalId, f"`Pluginler Yüklendi`")
+            bot.send_message(KanalId, "`Pluginler Yüklendi`")
     else:
-        bot.send_message("me", f"`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
+        bot.send_message("me", "`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
 
 except PhoneNumberInvalidError:
     print(INVALID_PH)
