@@ -164,7 +164,7 @@ async def memeyap(event):
           else: 
                await event.client.send_file(event.chat_id, response.media)
 
-@register(pattern="^.scan")
+@register(outgoing=True, pattern="^.scan")
 async def _(event):
     if event.fwd_from:
         return 
