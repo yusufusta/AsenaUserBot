@@ -297,7 +297,7 @@ CMD_HELP.update({
     \nKullanım: Fotoğrafa yazı ekleyin.\n",
     "voicy": 
     ".voicy \
-    \nKullanım: Sesi yazıya çevirin.\n"
+    \nKullanım: Sesi yazıya çevirin.\n",
     "quotly": 
     ".q \
     \nKullanım: Metninizi çıkartmaya dönüştürün.\n"
