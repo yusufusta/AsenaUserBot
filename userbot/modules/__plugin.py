@@ -6,13 +6,13 @@
 
 # @Qulec tarafından yazılmıştır.
 import asyncio
-import json
 import logging
 import userbot
 import re
 import os
 from telethon.tl.types import DocumentAttributeFilename, InputMessagesFilterDocument
 import importlib
+import time
 
 from userbot import CMD_HELP, SILINEN_PLUGIN, bot, tgbot, PLUGIN_CHANNEL_ID
 from userbot.events import register
@@ -112,7 +112,7 @@ async def plist(event):
         await event.edit("`Pluginler getiriliyor...`")
         yuklenen = "**İşte Yüklenen Pluginler:**\n\n"
         async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-            yuklenen += f"▶️ {plugin.file.name}"
+            yuklenen += f"▶️ {plugin.file.name}\n"
         await event.edit(yuklenen)
     else:
         await event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
@@ -155,7 +155,13 @@ async def pins(event):
             i += 1
         await event.edit(f"`Modül başarıyla yüklendi! {komutlar} ile kullanmaya başlayabilirsiniz.`")
     else:
-        komu = str(re.findall(r"(pattern=\")(.*)(\")(\))", dosy)[0][1]).replace("^", "").replace(".", "")
+        try:
+            komu = str(re.findall(r"(pattern=\")(.*)(\")(\))", dosy)[0][1]).replace("^", "").replace(".", "")
+        except IndexError:
+            zaman = time.time()
+            CMD_HELP[zaman] = f"Bu plugin dışarıdan yüklenmiştir. Kullanım: #KOMUT BULUNAMADI#"
+            await event.edit(f"`Modül başarıyla yüklendi! Fakat komutu bulamadım, üzgünüm.`")
+            return
 
         CMD_HELP[komu] = f"Bu plugin dışarıdan yüklenmiştir. Kullanım: .{komu}"
         await event.edit(f"`Modül başarıyla yüklendi! .{komu} ile kullanmaya başlayabilirsiniz.`")

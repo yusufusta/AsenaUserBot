@@ -231,7 +231,7 @@ async def ban(bon):
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
         await bon.edit(
-            "`Ban Hatası! Seden Yetkilisini yasaklayamam.`"
+            "`Ban Hatası! Asena Yetkilisini yasaklayamam.`"
         )
         return
 
@@ -334,7 +334,7 @@ async def spider(spdr):
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
         await spdr.edit(
-            "`Mute Hatası! Seden Yetkilisini susturamam.`"
+            "`Mute Hatası! Asena Yetkilisini susturamam.`"
         )
         return
 
@@ -529,7 +529,7 @@ async def gspider(gspdr):
 
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
-        await gspdr.edit("`Gmute Hatası! Seden Yetkilisini küresel olarak susturamam.`")
+        await gspdr.edit("`Gmute Hatası! Asena Yetkilisini küresel olarak susturamam.`")
         return
 
     # Başarı olursa bilgi ver
@@ -703,7 +703,7 @@ async def kick(usr):
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
         await usr.edit(
-            "`Kick Hatası! Seden Yetkilisini gruptan tekmeleyemem.`"
+            "`Kick Hatası! Asena Yetkilisini gruptan tekmeleyemem.`"
         )
         return
 

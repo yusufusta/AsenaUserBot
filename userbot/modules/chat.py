@@ -13,7 +13,7 @@ from asyncio import sleep
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot
 from userbot.events import register
 from userbot.modules.admin import get_user_from_event
-
+from userbot.main import PLUGIN_MESAJLAR
 
 @register(outgoing=True, pattern="^.userid$")
 async def useridgetter(target):
@@ -80,7 +80,7 @@ async def log(log_text):
 @register(outgoing=True, pattern="^.kickme$")
 async def kickme(leave):
     """ .kickme komutu gruptan çıkmaya yarar """
-    await leave.edit("Güle Güle ben gidiyorum 🤠")
+    await leave.edit(f"{PLUGIN_MESAJLAR}")
     await leave.client.kick_participant(leave.chat_id, 'me')
 
 

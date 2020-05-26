@@ -24,7 +24,7 @@ async def auto(event):
     metod = event.pattern_match.group(1).lower()
     
     if str(metod) != "isim" and str(metod) != "bio":
-        await event.edit(f"Bilinmeyen tür. Var olan türler: `isim`, `bio` {metod}")
+        await event.edit(f"Bilinmeyen tür. Var olan türler: `isim`, `bio`")
         return
 
     if metod in ASYNC_POOL:

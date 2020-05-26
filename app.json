@@ -12,7 +12,7 @@
   ],
   "repository": "https://github.com/quiec/AsenaUserbot",
   "website":   "https://quiec.tech",
-  "success_url": "https://t.me/SedenUserBotSupport",
+  "success_url": "https://t.me/AsenaSupport",
   "stack": "container",
   "env": {
     "API_KEY": {
@@ -164,7 +164,7 @@
     },
     "DEFAULT_BIO": {
       "description": "Varsayılan profil biyografisi.",
-      "value": "#TeamDerUntergang",
+      "value": "@AsenaUserBot",
       "required": false
     },
     "G_DRIVE_CLIENT_SECRET": {

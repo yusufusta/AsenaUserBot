@@ -82,7 +82,7 @@ async def run(run_q):
 
     if not code:
         await run_q.edit("``` Yürütmek için en az bir değişken gereklidir \
-.seden exec kullanarak örnek alabilirsiniz.```")
+.asena exec kullanarak örnek alabilirsiniz.```")
         return
 
     if code in ("userbot.session", "config.env"):
@@ -152,7 +152,7 @@ async def terminal_runner(term):
         return
 
     if not command:
-        await term.edit("``` Yardım almak için .seden term yazarak \
+        await term.edit("``` Yardım almak için .asena term yazarak \
             örneğe bakabilirsin.```")
         return
 

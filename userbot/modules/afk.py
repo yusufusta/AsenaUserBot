@@ -17,33 +17,7 @@ from telethon.events import StopPropagation
 from userbot import (AFKREASON, COUNT_MSG, CMD_HELP, ISAFK, BOTLOG,
                      BOTLOG_CHATID, USERS, PM_AUTO_BAN)
 from userbot.events import register
-
-# ========================= CONSTANTS ============================
-AFKSTR = [
-    "Şu an acele işim var, daha sonra mesaj atsan olmaz mı? Zaten yine geleceğim.",
-    "Aradığınız kişi şu anda telefona cevap veremiyor. Sinyal sesinden sonra kendi tarifeniz üzerinden mesajınızı bırakabilirsiniz. Mesaj ücreti 49 kuruştur. \n`biiiiiiiiiiiiiiiiiiiiiiiiiiiiip`!",
-    "Birkaç dakika içinde geleceğim. Fakat gelmezsem...\ndaha fazla bekle.",
-    "Şu an burada değilim, muhtemelen başka bir yerdeyim.",
-    "Güller kırmızı\nMenekşeler mavi\nBana bir mesaj bırak\nVe sana döneceğim.",
-    "Bazen hayattaki en iyi şeyler beklemeye değer…\nHemen dönerim.",
-    "Hemen dönerim,\nama eğer geri dönmezsem,\ndaha sonra dönerim.",
-    "Henüz anlamadıysan,\nburada değilim.",
-    "Merhaba, uzak mesajıma hoş geldiniz, bugün sizi nasıl görmezden gelebilirim?",
-    "7 deniz ve 7 ülkeden uzaktayım,\n7 su ve 7 kıta,\n7 dağ ve 7 tepe,\n7 ovala ve 7 höyük,\n7 havuz ve 7 göl,\n7 bahar ve 7 çayır,\n7 şehir ve 7 mahalle,\n7 blok ve 7 ev...\n\nMesajların bile bana ulaşamayacağı bir yer!",
-    "Şu anda klavyeden uzaktayım, ama ekranınızda yeterince yüksek sesle çığlık atarsanız, sizi duyabilirim.",
-    "Şu yönde ilerliyorum\n---->",
-    "Şu yönde ilerliyorum\n<----",
-    "Lütfen mesaj bırakın ve beni zaten olduğumdan daha önemli hissettirin.",
-    "Sahibim burada değil, bu yüzden bana yazmayı bırak.",
-    "Burada olsaydım,\nSana nerede olduğumu söylerdim.\n\nAma ben değilim,\ngeri döndüğümde bana sor...",
-    "Uzaklardayım!\nNe zaman dönerim bilmiyorum !\nUmarım birkaç dakika sonra!",
-    "Sahibim şuan da müsait değil. Adınızı, numarınızı ve adresinizi verirseniz ona iletibilirm ve böylelikle geri döndüğü zaman.",
-    "Üzgünüm, sahibim burada değil.\nO gelene kadar benimle konuşabilirsiniz.\nSahibim size sonra döner.",
-    "Bahse girerim bir mesaj bekliyordun!",
-    "Hayat çok kısa, yapacak çok şey var...\nOnlardan birini yapıyorum...",
-    "Şu an burada değilim....\nama öyleysem ...\n\nbu harika olmaz mıydı?",
-]
-# =================================================================
+from userbot.main import PLUGIN_MESAJLAR
 
 
 @register(incoming=True, disable_edited=True)
@@ -56,19 +30,19 @@ async def mention_afk(mention):
         if ISAFK:
             if mention.sender_id not in USERS:
                 if AFKREASON:
-                    await mention.reply(f"Sahibim halen AFK.\
+                    await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
                         \nSebep: `{AFKREASON}`")
                 else:
-                    await mention.reply(str(choice(AFKSTR)))
+                    await mention.reply(PLUGIN_MESAJLAR['afk'])
                 USERS.update({mention.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif mention.sender_id in USERS:
                 if USERS[mention.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
-                        await mention.reply(f"Sahibim halen AFK.\
+                        await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
                             \nSebep: `{AFKREASON}`")
                     else:
-                        await mention.reply(str(choice(AFKSTR)))
+                        await mention.reply(PLUGIN_MESAJLAR['afk'])
                     USERS[mention.sender_id] = USERS[mention.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
@@ -98,16 +72,16 @@ async def afk_on_pm(sender):
                     await sender.reply(f"Sahibim şu an AFK.\
                     \nSebep: `{AFKREASON}`")
                 else:
-                    await sender.reply(str(choice(AFKSTR)))
+                    await sender.reply(PLUGIN_MESAJLAR['afk'])
                 USERS.update({sender.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif apprv and sender.sender_id in USERS:
                 if USERS[sender.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
-                        await sender.reply(f"Sahibim halen AFK.\
+                        await sender.reply(f"{PLUGIN_MESAJLAR['afk']}\
                         \nSebep: `{AFKREASON}`")
                     else:
-                        await sender.reply(str(choice(AFKSTR)))
+                        await sender.reply(PLUGIN_MESAJLAR['afk'])
                     USERS[sender.sender_id] = USERS[sender.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:

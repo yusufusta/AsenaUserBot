@@ -18,6 +18,38 @@ from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 import base64
+import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
+from random import choice
+
+AFKSTR = [
+    "Şu an acele işim var, daha sonra mesaj atsan olmaz mı? Zaten yine geleceğim.",
+    "Aradığınız kişi şu anda telefona cevap veremiyor. Sinyal sesinden sonra kendi tarifeniz üzerinden mesajınızı bırakabilirsiniz. Mesaj ücreti 49 kuruştur. \n`biiiiiiiiiiiiiiiiiiiiiiiiiiiiip`!",
+    "Birkaç dakika içinde geleceğim. Fakat gelmezsem...\ndaha fazla bekle.",
+    "Şu an burada değilim, muhtemelen başka bir yerdeyim.",
+    "Güller kırmızı\nMenekşeler mavi\nBana bir mesaj bırak\nVe sana döneceğim.",
+    "Bazen hayattaki en iyi şeyler beklemeye değer…\nHemen dönerim.",
+    "Hemen dönerim,\nama eğer geri dönmezsem,\ndaha sonra dönerim.",
+    "Henüz anlamadıysan,\nburada değilim.",
+    "Merhaba, uzak mesajıma hoş geldiniz, bugün sizi nasıl görmezden gelebilirim?",
+    "7 deniz ve 7 ülkeden uzaktayım,\n7 su ve 7 kıta,\n7 dağ ve 7 tepe,\n7 ovala ve 7 höyük,\n7 havuz ve 7 göl,\n7 bahar ve 7 çayır,\n7 şehir ve 7 mahalle,\n7 blok ve 7 ev...\n\nMesajların bile bana ulaşamayacağı bir yer!",
+    "Şu anda klavyeden uzaktayım, ama ekranınızda yeterince yüksek sesle çığlık atarsanız, sizi duyabilirim.",
+    "Şu yönde ilerliyorum\n---->",
+    "Şu yönde ilerliyorum\n<----",
+    "Lütfen mesaj bırakın ve beni zaten olduğumdan daha önemli hissettirin.",
+    "Sahibim burada değil, bu yüzden bana yazmayı bırak.",
+    "Burada olsaydım,\nSana nerede olduğumu söylerdim.\n\nAma ben değilim,\ngeri döndüğümde bana sor...",
+    "Uzaklardayım!\nNe zaman dönerim bilmiyorum !\nUmarım birkaç dakika sonra!",
+    "Sahibim şuan da müsait değil. Adınızı, numarınızı ve adresinizi verirseniz ona iletibilirm ve böylelikle geri döndüğü zaman.",
+    "Üzgünüm, sahibim burada değil.\nO gelene kadar benimle konuşabilirsiniz.\nSahibim size sonra döner.",
+    "Bahse girerim bir mesaj bekliyordun!",
+    "Hayat çok kısa, yapacak çok şey var...\nOnlardan birini yapıyorum...",
+    "Şu an burada değilim....\nama öyleysem ...\n\nbu harika olmaz mıydı?",
+]
+
+UNAPPROVED_MSG = ("`Hey! Bu bir bot. Endişelenme.\n\n`"
+                  "`Sahibim sana PM atma izni vermedi. `"
+                  "`Lütfen sahibimin aktif olmasını bekleyin, o genellikle PM'leri onaylar.\n\n`"
+                  "`Bildiğim kadarıyla o kafayı yemiş insanlara PM izni vermiyor.`")
 
 DB = connect("learning-data-root.check")
 CURSOR = DB.cursor()
@@ -36,6 +68,16 @@ try:
     asenabl = requests.get('https://gitlab.com/Quiec/asen/-/raw/master/asen.json').json()
     if idim in asenabl:
         bot.disconnect()
+    PLUGIN_MESAJLAR = {}
+    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": str(choice(AFKSTR)), "kickme": "Güle Güle ben gidiyorum 🤠", "pm": UNAPPROVED_MSG}
+
+    PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm"]
+    for mesaj in PLUGIN_MESAJLAR_TURLER:
+        dmsj = MSJ_SQL.getir_mesaj(mesaj)
+        if dmsj == False:
+            PLUGIN_MESAJLAR[mesaj] = ORJ_PLUGIN_MESAJLAR[mesaj]
+        else:
+            PLUGIN_MESAJLAR[mesaj] = dmsj
 
     if PLUGIN_CHANNEL_ID != None:
         print("Pluginler Yükleniyor")
@@ -88,7 +130,7 @@ for module_name in ALL_MODULES:
 
 LOGS.info("Botunuz çalışıyor! Herhangi bir sohbete .alive yazarak Test edin."
           " Yardıma ihtiyacınız varsa, Destek grubumuza gelin t.me/AsenaSupport")
-LOGS.info("Bot sürümünüz Asena v1.3")
+LOGS.info("Bot sürümünüz Asena v1.4")
 
 """
 if len(argv) not in (1, 3, 4):

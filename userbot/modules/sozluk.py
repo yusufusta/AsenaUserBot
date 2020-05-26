@@ -6,7 +6,7 @@
 
 # Asena UserBot - Yusuf Usta
 
-# Turkish word meaning. Only Turkish. Coded @By_Azade, Seden uyarlaması @qulec
+# Turkish word meaning. Only Turkish. Coded @By_Azade, Asena uyarlaması @qulec
 #
 
 import requests
@@ -48,7 +48,7 @@ async def tdk(event):
         return
     inp = event.pattern_match.group(1)
     kelime = "https://sozluk.gov.tr/gts?ara={}".format(inp)
-    headers = {"USER-AGENT": "Seden"}
+    headers = {"USER-AGENT": "AsenaUserBot"}
     response = requests.get(kelime, headers=headers).json()
     
     try:

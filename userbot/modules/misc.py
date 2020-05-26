@@ -35,7 +35,7 @@ async def randomise(items):
     itemo = (items.text[8:]).split()
     if len(itemo) < 2:
         await items.edit(
-            "`2 veya daha fazla eşya gerekli. Daha fazla bilgi için .seden random komutunu gir.`"
+            "`2 veya daha fazla eşya gerekli. Daha fazla bilgi için .asena random komutunu gir.`"
         )
         return
     index = randint(1, len(itemo) - 1)
@@ -45,7 +45,7 @@ async def randomise(items):
 
 @register(outgoing=True, pattern="^.sleep( [0-9]+)?$")
 async def sleepybot(time):
-    """ .sleep komutu Seden'in birkaç saniye uyumasına olanak sağlar. """
+    """ .sleep komutu Asena'nın birkaç saniye uyumasına olanak sağlar. """
     if " " not in time.pattern_match.group(1):
         await time.reply("Kullanım Şekli: `.sleep [saniye]`")
     else:
@@ -103,7 +103,7 @@ async def creator(e):
 
 @register(outgoing=True, pattern="^.readme$")
 async def reedme(e):
-    await e.edit("[Asena README.md](https://github.com/quiec/AsenaUserBot/blob/seden/README.md)")
+    await e.edit("[Asena README.md](https://github.com/quiec/AsenaUserBot/blob/master/README.md)")
 
 
 # Copyright (c) Gegham Zakaryan | 2019
@@ -125,7 +125,6 @@ async def repeat(rep):
 async def repo_is_here(wannasee):
     """ .repo komutunun tek yaptığı şey GitHub repomuzun bağlantısını vermek. """
     await wannasee.edit("[Asena Repo](https://github.com/quiec/asenauserbot)")
-
 
 @register(outgoing=True, pattern="^.raw$")
 async def raw(event):
@@ -160,7 +159,7 @@ CMD_HELP.update({
 CMD_HELP.update({
     'sleep':
     '.sleep <saniye>\
-\nKullanım: Seden de bir insan, o da yoruluyor. Ara sıra biraz uyumasına izin ver.'
+\nKullanım: Asena de bir insan, o da yoruluyor. Ara sıra biraz uyumasına izin ver.'
 })
 
 CMD_HELP.update({

@@ -458,7 +458,7 @@ async def slap(replied_user, event):
     hit = choice(HIT)
     throw = choice(THROW)
 
-    caption = "Seden " + temp.format(
+    caption = "Asena " + temp.format(
         victim=slapped, item=item, hits=hit, throws=throw)
 
     return caption
@@ -969,6 +969,5 @@ CMD_HELP.update({
 \n\n.scam <eylem> <süre>\
 \n[Mevcut eylemler: (typing, contact, game, location, voice, round, video, photo, document, cancel)]\
 \nKullanım: Create fake chat actions, for fun. (Varsayılan eylem: typing)\
-\n\n\nBunlardan bazıları için teşekkürler 🅱️ottom🅱️ext🅱️ot (@NotAMemeBot).\
-\n\nUyarlamalar için teşekkürler @NaytSeyd"
+\n\n\nBunlardan bazıları için teşekkürler 🅱️ottom🅱️ext🅱️ot (@NotAMemeBot)."
 })

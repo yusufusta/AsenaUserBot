@@ -17,12 +17,10 @@ from sqlalchemy.exc import IntegrityError
 from userbot import (COUNT_PM, CMD_HELP, BOTLOG, BOTLOG_CHATID,
                      PM_AUTO_BAN, LASTMSG, LOGS)
 from userbot.events import register
+from userbot.main import PLUGIN_MESAJLAR
 
 # ========================= CONSTANTS ============================
-UNAPPROVED_MSG = ("`Hey! Bu bir bot. Endişelenme.\n\n`"
-                  "`Sahibim sana PM atma izni vermedi. `"
-                  "`Lütfen sahibimin aktif olmasını bekleyin, o genellikle PM'leri onaylar.\n\n`"
-                  "`Bildiğim kadarıyla o kafayı yemiş insanlara PM izni vermiyor.`")
+ 
 # =================================================================
 
 
@@ -45,7 +43,7 @@ async def permitpm(event):
             # Bu bölüm basitçe akıl sağlığı kontrolüdür.
             # Eğer mesaj daha önceden onaylanmamış olarak gönderildiyse
             # flood yapmayı önlemek için unapprove mesajı göndermeyi durdurur.
-            if not apprv and event.text != UNAPPROVED_MSG:
+            if not apprv and event.text != PLUGIN_MESAJLAR['pm']:
                 if event.chat_id in LASTMSG:
                     prevmsg = LASTMSG[event.chat_id]
                     # Eğer önceden gönderilmiş mesaj farklıysa unapprove mesajı tekrardan gönderilir.
@@ -53,12 +51,12 @@ async def permitpm(event):
                         async for message in event.client.iter_messages(
                                 event.chat_id,
                                 from_user='me',
-                                search=UNAPPROVED_MSG):
+                                search=PLUGIN_MESAJLAR['pm']):
                             await message.delete()
-                        await event.reply(UNAPPROVED_MSG)
+                        await event.reply(PLUGIN_MESAJLAR['pm'])
                     LASTMSG.update({event.chat_id: event.text})
                 else:
-                    await event.reply(UNAPPROVED_MSG)
+                    await event.reply(PLUGIN_MESAJLAR['pm'])
                     LASTMSG.update({event.chat_id: event.text})
 
                 if notifsoff:
@@ -122,7 +120,7 @@ async def auto_accept(event):
             async for message in event.client.iter_messages(event.chat_id,
                                                             reverse=True,
                                                             limit=1):
-                if message.message is not UNAPPROVED_MSG and message.from_id == self_user.id:
+                if message.message is not PLUGIN_MESAJLAR['pm'] and message.from_id == self_user.id:
                     try:
                         approve(event.chat_id)
                     except IntegrityError:
@@ -191,7 +189,7 @@ async def approvepm(apprvpm):
 
     async for message in apprvpm.client.iter_messages(apprvpm.chat_id,
                                                       from_user='me',
-                                                      search=UNAPPROVED_MSG):
+                                                      search=PLUGIN_MESAJLAR['pm']):
         await message.delete()
 
     if BOTLOG:

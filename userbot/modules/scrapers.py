@@ -55,11 +55,56 @@ from telethon import events
 import subprocess
 from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotModifiedError
 import io
-import asyncio
-import time
-from userbot.events import register
 import glob
-import os
+import instantmusic
+
+@register(outgoing=True, pattern="^.ekşi(?: |$)(.*)")
+async def eksi(event):
+    cmd = event.pattern_match.group(1)
+
+    if len(cmd) < 1:
+        await event.edit("`Bir başlık belirtmesiniz. Kullanım: .ekşi pena`")
+    else:
+        await event.edit(f"`Entryler getiriliyor...`")
+
+        eksi = get("http://67.158.54.51/eksiphp/eksi.php?a=a&b=" + cmd).json()
+        entry = ""
+        giri = ""
+
+        for i in eksi:
+            entry += i["entry"]
+            if len(entry) > 3064:
+                break
+            
+            giri += f"**Entry**: `{i['entry'][6:]}`\n**Yazar:** `{i['sahibi']}`\n\n"
+        await event.edit(f"**Ekşi Sözlük** Başlık: `{cmd}`\n\n{giri}")
+        return
+
+@register(outgoing=True, pattern="^.haber(?: |$)(.*)")
+async def haber(event):
+    TURLER = ["guncel", "magazin", "spor", "ekonomi", "politika", "dunya"]
+    cmd = event.pattern_match.group(1)
+    if len(cmd) < 1:
+            HABERURL = 'https://sondakika.haberler.com/'
+    else:
+        if cmd in TURLER:
+            HABERURL = f'https://sondakika.haberler.com/{cmd}'
+        else:
+            await event.edit("`Yanlış haber kategorisi! Bulunan kategoriler: .haber guncel/magazin/spor/ekonomi/politika/dunya`")
+            return
+    await event.edit("`Haberler Getiriliyor...`")
+
+    haber = get(HABERURL).text
+    kaynak = BeautifulSoup(haber, "lxml")
+    haberdiv = kaynak.find_all("div", attrs={"class":"hblnContent"})
+    i = 0
+    HABERLER = ""
+    while i < 3:
+        HABERLER += "\n\n❗️**" + haberdiv[i].find("a").text + "**\n"
+        HABERLER += haberdiv[i].find("p").text
+        i += 1
+
+    await event.edit(f"**Son Dakika Haberler {cmd.title()}**" + HABERLER)
 
 @register(outgoing=True, pattern="^.song(?: |$)(.*)")
 async def port_song(event):
@@ -77,6 +122,41 @@ async def port_song(event):
     await event.edit("`Şarkı aranıyor ve indiriliyor lütfen bekleyin!`")  
     dosya = os.getcwd() 
     os.system(f"spotdl --song {cmd} -f {dosya}")
+    await event.edit("`İndirme işlemi başarılı lütfen bekleyiniz.`")    
+
+    l = glob.glob("*.mp3")
+    if l[0]:
+        await event.edit("Şarkı yükleniyor!")
+        await event.client.send_file(
+            event.chat_id,
+            l[0],
+            force_document=True,
+            allow_cache=False,
+            reply_to=reply_to_id
+        )
+        await event.delete()
+    else:
+        await event.edit("`Aradığınız şarkı bulunamadı! Üzgünüm.`")   
+        return 
+    os.system("rm -rf *.mp3")
+    subprocess.check_output("rm -rf *.mp3",shell=True)
+
+@register(outgoing=True, pattern="^.song2(?: |$)(.*)")
+async def port_songiki(event):
+    if event.fwd_from:
+        return
+    
+    cmd = event.pattern_match.group(1)
+    if len(cmd) < 1:
+        await event.edit("`Kullanım: .song2 şarkı ismi`") 
+
+    reply_to_id = event.message.id
+    if event.reply_to_msg_id:
+        reply_to_id = event.reply_to_msg_id
+        
+    await event.edit("`Şarkı aranıyor ve indiriliyor lütfen bekleyin!`")  
+    dosya = os.getcwd() 
+    os.system(f"instantmusic -q -s {cmd}")
     await event.edit("`İndirme işlemi başarılı lütfen bekleyiniz.`")    
 
     l = glob.glob("*.mp3")

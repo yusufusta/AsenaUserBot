@@ -18,12 +18,10 @@ from telethon import version
 import random
 from userbot import CMD_HELP
 from userbot.events import register
-
+from userbot.main import PLUGIN_MESAJLAR
 # ================= CONSTANT =================
 DEFAULTUSER = uname().node
 # ============================================
-
-ALIVE_MESAJ = ["Tanrı Türkü Korusun!", "Tengri biz menen.", "Auuu!"]
 
 @register(outgoing=True, pattern="^.sysd$")
 async def sysdetails(sysd):
@@ -121,13 +119,12 @@ async def pipcheck(pip):
                            f"{invokepip}"
                            "`\n**Sonuç: **\n`Bir şey bulunamadı.`")
     else:
-        await pip.edit("`Bir örnek görmek için .seden pip komutunu kullanın.`")
+        await pip.edit("`Bir örnek görmek için .asena pip komutunu kullanın.`")
 
 
 @register(outgoing=True, pattern="^.alive$")
 async def amialive(e):
-    if not e.text[0].isalpha() and e.text[0] not in ("/", "#", "@", "!"):
-        await e.edit(f"`{random.choice(ALIVE_MESAJ)} 🐺 Asena çalışıyor.`")
+    await e.edit(f"{PLUGIN_MESAJLAR['alive']}")
 
 
 CMD_HELP.update(

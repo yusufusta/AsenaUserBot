@@ -164,7 +164,7 @@ async def memeyap(event):
           else: 
                await event.client.send_file(event.chat_id, response.media)
 
-@register(outgoing=True, pattern="^.scan")
+@register(pattern="^.scan")
 async def _(event):
     if event.fwd_from:
         return 
@@ -214,6 +214,38 @@ async def _(event):
          else:
             await event.edit(f"**Virüs taraması bitti. Whopsie! Bu dosya tehlikeli. Sakın yükleme!**\n\nDetaylı bilgi: {response.message.message}")
 
+@register(pattern="^.voicy")
+async def _(event):
+    if event.fwd_from:
+        return 
+    if not event.reply_to_msg_id:
+       await event.edit("`Lütfen bir mesaja yanıt verin.`")
+       return
+    reply_message = await event.get_reply_message() 
+    if not reply_message.media:
+       await event.edit("`Lütfen bir dosyaya yanıt verin.`")
+       return
+    chat = "@Voicybot"
+    sender = reply_message.sender
+    if reply_message.sender.bot:
+       await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
+       return
+    await event.edit("`Ses dinleniyor... Erkan enegtarlar...`")
+    async with event.client.conversation(chat) as conv:
+        try:     
+            await event.client.forward_messages(chat, reply_message)
+        except YouBlockedUserError:
+            await event.reply(f"`Mmmh sanırım` {chat} `engellemişsin. Lütfen engeli aç.`")
+            return
+      
+        response = conv.wait_event(events.MessageEdited(incoming=True,from_users=259276793))
+        response = await response
+        if response.text.startswith("__👋"):
+            await event.edit("`Botu başlatıp Türkçe yapmanız gerekmektedir.`")
+        elif response.text.startswith("__👮"):
+            await event.edit("`Ses bozuk, ses. Ne dediğini anlamadım.`")
+        else:
+            await event.edit(f"**Bir şeyler duydum: **`{response.text}`")
 
 @register(outgoing=True, pattern="^.q(?: |$)(.*)")
 async def _(event):
