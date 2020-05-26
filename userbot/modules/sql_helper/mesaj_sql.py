@@ -1,5 +1,5 @@
 import threading
-from sqlalchemy import func, distinct, Column, String, UnicodeText
+from sqlalchemy import Column, UnicodeText
 try:
     from userbot.modules.sql_helper import SESSION, BASE
 except ImportError:

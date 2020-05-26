@@ -9,18 +9,9 @@
 # @NaytSeyd tarafından portlanmıştır.
 #
 
-import time
-import requests
-
-from collections import deque
-from telethon import events
 from telethon.tl.types import ChannelParticipantsAdmins
-from asyncio import sleep
-from random import choice, getrandbits, randint
-from re import sub
 from userbot import CMD_HELP, bot
 from userbot.events import register
-from userbot.modules.admin import get_user_from_event
 
 @register(outgoing=True, pattern="^.tagall$")
 async def _(event):

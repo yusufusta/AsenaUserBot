@@ -1,4 +1,4 @@
-from sqlalchemy import Column, UnicodeText, LargeBinary, Numeric
+from sqlalchemy import Column, UnicodeText, Numeric
 from userbot.modules.sql_helper import SESSION, BASE
 
 

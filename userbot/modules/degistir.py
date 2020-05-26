@@ -1,10 +1,5 @@
 
-import io
 import re
-import asyncio
-
-from telethon import events, utils
-from telethon.tl import types, functions
 
 import userbot.modules.sql_helper.mesaj_sql as sql
 from userbot import CMD_HELP

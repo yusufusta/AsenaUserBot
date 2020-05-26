@@ -9,7 +9,6 @@
 # @NaytSeyd tarafından portlanmıştır.
 # @frknkrc44 tarafından düzenlenmiştir.
 
-import asyncio
 import json
 import logging
 

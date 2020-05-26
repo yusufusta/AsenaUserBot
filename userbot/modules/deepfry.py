@@ -12,13 +12,11 @@
 
 import io
 from random import randint, uniform
-from userbot import bot, CMD_HELP
+from userbot import CMD_HELP
 from userbot.events import register
 
 from PIL import Image, ImageEnhance, ImageOps
 from telethon.tl.types import DocumentAttributeFilename
-
-from telethon import events
 
 
 @register(pattern="^.deepfry(?: |$)(.*)", outgoing=True) 

@@ -5,16 +5,13 @@
 #
 
 # @Qulec tarafından yazılmıştır.
-import asyncio
-import logging
-import userbot
 import re
 import os
 from telethon.tl.types import DocumentAttributeFilename, InputMessagesFilterDocument
 import importlib
 import time
 
-from userbot import CMD_HELP, SILINEN_PLUGIN, bot, tgbot, PLUGIN_CHANNEL_ID
+from userbot import CMD_HELP, PLUGIN_CHANNEL_ID
 from userbot.events import register
 
 
