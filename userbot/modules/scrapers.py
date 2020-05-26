@@ -56,7 +56,10 @@ import subprocess
 from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotModifiedError
 import io
 import glob
-import instantmusic
+try:
+    import instantmusic
+except:
+    os.system("pip install instantmusic")
 
 @register(outgoing=True, pattern="^.ekşi(?: |$)(.*)")
 async def eksi(event):
