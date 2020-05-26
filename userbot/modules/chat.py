@@ -80,7 +80,7 @@ async def log(log_text):
 @register(outgoing=True, pattern="^.kickme$")
 async def kickme(leave):
     """ .kickme komutu gruptan çıkmaya yarar """
-    await leave.edit(f"{PLUGIN_MESAJLAR}")
+    await leave.edit(f"{PLUGIN_MESAJLAR['kickme']}")
     await leave.client.kick_participant(leave.chat_id, 'me')
 
 
