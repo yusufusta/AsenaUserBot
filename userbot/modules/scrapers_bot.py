@@ -214,7 +214,7 @@ async def _(event):
          else:
             await event.edit(f"**Virüs taraması bitti. Whopsie! Bu dosya tehlikeli. Sakın yükleme!**\n\nDetaylı bilgi: {response.message.message}")
 
-@register(pattern="^.voicy")
+@register(outgoing=True, pattern="^.voicy")
 async def _(event):
     if event.fwd_from:
         return 
