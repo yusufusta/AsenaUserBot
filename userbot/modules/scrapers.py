@@ -920,10 +920,15 @@ CMD_HELP.update({
 CMD_HELP.update({'yt': '.yt <metin>\
         \nKullanım: YouTube üzerinde bir arama yapar.'})
 CMD_HELP.update({'song': 
-    '.song <youtube/spotify/şarkı>\
+    '.song2 <şarkı>\
+    .song <youtube/spotify/şarkı>\
         \nKullanım: Şarkı indirir.\
     .songpl <spotify playlist url>\
         \nKullanım: Spotify playlist indirir.'})
+CMD_HELP.update(
+    {"ekşi": ".ekşi <başlık>\nKullanım: Ekşi sözlükten veri çekin."})
+CMD_HELP.update(
+    {"haber": ".haber <guncel/magazin/spor/ekonomi/politika/dunya>\nKullanım: Son dakika haberler."})
 
 CMD_HELP.update(
     {"imdb": ".imdb <film>\nKullanım: Film hakkında bilgi verir."})

@@ -164,7 +164,7 @@ async def memeyap(event):
           else: 
                await event.client.send_file(event.chat_id, response.media)
 
-@register(pattern="^.scan")
+@register(outgoing=True, pattern="^.scan")
 async def _(event):
     if event.fwd_from:
         return 
@@ -295,7 +295,9 @@ CMD_HELP.update({
     "meme": 
     ".meme üst;alt \
     \nKullanım: Fotoğrafa yazı ekleyin.\n",
-
+    "voicy": 
+    ".voicy \
+    \nKullanım: Sesi yazıya çevirin.\n"
     "quotly": 
     ".q \
     \nKullanım: Metninizi çıkartmaya dönüştürün.\n"
