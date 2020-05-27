@@ -29,7 +29,7 @@ async def ezanvakti(event):
         await event.edit("`Lütfen komutun yanına bir şehir belirtin.`")
         return
 
-    url = f'http://67.158.54.51/namaz2.php?il={konum}'
+    url = f'https://quiec.tech/ezan.php?il={konum}'
     request = requests.get(url)
     result = json.loads(request.text)
 
@@ -55,44 +55,9 @@ async def ezanvakti(event):
 
     await event.edit(vakitler)
 
-@register(outgoing=True, pattern="^.ramazan ?(.*)")
-async def ramazan(event):
-    konum = event.pattern_match.group(1).lower()
-
-    if len(konum) < 1:
-        await event.edit("`Lütfen komutun yanına bir şehir belirtin.`")
-        return
-    
-    url = f'http://67.158.54.51/ramazan2.php?il={konum}'
-    request = requests.get(url)
-    result = json.loads(request.text)
-
-    if result[0] == '404':
-        await event.edit(f"`{konum} için bir bilgi bulunamadı.`")
-        return
-
-    sahur = result[0]
-    
-    def styling_times(array):
-        return array[0] + (f' ({array[1]})' if len(array[1]) > 0 else '')
-
-    iftar = styling_times(result[1])
-    teravih = styling_times(result[2])
-
-    vakitler =(f"**Diyanet Ramazan Vakitleri**\n\n" + 
-                 f"📍 **Yer: **`{konum}`\n\n" +
-                 f"🏙 **Sahur: ** `{sahur}`\n" +
-                 f"🌃 **İftar: ** `{iftar}`\n" +
-                 f"🌌 **Teravih: ** `{teravih}`\n")
-
-    await event.edit(vakitler)
-
 CMD_HELP.update({
     "ezanvakti":
     ".ezanvakti <şehir> \
     \nKullanım: Belirtilen şehir için namaz vakitlerini gösterir. \
-    \nÖrnek: .ezanvakti istanbul \
-    \n.ramazan <şehir> \
-    \nKullanım: Belirtilen şehir için ramazan vakitlerini gösterir. \
-    \nÖrnek: .ramazan istanbul"
+    \nÖrnek: .ezanvakti istanbul"
 })

@@ -18,7 +18,7 @@ from json import loads as jsloads
 @register(outgoing=True, pattern="^.covid$")
 async def covid(event):
     try:
-        url = 'http://67.158.54.51/corona2.php'
+        url = 'https://quiec.tech/corona.php'
         http = PoolManager()
         request = http.request('GET', url)
         result = jsloads(request.data.decode('utf-8'))

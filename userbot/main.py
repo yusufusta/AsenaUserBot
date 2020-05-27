@@ -93,7 +93,6 @@ try:
             if DOGRU == 0:
                 break
             dosyaa = plugin.file.name
-            print(dosyaa)
             if not os.path.exists(os.getcwd() + "/userbot/modules/" + dosyaa):
                 dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
             else:
@@ -113,9 +112,9 @@ try:
                   os.remove(os.getcwd() + "/userbot/modules/" + dosya)
                 continue
             
-            ndosya = dosya.replace(".py", "")
+            ndosya = dosyaa.replace(".py", "")
             CMD_HELP[ndosya] = "Bu Plugin Dışarıdan Yüklenmiştir"
-            bot.send_message(KanalId, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
+            bot.send_message(KanalId, f"`Plugin Yüklendi\nDosya: {dosya}`")
         if KanalId != "me":
             bot.send_message(KanalId, f"`Pluginler Yüklendi`")
     else:
