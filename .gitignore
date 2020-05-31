@@ -1,0 +1,13 @@
+
+*.pyc
+bin/cmrudl
+bin/megadown
+*.check
+*.log
+*.session-journal
+*.session
+*.db
+config.env
+userbot/.DS_Store
+userbot/.DS_Store
+.DS_Store

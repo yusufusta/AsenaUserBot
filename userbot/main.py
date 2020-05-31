@@ -19,7 +19,6 @@ from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 import base64
 import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
-import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
 from pySmartDL import SmartDL
 from telethon.tl import functions
 
