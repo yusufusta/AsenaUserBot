@@ -112,7 +112,9 @@ async def plist(event):
         await event.edit("`Pluginler getiriliyor...`")
         yuklenen = "**İşte Yüklenen Pluginler:**\n\n"
         async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-            yuklenen += f"▶️ {plugin.file.name}\n"
+            dosyaismi = plugin.file.name.strip(".")[1]
+            if dosyaismi == "py":
+                yuklenen += f"▶️ {plugin.file.name}\n"
         await event.edit(yuklenen)
     else:
         await event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
@@ -175,7 +177,7 @@ async def premove(event):
 
     await event.edit("`Plugin Siliniyor...`")
     i = 0
-    async for message in event.client.iter_messages("me", search=modul):
+    async for message in event.client.iter_messages(PLUGIN_CHANNEL_ID, search=modul):
         await message.delete()
         i += 1
 

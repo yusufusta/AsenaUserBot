@@ -51,6 +51,7 @@ def getir_mesaj(komu):
 def sil_mesaj(komu):
     try:
         SESSION.query(Mesajlar).filter(Mesajlar.komut == komu).delete()
+        SESSION.commit()
     except Exception as e:
         return e
     return True

@@ -19,6 +19,10 @@ from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 import base64
 import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
+import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
+from pySmartDL import SmartDL
+from telethon.tl import functions
+
 from random import choice
 
 AFKSTR = [
@@ -68,6 +72,12 @@ try:
     asenabl = requests.get('https://gitlab.com/Quiec/asen/-/raw/master/asen.json').json()
     if idim in asenabl:
         bot.disconnect()
+
+    # Galeri için değerler
+
+    GALERI = {}
+
+    # PLUGIN MESAJLARI AYARLIYORUZ
     PLUGIN_MESAJLAR = {}
     ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": str(choice(AFKSTR)), "kickme": "Güle Güle ben gidiyorum 🤠", "pm": UNAPPROVED_MSG}
 
@@ -93,6 +103,10 @@ try:
             if DOGRU == 0:
                 break
             dosyaa = plugin.file.name
+            uzanti = dosyaa.strip(".")[1]
+
+            if uzanti != "py":
+                continue
             if not os.path.exists(os.getcwd() + "/userbot/modules/" + dosyaa):
                 dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
             else:
@@ -123,6 +137,21 @@ try:
 except PhoneNumberInvalidError:
     print(INVALID_PH)
     exit(1)
+
+async def FotoDegistir (foto):
+    FOTOURL = GALERI_SQL.TUM_GALERI[foto].foto
+    r = requests.get(FOTOURL)
+
+    with open(str(foto) + ".jpg", 'wb') as f:
+        f.write(r.content)    
+    file = await bot.upload_file(str(foto) + ".jpg")
+    try:
+        await bot(functions.photos.UploadProfilePhotoRequest(
+            file
+        ))
+        return True
+    except:
+        return False
 
 for module_name in ALL_MODULES:
     imported_module = import_module("userbot.modules." + module_name)

@@ -349,7 +349,7 @@ async def zip(event):
         await event.edit("`Lütfen bir Zip'e yanıt verin!`")
 
 
-@register(pattern="^.wupload ?(.+?|) (.*)")
+@register(outgoing=True, pattern="^.wupload ?(.+?|) (.*)")
 async def wupload(event):
     await event.edit("`Dosya indiriliyor...`")
     PROCESS_RUN_TIME = 100
