@@ -133,21 +133,6 @@ except PhoneNumberInvalidError:
     print(INVALID_PH)
     exit(1)
 
-async def FotoDegistir (foto):
-    FOTOURL = GALERI_SQL.TUM_GALERI[foto].foto
-    r = requests.get(FOTOURL)
-
-    with open(str(foto) + ".jpg", 'wb') as f:
-        f.write(r.content)    
-    file = await bot.upload_file(str(foto) + ".jpg")
-    try:
-        await bot(functions.photos.UploadProfilePhotoRequest(
-            file
-        ))
-        return True
-    except:
-        return False
-
 for module_name in ALL_MODULES:
     imported_module = import_module("userbot.modules." + module_name)
 
