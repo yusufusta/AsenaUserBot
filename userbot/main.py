@@ -103,10 +103,6 @@ try:
             if DOGRU == 0:
                 break
             dosyaa = plugin.file.name
-            uzanti = dosyaa.strip(".")[1]
-
-            if uzanti != "py":
-                continue
             if not os.path.exists(os.getcwd() + "/userbot/modules/" + dosyaa):
                 dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
             else:
