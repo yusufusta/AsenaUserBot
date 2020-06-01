@@ -69,19 +69,21 @@ async def degistir(event):
         ASYNC_POOL.append("galeri")
         sql.getir_foto()
         await event.edit("`Galeri çalışmaya başladı.`")
-
-        while "galeri" in ASYNC_POOL:
-            fotolar = sql.TUM_GALERI
-            i = 0
-            while i < len(fotolar):
-                if not "galeri" in ASYNC_POOL:
-                    break
-                if i == len(fotolar):
-                    i = 0
-                await FotoDegistir(i)
-                await asyncio.sleep(GALERI_SURE)
-                i += 1
-
+        if len(sql.TUM_GALERI) >= 1:
+            while "galeri" in ASYNC_POOL:
+                fotolar = sql.TUM_GALERI
+                i = 0
+                while i < len(fotolar):
+                    if not "galeri" in ASYNC_POOL:
+                        break
+                    if i == len(fotolar):
+                        i = 0
+                    await FotoDegistir(i)
+                    await asyncio.sleep(GALERI_SURE)
+                    i += 1
+        else:
+            await event.edit("`Galeri çalışması için fotoğraf eklemeniz gerekmektedir. Eklemeyi bilmiyorsanız .asena galeri ile kullanım hakkında bilgi sahibi olabilirsiniz.`")
+            return
     elif secen[0] == "kapa":
         if "galeri" in ASYNC_POOL:
             ASYNC_POOL.remove("galeri")
@@ -90,6 +92,6 @@ async def degistir(event):
             event.edit("`Galeri zaten çalışmıyor.`")
         return
     else:
-        await event.edit("**Bilinmeyen komut** Kullanım:\nGaleri'ye fotoğraf ekleme: `.galeri ekle https://i.resimyukle.xyz/7Qbbc9.jpeg`\nGaleri listesini görme: `.galeri liste`\nSıradan bir fotoğrafı silme: `.galeri sil <sıra sayısı>`")
+        await event.edit("**Bilinmeyen komut** Kullanım:\n\nGaleri'ye fotoğraf ekleme: `.galeri ekle https://i.resimyukle.xyz/7Qbbc9.jpeg`\nGaleri listesini görme: `.galeri liste`\nSıradan bir fotoğrafı silme: `.galeri sil <sıra sayısı>`")
 
 CMD_HELP["galeri"] = "Kullanım: Galeri'ye fotoğraf ekleme: `.galeri ekle https://i.resimyukle.xyz/7Qbbc9.jpeg`\nGaleri listesini görme: `.galeri liste`\nSıradan bir fotoğrafı silme: `.galeri sil <sıra sayısı>`"
