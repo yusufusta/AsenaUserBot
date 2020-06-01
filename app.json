@@ -186,7 +186,20 @@
     "LOGSPAMMER": {
       "description": "Hata günlüklerinin, geçerli sohbette dosyayı göndermesi yerine UserBot günlük grubunda saklanmasını istemeniz durumunda bu değeri True olarak ayarlayın. Geçerli bir BOTLOG_CHATID değerinin ayarlanmasını gerektirir.",
       "value": "False"
+    },
+    "WARN_LIMIT": {
+      "description": "Kişiyi gmutelemek/gbanlamak için gerekli uyarı sayısı. Genellikle 3 kullanılır.",
+      "value": 3
+    },
+    "WARN_MODE": {
+      "description": "3 uyarıdan sonra gerçekleşecek olay. Sadece gmute ya da gban yazabilirsiniz. Aksi takdirde bot çalışmayabilir.",
+      "value": "gmute"
+    },
+    "GALERI_SURE": {
+      "description": "Galeri plugini içindir. Profil fotoğraflarıı kaç saniye de bir değişsin?",
+      "value": 60
     }
+
   },
   "addons": [{
     "plan": "heroku-postgresql",

@@ -11,7 +11,7 @@ from userbot import CMD_HELP
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR, ORJ_PLUGIN_MESAJLAR
 
-@register(outgoing=True, pattern="^.değiştir (.*)")
+@register(outgoing=True, pattern="^.değiştir ?(.*)")
 async def degistir(event):
     plugin = event.pattern_match.group(1)
     mesaj = re.search(r"\"(.*)\"", plugin)
@@ -24,7 +24,7 @@ async def degistir(event):
         mesaj = []
 
     plugin = plugin.strip()
-    TURLER = ["afk", "alive", "pm", "kickme"]
+    TURLER = ["afk", "alive", "pm", "kickme", "dızcı"]
     if type(mesaj) == list:
         if plugin in TURLER:
             silme = sql.sil_mesaj(plugin)
@@ -36,7 +36,7 @@ async def degistir(event):
         else:
             await event.edit("**Bilinmeyen plugin.** Mesajını silebileceğiniz pluginler: `afk/alive/pm/kickme`")
     elif len(plugin) < 1:
-        await event.edit("**Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme`")
+        await event.edit("**Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı`")
     elif type(mesaj) == str:
         if plugin in TURLER:
             if mesaj.isspace():
@@ -47,7 +47,7 @@ async def degistir(event):
                 sql.ekle_mesaj(plugin, mesaj)
                 await event.edit(f"Plugin(`{plugin}`) için mesajınız(`{mesaj}`) ayarlandı.")
         else:
-            await event.edit("**Bilinmeyen plugin.** Değiştirebileceğiniz pluginler: `afk/alive/pm/kickme`")
+            await event.edit("**Bilinmeyen plugin.** Değiştirebileceğiniz pluginler: `afk/alive/pm/kickme/dızcı`")
 
 CMD_HELP.update({'degistir': '.değiştir <modül> <mesaj>\
-        \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme`'})
+        \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı`'})

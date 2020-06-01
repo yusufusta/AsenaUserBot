@@ -8,7 +8,7 @@
 #
 # @NaytSeyd tarafından portlanmıştır.
 # @frknkrc44 tarafından düzenlenmiştir.
-#
+
 
 import os
 from datetime import datetime
@@ -21,6 +21,7 @@ from userbot.events import register
 import asyncio
 import random
 import shutil
+import requests
 
 @register(outgoing=True, pattern="^.autopp ?(.*)")
 async def autopic(event):
@@ -33,12 +34,11 @@ async def autopic(event):
     FONT_FILE_TO_USE = await get_font_file(event.client, "@FontDunyasi")
 
     downloaded_file_name = "./userbot/eskipp.png"
-    downloader = SmartDL(AUTO_PP, downloaded_file_name, progress_bar=True)
-    downloader.start(blocking=False)
-    photo = "yenipp.png"
-    while not downloader.isFinished():
-        continue
+    r = requests.get(AUTO_PP)
 
+    with open(downloaded_file_name, 'wb') as f:
+        f.write(r.content)    
+    photo = "yenipp.png"
     await event.edit("`Profil fotoğrafınız ayarlandı :)`")
 
     ASYNC_POOL.append('autopic')

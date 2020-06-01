@@ -28,7 +28,7 @@ from telethon.tl.types import (PeerChannel, ChannelParticipantsAdmins,
                                MessageEntityMentionName, MessageMediaPhoto,
                                ChannelParticipantsBots)
 
-from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, bot
+from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, bot, WARN_MODE, WARN_LIMIT
 from userbot.events import register
 
 # =================== CONSTANT ===================
@@ -534,7 +534,7 @@ async def gspider(gspdr):
 
     # Başarı olursa bilgi ver
     await gspdr.edit("`Susturuluyor...`")
-    if gmute(user.id) is False:
+    if gmute(user.id) == False:
         await gspdr.edit(
             '`Hata! Kullanıcı zaten küresel olarak susturuldu.`')
     else:
@@ -820,6 +820,166 @@ async def get_user_from_id(user, event):
 
     return user_obj
 
+@register(outgoing=True, pattern="^.unwarn ?(.*)")
+async def unwarn(event):
+    """ .unwarn kullanıcıyı uyarıyı kaldırmaya işe yarar """
+    # Yetki kontrolü
+    chat = await event.get_chat()
+    admin = chat.admin_rights
+    creator = chat.creator
+
+    # Yönetici değil ise geri dön
+    if not admin and not creator:
+        await event.edit(NO_ADMIN)
+        return
+
+    # Fonksiyonun SQL modu altında çalışıp çalışmadığını kontrol et
+    try:
+        import userbot.modules.sql_helper.warn_sql as warn
+    except:
+        await event.edit(NO_SQL)
+        return
+
+    user, reason = await get_user_from_event(event)
+    if user:
+        pass
+    else:
+        return
+
+    # Başarı olursa bilgi ver
+    await event.edit("`Uyarı kaldırılıyor...`")
+    silme = warn.sil_warn(user.id)
+    if silme == False:
+        await event.edit("`Bu kişi zaten hiç uyarılmamış!`")
+        return
+
+    warnsayi = warn.getir_warn(user.id)
+    
+    await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, uyarın kaldırıldı ama gene de dikkatli ol lütfen! Yeni durum: {warnsayi}/3`")
+
+    if BOTLOG:
+        await event.client.send_message(
+            BOTLOG_CHATID, "#WARN\n"
+            f"USER: [{user.first_name}](tg://user?id={user.id})\n"
+            f"CHAT: {event.chat.title}(`{event.chat_id}`)")
+
+@register(outgoing=True, pattern="^.warn ?(.*)")
+async def warn(event):
+    """ .warn kullanıcıyı uyarmaya işe yarar """
+    # Yetki kontrolü
+    chat = await event.get_chat()
+    admin = chat.admin_rights
+    creator = chat.creator
+
+    # Yönetici değil ise geri dön
+    if not admin and not creator:
+        await event.edit(NO_ADMIN)
+        return
+
+    # Fonksiyonun SQL modu altında çalışıp çalışmadığını kontrol et
+    try:
+        import userbot.modules.sql_helper.warn_sql as warn
+    except:
+        await event.edit(NO_SQL)
+        return
+
+    user, reason = await get_user_from_event(event)
+    if user:
+        pass
+    else:
+        return
+
+    # Eğer kullanıcı sudo ise
+    if user.id in BRAIN_CHECKER:
+        await event.edit("`Warn Hatası! Asena Yetkilisini uyaramam.`")
+        return
+
+    # Başarı olursa bilgi ver
+    await event.edit("`Uyarı atılıyor...`")
+    if reason:
+        warn.ekle_warn(user.id, reason)
+        warnsayi = warn.getir_warn(user.id)
+
+        if WARN_MODE == "gban":
+            await Warn_Gban(event, warn, user)
+        else:
+            await Warn_Gmute(event, warn, user)
+        return
+
+        await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {warnsayi}/{WARN_LIMIT} kere uyarıldı; dikkatli ol lütfen!` `Nedeni: {reason}`")
+    else:
+        warn.ekle_warn(user.id)
+        warnsayi = warn.getir_warn(user.id)
+        if warnsayi >= WARN_LIMIT:
+            if WARN_MODE == "gban":
+                await Warn_Gban(event, warn, user)
+            else:
+                await Warn_Gmute(event, warn, user)
+            return
+        await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {warnsayi}/{WARN_LIMIT} kere uyarıldı; dikkatli ol lütfen!`")
+    warnsayi = warn.getir_warn(user.id)
+
+    if BOTLOG:
+        await event.client.send_message(
+            BOTLOG_CHATID, "#WARN\n"
+            f"USER: [{user.first_name}](tg://user?id={user.id})\n"
+            f"CHAT: {event.chat.title}(`{event.chat_id}`)")
+
+async def Warn_Gmute(event, warn, user, reason = None):
+    await event.delete()
+    yeni = await event.reply(f"`Seni yeteri kadar uyardım` [{user.first_name}](tg://user?id={user.id})`, küresel olarak susturuldun!`")
+
+    try:
+        from userbot.modules.sql_helper.gmute_sql import gmute
+    except:
+        await yeni.edit(NO_SQL)
+        return
+        
+    yeni2 = await yeni.reply("`Susturuluyor...`")
+        
+    if gmute(user.id) == False:
+        await yeni2.edit(
+            '`Hata! Kullanıcı zaten küresel olarak susturuldu.`')
+    else:
+        if reason != None:
+            await yeni2.edit(f"`Kullanıcı küresel olarak susturuldu!`Nedeni: {reason}")
+        else:
+            await yeni2.edit("`Kullanıcı küresel olarak susturuldu!`")
+
+        if BOTLOG:
+            await event.client.send_message(
+                BOTLOG_CHATID, "#GMUTE\n"
+                f"USER: [{user.first_name}](tg://user?id={user.id})\n"
+                f"CHAT: {event.chat.title}(`{event.chat_id}`)")
+    warn.toplu_sil_warn(user.id)
+
+async def Warn_Gban(event, warn, user, reason = None):
+    await event.delete()
+    yeni = await event.reply(f"`Seni yeteri kadar uyardım` [{user.first_name}](tg://user?id={user.id})`, küresel olarak yasaklandıın!`")
+
+    try:
+        from userbot.modules.sql_helper.gban_sql import gban
+    except:
+        await yeni.edit(NO_SQL)
+        return
+        
+    yeni2 = await yeni.reply("`Yasaklanıyor...`")
+        
+    if gban(user.id) == False:
+        await yeni2.edit(
+            '`Hata! Kullanıcı zaten küresel olarak yasaklandı.`')
+    else:
+        if reason != None:
+            await yeni2.edit(f"`Kullanıcı küresel olarak yasaklandı!`Nedeni: {reason}")
+        else:
+            await yeni2.edit("`Kullanıcı küresel olarak yasaklandı!`")
+
+        if BOTLOG:
+            await event.client.send_message(
+                BOTLOG_CHATID, "#GBAN\n"
+                f"USER: [{user.first_name}](tg://user?id={user.id})\n"
+                f"CHAT: {event.chat.title}(`{event.chat_id}`)")
+    warn.toplu_sil_warn(user.id)
 
 @register(outgoing=True, pattern="^.usersdel ?(.*)")
 async def get_usersdel(show):

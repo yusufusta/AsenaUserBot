@@ -14,27 +14,13 @@ import math
 import urllib.request
 from os import remove
 from PIL import Image
-import random
 from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto
 from userbot import bot, CMD_HELP
 from userbot.events import register
 from telethon.tl.functions.messages import GetStickerSetRequest
 from telethon.tl.types import InputStickerSetID
 from telethon.tl.types import DocumentAttributeSticker
-
-DIZCILIK_STR = [
-    "Çıkartmayı dızlıyorum...",
-    "Yaşasın dızcılık...",
-    "Bu çıkartmayı kendi paketime davet ediyorum...",
-    "Bunu dızlamam lazım...",
-    "Hey bu güzel bir çıkartma!\nHemen dızlıyorum..",
-    "Çıkartmanı dızlıyorum\nhahaha.",
-    "Hey şuraya bak. (☉｡☉)!→\nBen bunu dızlarken...",
-    "Güller kırmızı menekşeler mavi, bu çıkartmayı paketime dızlayarak havalı olacağım...",
-    "Çıkartma hapsediliyor...",
-    "Bay dızcı bu çıkartmayı dızlıyor... ",
-]
-
+from userbot.main import PLUGIN_MESAJLAR
 
 @register(outgoing=True, pattern="^.dızla")
 async def dizla(args):
@@ -50,11 +36,11 @@ async def dizla(args):
 
     if message and message.media:
         if isinstance(message.media, MessageMediaPhoto):
-            await args.edit(f"`{random.choice(DIZCILIK_STR)}`")
+            await args.edit(f"`{PLUGIN_MESAJLAR['dızcı']}`")
             photo = io.BytesIO()
             photo = await bot.download_media(message.photo, photo)
         elif "image" in message.media.document.mime_type.split('/'):
-            await args.edit(f"`{random.choice(DIZCILIK_STR)}`")
+            await args.edit(f"`{PLUGIN_MESAJLAR['dızcı']}`")
             photo = io.BytesIO()
             await bot.download_file(message.media.document, photo)
             if (DocumentAttributeFilename(file_name='sticker.webp') in
@@ -62,7 +48,7 @@ async def dizla(args):
                 emoji = message.media.document.attributes[1].alt
                 emojibypass = True
         elif "tgsticker" in message.media.document.mime_type:
-            await args.edit(f"`{random.choice(DIZCILIK_STR)}`")
+            await args.edit(f"`{PLUGIN_MESAJLAR['dızcı']}`")
             await bot.download_file(message.media.document,
                                     'AnimatedSticker.tgs')
 

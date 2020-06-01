@@ -18,7 +18,7 @@ from time import sleep
 import os
 from telethon.tl.types import MessageMediaPhoto
 import asyncio
-
+from userbot.modules.admin import get_user_from_event
 
 def is_message_image(message):
     if message.media:
@@ -213,6 +213,34 @@ async def _(event):
             await event.edit(f"**Virüs taraması bitti. Bu dosya temiz. Geç!**")
          else:
             await event.edit(f"**Virüs taraması bitti. Whopsie! Bu dosya tehlikeli. Sakın yükleme!**\n\nDetaylı bilgi: {response.message.message}")
+
+@register(outgoing=True, pattern="^.creation")
+async def creation(event):
+    if not event.reply_to_msg_id:
+        await event.edit("`Lütfen bir mesaja yanıt verin.`")
+        return
+    reply_message = await event.get_reply_message() 
+    if event.fwd_from:
+        return 
+    chat = "@creationdatebot"
+    sender = reply_message.sender
+    if reply_message.sender.bot:
+       await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
+       return
+    await event.edit("`Tarih hesaplanıyor...`")
+    async with event.client.conversation(chat) as conv:
+        try:     
+            await event.client.forward_messages(chat, reply_message)
+        except YouBlockedUserError:
+            await event.reply(f"`Mmmh sanırım` {chat} `engellemişsin. Lütfen engeli aç.`")
+            return
+      
+        response = conv.wait_event(events.NewMessage(incoming=True,from_users=747653812))
+        response = await response
+        if response.text.startswith("Looks"):
+            await event.edit("`Gizlilik ayarları yüzenden sonuç çıkartamadım.`")
+        else:
+            await event.edit(f"**Rapor hazır: **`{response.text.replace('**','')}`")
 
 @register(outgoing=True, pattern="^.voicy")
 async def _(event):

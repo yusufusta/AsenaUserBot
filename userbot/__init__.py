@@ -129,6 +129,16 @@ REM_BG_API_KEY = os.environ.get("REM_BG_API_KEY", None)
 # AUTO PP
 AUTO_PP = os.environ.get("AUTO_PP", None)
 
+# Warn modül
+WARN_LIMIT = int(os.environ.get("WARN_LIMIT", 3))
+WARN_MODE = os.environ.get("WARN_MODE", "gmute")
+
+if WARN_MODE != "gmute" or WARN_MODE != "gban":
+    WARN_MODE = "gmute"
+
+# Galeri
+GALERI_SURE = int(os.environ.get("GALERI_SURE", 60))
+
 # Chrome sürücüsü ve Google Chrome dosyaları
 CHROME_DRIVER = os.environ.get("CHROME_DRIVER", None)
 GOOGLE_CHROME_BIN = os.environ.get("GOOGLE_CHROME_BIN", None)
@@ -193,7 +203,6 @@ BOT_USERNAME = os.environ.get("BOT_USERNAME", None)
 # Genius modülünün çalışması için buradan değeri alın https://genius.com/developers her ikisi de aynı değerlere sahiptir
 GENIUS = os.environ.get("GENIUS", None)
 CMD_HELP = {}
-
 
 # CloudMail.ru ve MEGA.nz ayarlama
 if not os.path.exists('bin'):

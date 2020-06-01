@@ -18,11 +18,28 @@ from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 import base64
-import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
+try:
+    import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
+    import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
+except:
+    pass
 from pySmartDL import SmartDL
 from telethon.tl import functions
 
 from random import choice
+
+DIZCILIK_STR = [
+    "Çıkartmayı dızlıyorum...",
+    "Yaşasın dızcılık...",
+    "Bu çıkartmayı kendi paketime davet ediyorum...",
+    "Bunu dızlamam lazım...",
+    "Hey bu güzel bir çıkartma!\nHemen dızlıyorum..",
+    "Çıkartmanı dızlıyorum\nhahaha.",
+    "Hey şuraya bak. (☉｡☉)!→\nBen bunu dızlarken...",
+    "Güller kırmızı menekşeler mavi, bu çıkartmayı paketime dızlayarak havalı olacağım...",
+    "Çıkartma hapsediliyor...",
+    "Bay dızcı bu çıkartmayı dızlıyor... ",
+]
 
 AFKSTR = [
     "Şu an acele işim var, daha sonra mesaj atsan olmaz mı? Zaten yine geleceğim.",
@@ -78,9 +95,9 @@ try:
 
     # PLUGIN MESAJLARI AYARLIYORUZ
     PLUGIN_MESAJLAR = {}
-    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": str(choice(AFKSTR)), "kickme": "Güle Güle ben gidiyorum 🤠", "pm": UNAPPROVED_MSG}
+    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": str(choice(AFKSTR)), "kickme": "Güle Güle ben gidiyorum 🤠", "pm": UNAPPROVED_MSG, "dızcı": str(choice(DIZCILIK_STR))}
 
-    PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm"]
+    PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm", "dızcı"]
     for mesaj in PLUGIN_MESAJLAR_TURLER:
         dmsj = MSJ_SQL.getir_mesaj(mesaj)
         if dmsj == False:
@@ -132,6 +149,21 @@ try:
 except PhoneNumberInvalidError:
     print(INVALID_PH)
     exit(1)
+
+async def FotoDegistir (foto):
+    FOTOURL = GALERI_SQL.TUM_GALERI[foto].foto
+    r = requests.get(FOTOURL)
+
+    with open(str(foto) + ".jpg", 'wb') as f:
+        f.write(r.content)    
+    file = await bot.upload_file(str(foto) + ".jpg")
+    try:
+        await bot(functions.photos.UploadProfilePhotoRequest(
+            file
+        ))
+        return True
+    except:
+        return False
 
 for module_name in ALL_MODULES:
     imported_module = import_module("userbot.modules." + module_name)

@@ -220,7 +220,26 @@ async def songpl(event):
     os.system(f"rm -rf {klasor}/*.pl")
     subprocess.check_output(f"rm -rf {klasor}/*.pl",shell=True)
 
+@register(outgoing=True, pattern="^.karbon ?(.*)")
+async def karbon(e):
+    cmd = e.pattern_match.group(1)
+    if os.path.exists("@AsenaUserBot-Karbon.jpg"):
+        os.remove("@AsenaUserBot-Karbon.jpg")
 
+    if len(cmd) < 1:
+        await e.edit("Kullanım: .karbon mesaj")    
+    yanit = await e.get_reply_message()
+    if yanit:
+        cmd = yanit.message
+    await e.edit("`Lütfen bekleyiniz...`")    
+
+    r = get(f"https://carbonnowsh.herokuapp.com/?code={cmd}")
+
+    with open("@AsenaUserBot-Karbon.jpg", 'wb') as f:
+        f.write(r.content)    
+
+    await e.client.send_file(e.chat.id, file="@AsenaUserBot-Karbon.jpg", force_document=True, caption="[AsenaUserBot](https://t.me/asenauserbot) ile oluşturuldu.")
+    await e.delete()
 
 @register(outgoing=True, pattern="^.crblang (.*)")
 async def setlang(prog):
