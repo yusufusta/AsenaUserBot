@@ -189,15 +189,18 @@
     },
     "WARN_LIMIT": {
       "description": "Kişiyi gmutelemek/gbanlamak için gerekli uyarı sayısı. Genellikle 3 kullanılır.",
-      "value": 3
+      "value": "3",
+      "required": false
     },
     "WARN_MODE": {
       "description": "3 uyarıdan sonra gerçekleşecek olay. Sadece gmute ya da gban yazabilirsiniz. Aksi takdirde bot çalışmayabilir.",
-      "value": "gmute"
+      "value": "gmute",
+      "required": false
     },
     "GALERI_SURE": {
       "description": "Galeri plugini içindir. Profil fotoğraflarıı kaç saniye de bir değişsin?",
-      "value": 60
+      "value": "60",
+      "required": false
     }
 
   },
