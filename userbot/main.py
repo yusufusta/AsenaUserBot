@@ -18,11 +18,8 @@ from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 import base64
-try:
-    import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
-    import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
-except:
-    pass
+import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
+import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
 from pySmartDL import SmartDL
 from telethon.tl import functions
 
@@ -170,7 +167,7 @@ for module_name in ALL_MODULES:
 
 LOGS.info("Botunuz çalışıyor! Herhangi bir sohbete .alive yazarak Test edin."
           " Yardıma ihtiyacınız varsa, Destek grubumuza gelin t.me/AsenaSupport")
-LOGS.info("Bot sürümünüz Asena v1.4")
+LOGS.info("Bot sürümünüz Asena v1.5")
 
 """
 if len(argv) not in (1, 3, 4):
