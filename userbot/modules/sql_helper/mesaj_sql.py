@@ -48,9 +48,9 @@ def getir_mesaj(komu):
         return False
     
 
-def sil_mesaj(userid):
+def sil_mesaj(komu):
     try:
-        SESSION.query(Mesajlar).filter(Mesajlar.uid == userid).delete()
+        SESSION.query(Mesajlar).filter(Mesajlar.komut == komu).delete()
         SESSION.commit()
     except Exception as e:
         return e
