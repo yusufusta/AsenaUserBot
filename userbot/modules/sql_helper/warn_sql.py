@@ -13,19 +13,17 @@ class Warn(BASE):
     __tablename__ = "warn"
     uid = Column(UnicodeText, primary_key=True, nullable=False)
     warn = Column(Integer, primary_key=True, nullable=False)
-    sebep = Column(UnicodeText, nullable=True)
 
     def __init__(self, uid, warn, sebep = None):
         self.uid = uid  # ensure string
         self.warn = warn
-        self.sebep = sebep
     def __repr__(self):
         return "<Warn '%s' için %s>" % (self.uid, self.warn)
 
     def __eq__(self, other):
         return bool(isinstance(other, Warn)
-                    and self.komut == other.komut
-                    and self.mesaj == other.mesaj)
+                    and self.uid == other.uid
+                    and self.warn == other.warn)
 
 
 Warn.__table__.create(checkfirst=True)
@@ -42,10 +40,7 @@ def ekle_warn(userid, sebep = None):
             wsayi =  0
 
         wsayi += 1
-        if sebep == None:
-            komut = Warn(userid, wsayi)
-        else:
-            komut = Warn(userid, wsayi, sebep)
+        komut = Warn(userid, wsayi)
         SESSION.merge(komut)
         SESSION.commit()
 

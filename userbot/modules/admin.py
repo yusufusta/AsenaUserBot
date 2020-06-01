@@ -896,28 +896,15 @@ async def warn(event):
 
     # Başarı olursa bilgi ver
     await event.edit("`Uyarı atılıyor...`")
-    if reason:
-        warn.ekle_warn(user.id, reason)
-        warnsayi = warn.getir_warn(user.id)
-
+    warn.ekle_warn(user.id)
+    warnsayi = warn.getir_warn(user.id)
+    if warnsayi >= WARN_LIMIT:
         if WARN_MODE == "gban":
             await Warn_Gban(event, warn, user)
         else:
             await Warn_Gmute(event, warn, user)
         return
-
-        await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {warnsayi}/{WARN_LIMIT} kere uyarıldı; dikkatli ol lütfen!` `Nedeni: {reason}`")
-    else:
-        warn.ekle_warn(user.id)
-        warnsayi = warn.getir_warn(user.id)
-        if warnsayi >= WARN_LIMIT:
-            if WARN_MODE == "gban":
-                await Warn_Gban(event, warn, user)
-            else:
-                await Warn_Gmute(event, warn, user)
-            return
-        await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {warnsayi}/{WARN_LIMIT} kere uyarıldı; dikkatli ol lütfen!`")
-    warnsayi = warn.getir_warn(user.id)
+    await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {warnsayi}/{WARN_LIMIT} kere uyarıldı; dikkatli ol lütfen!`")
 
     if BOTLOG:
         await event.client.send_message(
