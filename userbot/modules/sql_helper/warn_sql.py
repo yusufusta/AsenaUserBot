@@ -48,7 +48,7 @@ def ekle_warn(userid):
 def getir_warn(userid):
     try:
         UYARI = SESSION.query(Warns).filter(Warns.user_id == userid).first()
-        return UYARI.nuwarn
+        return UYARI.num_warn
     except:
         return 0
     
