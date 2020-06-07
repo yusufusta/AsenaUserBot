@@ -29,7 +29,7 @@ async def ezanvakti(event):
         await event.edit("`Lütfen komutun yanına bir şehir belirtin.`")
         return
 
-    url = f'https://quiec.tech/ezan.php?il={konum}'
+    url = f'https://api.quiec.tech/namaz.php?il={konum}'
     request = requests.get(url)
     result = json.loads(request.text)
 

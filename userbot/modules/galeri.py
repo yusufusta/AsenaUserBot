@@ -1,15 +1,11 @@
-# Copyright (C) 2019 The Raphielscape Company LLC.
+# Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
 # you may not use this file except in compliance with the License.
 #
 
-# Coded By Yusuf Usta
-# Please give credit.
 # Asena UserBot - Yusuf Usta
 
-
-import io
 import re
 import asyncio
 

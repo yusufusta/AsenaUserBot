@@ -1,11 +1,12 @@
+# Copyright (C) 2020 Yusuf Usta.
+#
+# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
+# you may not use this file except in compliance with the License.
+#
 
-import io
+# Asena UserBot - Yusuf Usta
+
 import re
-import asyncio
-
-from telethon import events, utils
-from telethon.tl import types, functions
-
 import userbot.modules.sql_helper.mesaj_sql as sql
 from userbot import CMD_HELP
 from userbot.events import register
@@ -24,7 +25,7 @@ async def degistir(event):
         mesaj = []
 
     plugin = plugin.strip()
-    TURLER = ["afk", "alive", "pm", "kickme", "dızcı"]
+    TURLER = ["afk", "alive", "pm", "kickme", "dızcı", "ban", "mute"]
     if type(mesaj) == list:
         if plugin in TURLER:
             silme = sql.sil_mesaj(plugin)
@@ -36,7 +37,7 @@ async def degistir(event):
         else:
             await event.edit("**Bilinmeyen plugin.** Mesajını silebileceğiniz pluginler: `afk/alive/pm/kickme`")
     elif len(plugin) < 1:
-        await event.edit("**Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı`")
+        await event.edit("**Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute`")
     elif type(mesaj) == str:
         if plugin in TURLER:
             if mesaj.isspace():
@@ -47,7 +48,7 @@ async def degistir(event):
                 sql.ekle_mesaj(plugin, mesaj)
                 await event.edit(f"Plugin(`{plugin}`) için mesajınız(`{mesaj}`) ayarlandı.")
         else:
-            await event.edit("**Bilinmeyen plugin.** Değiştirebileceğiniz pluginler: `afk/alive/pm/kickme/dızcı`")
+            await event.edit("**Bilinmeyen plugin.** Değiştirebileceğiniz pluginler: `afk/alive/pm/kickme/dızcı/ban/mute`")
 
 CMD_HELP.update({'degistir': '.değiştir <modül> <mesaj>\
-        \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı`'})
+        \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute`'})

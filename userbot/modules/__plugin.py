@@ -5,16 +5,13 @@
 #
 
 # @Qulec tarafından yazılmıştır.
-import asyncio
-import logging
-import userbot
 import re
 import os
 from telethon.tl.types import DocumentAttributeFilename, InputMessagesFilterDocument
 import importlib
 import time
 
-from userbot import CMD_HELP, SILINEN_PLUGIN, bot, tgbot, PLUGIN_CHANNEL_ID
+from userbot import CMD_HELP, bot, tgbot, PLUGIN_CHANNEL_ID
 from userbot.events import register
 
 
@@ -112,7 +109,7 @@ async def plist(event):
         await event.edit("`Pluginler getiriliyor...`")
         yuklenen = "**İşte Yüklenen Pluginler:**\n\n"
         async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-            dosyaismi = plugin.file.name.strip(".")[1]
+            dosyaismi = plugin.file.name.split(".")[1]
             if dosyaismi == "py":
                 yuklenen += f"▶️ {plugin.file.name}\n"
         await event.edit(yuklenen)

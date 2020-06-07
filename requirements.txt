@@ -45,3 +45,4 @@ urbandict>=0.5
 wikipedia>=1.4.0
 coffeehouse
 spotify_token
+twitter_scraper

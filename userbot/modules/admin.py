@@ -26,11 +26,12 @@ from telethon.tl.functions.messages import UpdatePinnedMessageRequest
 from telethon.tl.types import (PeerChannel, ChannelParticipantsAdmins,
                                ChatAdminRights, ChatBannedRights,
                                MessageEntityMentionName, MessageMediaPhoto,
-                               ChannelParticipantsBots)
+                               ChannelParticipantsBots, User)
+from telethon.events import ChatAction
 
 from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, bot, WARN_MODE, WARN_LIMIT
 from userbot.events import register
-
+from userbot.main import PLUGIN_MESAJLAR
 # =================== CONSTANT ===================
 PP_TOO_SMOL = "`Görüntü çok küçük`"
 PP_ERROR = "`Görüntü işleme sırasında hata oluştu`"
@@ -71,6 +72,118 @@ MUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=True)
 
 UNMUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=False)
 # ================================================
+@register(outgoing=True, pattern="^.gban(?: |$)(.*)")
+async def gbanspider(gspdr):
+    """ .gban komutu belirlenen kişiyi küresel olarak yasaklar """
+    # Yetki kontrolü
+    chat = await gspdr.get_chat()
+    admin = chat.admin_rights
+    creator = chat.creator
+
+    # Yönetici değil ise geri dön
+    if not admin and not creator:
+        await gspdr.edit(NO_ADMIN)
+        return
+
+    # Fonksiyonun SQL modu altında çalışıp çalışmadığını kontrol et
+    try:
+        from userbot.modules.sql_helper.gban_sql import gban
+    except:
+        await gspdr.edit(NO_SQL)
+        return
+
+    user, reason = await get_user_from_event(gspdr)
+    if user:
+        pass
+    else:
+        return
+
+    # Eğer kullanıcı sudo ise
+    if user.id in BRAIN_CHECKER:
+        await gspdr.edit("`Gban Hatası! Asena Yetkilisini küresel olarak yasaklayamam.`")
+        return
+
+    # Başarı olursa bilgi ver
+    await gspdr.edit("`Yasaklanıyor...`")
+    if gban(user.id) == False:
+        await gspdr.edit(
+            '`Hata! Kullanıcı zaten küresel olarak yasaklanmış.`')
+    else:
+        if reason:
+            await gspdr.edit(f"`Kullanıcı küresel olarak yasaklandı!`Nedeni: {reason}")
+        else:
+            await gspdr.edit("`Kullanıcı küresel olarak yasaklandı!`")
+
+        if BOTLOG:
+            await gspdr.client.send_message(
+                BOTLOG_CHATID, "#GBAN\n"
+                f"USER: [{user.first_name}](tg://user?id={user.id})\n"
+                f"CHAT: {gspdr.chat.title}(`{gspdr.chat_id}`)")
+
+
+@register(incoming=True)
+async def gbanmsg(moot):
+    """ Küresel banlanan kullanıcı mesaj gelirse """
+    try:
+        from userbot.modules.sql_helper.gban_sql import is_gbanned
+    except:
+        return
+
+    chat = await moot.get_chat()
+    if (type(chat) == User):
+        return 
+
+    admin = chat.admin_rights
+    creator = chat.creator
+
+    if not admin and not creator:
+        return
+
+    gbanned = is_gbanned(moot.sender_id) 
+    if gbanned == str(moot.sender_id):
+        await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id, BANNED_RIGHTS))
+        await moot.reply("```Sen kötü birisisin! Daha fazla seni burda tutmuyacağım. Bays!```")
+
+@register(outgoing=True, pattern="^.ungban(?: |$)(.*)")
+async def ungban(un_gban):
+    """ .ungban komutu belirlenen kişinin küresel susturulmasını kaldırır """
+    # Yetki kontrolü
+    chat = await un_gban.get_chat()
+    admin = chat.admin_rights
+    creator = chat.creator
+
+    # Yönetici değil ise geri dön
+    if not admin and not creator:
+        await un_gban.edit(NO_ADMIN)
+        return
+
+    # Fonksiyonun SQL modu altında çalışıp çalışmadığını kontrol et
+    try:
+        from userbot.modules.sql_helper.gban_sql import ungban
+    except:
+        await un_gban.edit(NO_SQL)
+        return
+
+    user = await get_user_from_event(un_gban)
+    user = user[0]
+    if user:
+        pass
+    else:
+        return
+
+    await un_gban.edit('```Küresel yasaklama kaldırılıyor...```')
+
+    if ungban(user.id) is False:
+        await un_gban.edit("`Hata! Muhtemelen kullanıcının yasaklaması yok.`")
+    else:
+        # Başarı olursa bilgi ver
+        await un_gban.edit("```Kullanıcının küresel yasaklaması kalktı```")
+
+        if BOTLOG:
+            await un_gban.client.send_message(
+                BOTLOG_CHATID, "#UNGBAN\n"
+                f"KULLANICI: [{user.first_name}](tg://user?id={user.id})\n"
+                f"GRUP: {un_gban.chat.title}(`{un_gban.chat_id}`)")
 
 
 @register(outgoing=True, pattern="^.setgpic$")
@@ -236,7 +349,7 @@ async def ban(bon):
         return
 
     # Hedefi yasaklayacağınızı duyurun
-    await bon.edit("`Düşman vuruldu!`")
+    await bon.edit("`Kullanıcı yollanıyor...`")
 
     try:
         await bon.client(EditBannedRequest(bon.chat_id, user.id,
@@ -256,9 +369,9 @@ async def ban(bon):
     # Mesajı silin ve ardından komutun
     # incelikle yapıldığını söyleyin
     if reason:
-        await bon.edit(f"`{str(user.id)}` yasaklandı !!\nNedeni: {reason}")
+        await bon.edit(f"`{str(user.id)}` {PLUGIN_MESAJLAR['ban']}\nNedeni: {reason}")
     else:
-        await bon.edit(f"`{str(user.id)}` yasaklandı !!")
+        await bon.edit(f"`{str(user.id)}` {PLUGIN_MESAJLAR['ban']}")
     # Yasaklama işlemini günlüğe belirtelim
     if BOTLOG:
         await bon.client.send_message(
@@ -364,9 +477,9 @@ async def spider(spdr):
 async def mutmsg(spdr, user, reason):
     # Fonksiyonun yapıldığını duyurun
     if reason:
-        await spdr.edit(f"`Kullanıcı sessize alındı !!`\nNedeni: {reason}")
+        await spdr.edit(f"`{PLUGIN_MESAJLAR['mute']}`\nNedeni: {reason}")
     else:
-        await spdr.edit("`Kullanıcı sessize alındı !!`")
+        await spdr.edit(f"`{PLUGIN_MESAJLAR['mute']}`")
 
     # Susturma işlemini günlüğe belirtelim
     if BOTLOG:
@@ -457,7 +570,6 @@ async def muter(moot):
     for i in gmuted:
         if i.sender == str(moot.sender_id):
             await moot.delete()
-
 
 @register(outgoing=True, pattern="^.ungmute(?: |$)(.*)")
 async def ungmoot(un_gmute):

@@ -15,7 +15,7 @@ from telethon.tl.types import User
 from sqlalchemy.exc import IntegrityError
 
 from userbot import (COUNT_PM, CMD_HELP, BOTLOG, BOTLOG_CHATID,
-                     PM_AUTO_BAN, LASTMSG, LOGS)
+                     PM_AUTO_BAN, PM_AUTO_BAN_LIMIT, LASTMSG, LOGS)
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 
@@ -66,7 +66,7 @@ async def permitpm(event):
                 else:
                     COUNT_PM[event.chat_id] = COUNT_PM[event.chat_id] + 1
 
-                if COUNT_PM[event.chat_id] > 4:
+                if COUNT_PM[event.chat_id] > PM_AUTO_BAN_LIMIT:
                     await event.respond(
                         "`Sen benim sahibimin PM'ini spamlıyorsun, bu benim hoşuma gitmiyor.`\n"
                         "`Şu an ENGELLENDIN ve SPAM olarak bildirildin, ileride değişiklik olmadığı sürece..`"

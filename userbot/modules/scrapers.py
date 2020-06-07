@@ -9,6 +9,7 @@
 
 """ Diğer kategorilere uymayan fazlalık komutların yer aldığı modül. """
 
+import twitter_scraper
 import os
 import time
 import asyncio
@@ -56,11 +57,69 @@ import subprocess
 from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotModifiedError
 import io
 import glob
-try:
-    import instantmusic
-except:
-    os.system("pip install instantmusic")
 
+@register(pattern="^.twit ?(.*)", outgoing=True)
+async def twit(event):
+    hesap = event.pattern_match.group(1)
+    if len(hesap) < 1:
+        await event.edit("`Lütfen bir Twitter hesabı belirtin. Örnek: ``.twit st4r_m0rn1ng`")
+        return
+    try:
+        twits = list(twitter_scraper.get_tweets(hesap, pages=1))
+    except Exception as e:
+        await event.edit(f"`Muhtemelen böyle bir hesap yok. Çünkü hata oluştu. Hata: {e}`")
+        return
+
+    if len(twits) > 2:
+        if twits[0]["tweetId"] < twits[1]["tweetId"]:
+            twit = twits[1]
+            fotolar = twit['entries']['photos']
+            sonuc = []
+            if len(fotolar) >= 1:
+                i = 0
+                while i < len(fotolar):
+                    with open(f"{hesap}-{i}.jpg", 'wb') as load:
+                        load.write(get(fotolar[i]).content)
+                    sonuc.append(f"{hesap}-{i}.jpg")
+                    i += 1
+                await event.client.send_file(event.chat_id, sonuc, caption=f"**{hesap}**\n{twit['time']}\n\n`{twit['text']}`\n\n💬{twit['replies']} 🔁{twit['retweets']} ❤️{twit['likes']}")
+                await event.delete()
+                return
+            await event.edit(f"**{hesap}**\n{twit['time']}\n\n`{twit['text']}`\n\n💬{twit['replies']} 🔁{twit['retweets']} ❤️{twit['likes']}")
+        else:
+            twit = twits[1]
+            fotolar = twit['entries']['photos']
+            sonuc = []
+            if len(fotolar) >= 1:
+                i = 0
+                while i < len(fotolar):
+                    with open(f"{hesap}-{i}.jpg", 'wb') as load:
+                        load.write(get(fotolar[i]).content)
+                    sonuc.append(f"{hesap}-{i}.jpg")
+                    i += 1
+                print(sonuc)
+                await event.client.send_file(event.chat_id, sonuc, caption=f"**{hesap}**\n{twit['time']}\n\n`{twit['text']}`\n\n💬{twit['replies']} 🔁{twit['retweets']} ❤️{twit['likes']}")
+                await event.delete()
+                return
+            await event.edit(f"**{hesap}**\n{twit['time']}\n\n`{twit['text']}`\n\n💬{twit['replies']} 🔁{twit['retweets']} ❤️{twit['likes']}")
+        return
+    else:
+        twit = twits[0]
+        fotolar = twit['entries']['photos']
+        sonuc = []
+        if len(fotolar) >= 1:
+            i = 0
+            while i < len(fotolar):
+                with open(f"{hesap}-{i}.jpg", 'wb') as load:
+                    load.write(get(fotolar[i]).content)
+                sonuc.append(f"{hesap}-{i}.jpg")
+                i += 1
+            await event.client.send_file(event.chat_id, sonuc, caption=f"**{hesap}**\n{twit['time']}\n\n`{twit['text']}`\n\n💬{twit['replies']} 🔁{twit['retweets']} ❤️{twit['likes']}")
+            await event.delete()
+            return
+        await event.edit(f"**{hesap}**\n{twit['time']}\n\n`{twit['text']}`\n\n💬{twit['replies']} 🔁{twit['retweets']} ❤️{twit['likes']}")
+        return
+        
 @register(outgoing=True, pattern="^.ekşi(?: |$)(.*)")
 async def eksi(event):
     cmd = event.pattern_match.group(1)
@@ -70,7 +129,7 @@ async def eksi(event):
     else:
         await event.edit(f"`Entryler getiriliyor...`")
 
-        eksi = get("http://67.158.54.51/eksiphp/eksi.php?a=a&b=" + cmd).json()
+        eksi = get("https://api.quiec.tech/eksi.php?a=a&b=" + cmd).json()
         entry = ""
         giri = ""
 
@@ -125,41 +184,6 @@ async def port_song(event):
     await event.edit("`Şarkı aranıyor ve indiriliyor lütfen bekleyin!`")  
     dosya = os.getcwd() 
     os.system(f"spotdl --song {cmd} -f {dosya}")
-    await event.edit("`İndirme işlemi başarılı lütfen bekleyiniz.`")    
-
-    l = glob.glob("*.mp3")
-    if l[0]:
-        await event.edit("Şarkı yükleniyor!")
-        await event.client.send_file(
-            event.chat_id,
-            l[0],
-            force_document=True,
-            allow_cache=False,
-            reply_to=reply_to_id
-        )
-        await event.delete()
-    else:
-        await event.edit("`Aradığınız şarkı bulunamadı! Üzgünüm.`")   
-        return 
-    os.system("rm -rf *.mp3")
-    subprocess.check_output("rm -rf *.mp3",shell=True)
-
-@register(outgoing=True, pattern="^.song2(?: |$)(.*)")
-async def port_songiki(event):
-    if event.fwd_from:
-        return
-    
-    cmd = event.pattern_match.group(1)
-    if len(cmd) < 1:
-        await event.edit("`Kullanım: .song2 şarkı ismi`") 
-
-    reply_to_id = event.message.id
-    if event.reply_to_msg_id:
-        reply_to_id = event.reply_to_msg_id
-        
-    await event.edit("`Şarkı aranıyor ve indiriliyor lütfen bekleyin!`")  
-    dosya = os.getcwd() 
-    os.system(f"instantmusic -q -s {cmd}")
     await event.edit("`İndirme işlemi başarılı lütfen bekleyiniz.`")    
 
     l = glob.glob("*.mp3")
@@ -238,7 +262,7 @@ async def karbon(e):
     with open("@AsenaUserBot-Karbon.jpg", 'wb') as f:
         f.write(r.content)    
 
-    await e.client.send_file(e.chat.id, file="@AsenaUserBot-Karbon.jpg", force_document=True, caption="[AsenaUserBot](https://t.me/asenauserbot) ile oluşturuldu.")
+    await e.client.send_file(e.chat_id, file="@AsenaUserBot-Karbon.jpg", force_document=True, caption="[AsenaUserBot](https://t.me/asenauserbot) ile oluşturuldu.")
     await e.delete()
 
 @register(outgoing=True, pattern="^.crblang (.*)")

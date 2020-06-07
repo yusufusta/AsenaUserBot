@@ -10,14 +10,12 @@
 import importlib
 from importlib import import_module
 from sqlite3 import connect
-from sys import argv
 import os
 import requests
 from telethon.tl.types import InputMessagesFilterDocument
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
-import base64
 import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
 import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
 from pySmartDL import SmartDL
@@ -87,14 +85,13 @@ try:
         bot.disconnect()
 
     # Galeri için değerler
-
     GALERI = {}
 
     # PLUGIN MESAJLARI AYARLIYORUZ
     PLUGIN_MESAJLAR = {}
-    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": str(choice(AFKSTR)), "kickme": "Güle Güle ben gidiyorum 🤠", "pm": UNAPPROVED_MSG, "dızcı": str(choice(DIZCILIK_STR))}
+    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": str(choice(AFKSTR)), "kickme": "Güle Güle ben gidiyorum 🤠", "pm": UNAPPROVED_MSG, "dızcı": str(choice(DIZCILIK_STR)), "ban": "yasaklandı!", "mute": "sessize alındı!"}
 
-    PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm", "dızcı"]
+    PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm", "dızcı", "ban", "mute"]
     for mesaj in PLUGIN_MESAJLAR_TURLER:
         dmsj = MSJ_SQL.getir_mesaj(mesaj)
         if dmsj == False:
@@ -116,8 +113,11 @@ try:
             if DOGRU == 0:
                 break
             dosyaa = plugin.file.name
-            if not os.path.exists(os.getcwd() + "/userbot/modules/" + dosyaa):
-                dosya = bot.download_media(plugin, os.getcwd() + "/userbot/modules/")
+            dosyaismi = plugin.file.name.split(".")[1]
+            if not dosyaismi == "py":
+                continue
+            if not os.path.exists("./userbot/modules/" + dosyaa):
+                dosya = bot.download_media(plugin, "./userbot/modules/")
             else:
                 print("Bu Plugin Zaten Yüklü " + dosyaa)
                 dosya = dosyaa
@@ -129,15 +129,14 @@ try:
                 spec.loader.exec_module(mod)
             except Exception as e:
                 bot.send_message(KanalId, f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
-                plugin.delete()
 
-                if os.path.exists("/userbot/modules/" + dosya):
-                  os.remove(os.getcwd() + "/userbot/modules/" + dosya)
+                if os.path.exists("./userbot/modules/" + dosya):
+                  os.remove("./userbot/modules/" + dosya)
                 continue
             
             ndosya = dosyaa.replace(".py", "")
             CMD_HELP[ndosya] = "Bu Plugin Dışarıdan Yüklenmiştir"
-            bot.send_message(KanalId, f"`Plugin Yüklendi\nDosya: {dosya}`")
+            bot.send_message(KanalId, f"`Plugin Yüklendi\nDosya: {dosyaa}`")
         if KanalId != "me":
             bot.send_message(KanalId, f"`Pluginler Yüklendi`")
     else:

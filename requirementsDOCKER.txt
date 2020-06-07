@@ -52,3 +52,4 @@ zalgo_text>=0.6
 spotify_token
 PyLyrics
 pythonping
+twitter_scraper

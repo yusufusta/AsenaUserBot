@@ -24,7 +24,8 @@ from cowpy import cow
 from userbot import CMD_HELP, ZALG_LIST
 from userbot.events import register
 from userbot.modules.admin import get_user_from_event
-
+from PIL import Image
+import math
 # ================= CONSTANT =================
 EMOJIS = [
     "😂",

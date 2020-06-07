@@ -110,6 +110,11 @@
       "description": "PM Otomatik Yasaklama Özelliği. 'Hey! Bu bir bot.' modülüdür.",
       "value": "False"
     },
+    "PM_AUTO_BAN_LIMIT": {
+      "description": "PM Auto Ban limiti. Size kullanıcı x mesaj atarsa engellencek.",
+      "value": "4",
+      "required": false
+    },
     "YOUTUBE_API_KEY": {
       "description": ".yt komutu için YouTube Veri API'sı keyidir. https://console.cloud.google.com adresinden alın.",
       "required": false
@@ -202,7 +207,6 @@
       "value": "60",
       "required": false
     }
-
   },
   "addons": [{
     "plan": "heroku-postgresql",

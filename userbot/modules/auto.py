@@ -16,7 +16,7 @@ import time
 from telethon.tl import functions
 from telethon.tl.types import InputMessagesFilterDocument
 
-from userbot import CMD_HELP, AUTO_PP, ASYNC_POOL
+from userbot import CMD_HELP, ASYNC_POOL
 from userbot.events import register
 
 @register(outgoing=True, pattern="^.auto ?(.*)")
