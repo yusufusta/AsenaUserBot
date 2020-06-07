@@ -23,6 +23,7 @@ def is_gbanned (sid):
         return sonuc.sender
     except:
         return False
+
 def gbanlist():
     try:
         return SESSION.query(GBan).all()
@@ -33,9 +34,12 @@ def gbanlist():
 
 
 def gban(sender):
-    adder = GBan(str(sender))
-    SESSION.add(adder)
-    SESSION.commit()
+    try:
+        adder = GBan(str(sender))
+        SESSION.add(adder)
+        SESSION.commit()
+    except:
+        return False
 
 
 def ungban(sender):

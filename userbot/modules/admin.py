@@ -139,7 +139,7 @@ async def gbanmsg(moot):
     if not admin and not creator:
         return
 
-    gbanned = is_gbanned(moot.sender_id) 
+    gbanned = is_gbanned(str(moot.sender_id))
     if gbanned == str(moot.sender_id):
         await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id, BANNED_RIGHTS))
         await moot.reply("```Sen kötü birisisin! Daha fazla seni burda tutmuyacağım. Bays!```")
