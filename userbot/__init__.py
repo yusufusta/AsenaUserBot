@@ -172,7 +172,7 @@ TZ_NUMBER = int(os.environ.get("TZ_NUMBER", 1))
 CLEAN_WELCOME = sb(os.environ.get("CLEAN_WELCOME", "True"))
 
 # Last.fm Modülü
-BIO_PREFIX = os.environ.get("BIO_PREFIX", None)
+BIO_PREFIX = os.environ.get("BIO_PREFIX", "@AsenaUserBot | ")
 DEFAULT_BIO = os.environ.get("DEFAULT_BIO", None)
 
 LASTFM_API = os.environ.get("LASTFM_API", None)
@@ -204,6 +204,9 @@ BOT_USERNAME = os.environ.get("BOT_USERNAME", None)
 GENIUS = os.environ.get("GENIUS", None)
 CMD_HELP = {}
 PM_AUTO_BAN_LIMIT = int(os.environ.get("PM_AUTO_BAN_LIMIT", 4))
+
+SPOTIFY_DC = os.environ.get("SPOTIFY_DC", None)
+SPOTIFY_KEY = os.environ.get("SPOTIFY_KEY", None)
 
 # CloudMail.ru ve MEGA.nz ayarlama
 if not os.path.exists('bin'):

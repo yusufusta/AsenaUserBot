@@ -10,8 +10,9 @@ import os
 from telethon.tl.types import DocumentAttributeFilename, InputMessagesFilterDocument
 import importlib
 import time
+import traceback
 
-from userbot import CMD_HELP, PLUGIN_CHANNEL_ID
+from userbot import CMD_HELP, bot, tgbot, PLUGIN_CHANNEL_ID
 from userbot.events import register
 
 
@@ -174,8 +175,11 @@ async def premove(event):
 
     await event.edit("`Plugin Siliniyor...`")
     i = 0
+    a = 0
     async for message in event.client.iter_messages(PLUGIN_CHANNEL_ID, search=modul):
         await message.delete()
+        os.remove(f"./userbot/modules/{message.file.name}")
+
         i += 1
 
         if i > 1:

@@ -18,6 +18,7 @@ from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
 import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
+from pySmartDL import SmartDL
 from telethon.tl import functions
 
 from random import choice
@@ -112,8 +113,14 @@ try:
             if DOGRU == 0:
                 break
             dosyaa = plugin.file.name
-            dosyaismi = plugin.file.name.split(".")[1]
-            if not dosyaismi == "py":
+            dosyaismi = plugin.file.name.split(".")
+
+            try:
+                ext = plugin.file.name.split(".")[1]
+            except:
+                continue
+
+            if not dosyaismi[1] == "py":
                 continue
             if not os.path.exists("./userbot/modules/" + dosyaa):
                 dosya = bot.download_media(plugin, "./userbot/modules/")
@@ -122,22 +129,19 @@ try:
                 dosya = dosyaa
                 break
             try:
-                spec = importlib.util.spec_from_file_location(dosya, dosya)
+                spec = importlib.util.spec_from_file_location("userbot.modules." + dosyaismi[0], dosya)
                 mod = importlib.util.module_from_spec(spec)
 
                 spec.loader.exec_module(mod)
             except Exception as e:
                 bot.send_message(KanalId, f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
 
-                if os.path.exists("./userbot/modules/" + dosya):
-                  os.remove("./userbot/modules/" + dosya)
+                if os.path.exists("./userbot/modules/" + dosyaa):
+                    os.remove("./userbot/modules/" + dosyaa)
                 continue
             
-            ndosya = dosyaa.replace(".py", "")
+            ndosya = dosyaismi[0]
             CMD_HELP[ndosya] = "Bu Plugin Dışarıdan Yüklenmiştir"
-            bot.send_message(KanalId, f"`Plugin Yüklendi\nDosya: {dosyaa}`")
-        if KanalId != "me":
-            bot.send_message(KanalId, f"`Pluginler Yüklendi`")
     else:
         bot.send_message("me", f"`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
 
@@ -165,7 +169,7 @@ for module_name in ALL_MODULES:
 
 LOGS.info("Botunuz çalışıyor! Herhangi bir sohbete .alive yazarak Test edin."
           " Yardıma ihtiyacınız varsa, Destek grubumuza gelin t.me/AsenaSupport")
-LOGS.info("Bot sürümünüz Asena v1.5")
+LOGS.info("Bot sürümünüz Asena v1.7")
 
 """
 if len(argv) not in (1, 3, 4):

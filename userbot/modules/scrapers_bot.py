@@ -6,14 +6,17 @@
 
 # Asena UserBot - Yusuf Usta
 
+import datetime
 from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
+from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from userbot.events import register
 from userbot import bot, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from time import sleep
 import os
 from telethon.tl.types import MessageMediaPhoto
 import asyncio
+from userbot.modules.admin import get_user_from_event
 
 def is_message_image(message):
     if message.media:
@@ -237,8 +240,44 @@ async def creation(event):
         else:
             await event.edit(f"**Rapor hazır: **`{response.text.replace('**','')}`")
 
+
+@register(outgoing=True, pattern="^.ocr2")
+async def ocriki(event):
+    if event.fwd_from:
+        return 
+    if not event.reply_to_msg_id:
+       await event.edit("`Lütfen bir mesaja yanıt verin.`")
+       return
+    reply_message = await event.get_reply_message() 
+    if not reply_message.media:
+       await event.edit("`Lütfen bir dosyaya yanıt verin.`")
+       return
+    chat = "@bacakubot"
+    sender = reply_message.sender
+    if reply_message.sender.bot:
+       await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
+       return
+    await event.edit("`Okuyorum... A B C...`")
+    async with event.client.conversation(chat) as conv:
+        try:     
+            await event.client.forward_messages(chat, reply_message)
+        except YouBlockedUserError:
+            await event.reply(f"`Mmmh sanırım` {chat} `engellemişsin. Lütfen engeli aç.`")
+            return
+      
+        response = conv.wait_event(events.NewMessage(incoming=True,from_users=834289439))
+        response = await response
+        if response.text.startswith("Please try my other cool bot:"):
+            response = conv.wait_event(events.NewMessage(incoming=True,from_users=834289439))
+            response = await response
+
+        if response.text == "":
+            await event.edit("`Kesinlikle bir şeyler oldu. Okuyamadım.`")
+        else:
+            await event.edit(f"**Bir şeyler okudum: **`{response.text}`")
+
 @register(outgoing=True, pattern="^.voicy")
-async def _(event):
+async def voicy(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:

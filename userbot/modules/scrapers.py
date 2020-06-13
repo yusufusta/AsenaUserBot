@@ -22,6 +22,7 @@ from re import findall
 from selenium import webdriver
 from urllib.parse import quote_plus
 from urllib.error import HTTPError
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
@@ -43,13 +44,18 @@ from asyncio import sleep
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, YOUTUBE_API_KEY, CHROME_DRIVER, GOOGLE_CHROME_BIN
 from userbot.events import register
 from telethon.tl.types import DocumentAttributeAudio
-from userbot.modules.upload_download import progress
-from userbot.google_images_download import googleimagesdownload
+from userbot.modules.upload_download import progress, humanbytes, time_formatter
+from google_images_download import google_images_download
 
 CARBONLANG = "auto"
 TTS_LANG = "tr"
 TRT_LANG = "tr"
+
+
+from telethon import events
 import subprocess
+from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotModifiedError
+import io
 import glob
 
 @register(pattern="^.twit ?(.*)", outgoing=True)
@@ -370,22 +376,20 @@ async def img_sampler(event):
         query = query.replace("lim=" + lim[0], "")
     except IndexError:
         lim = 5
-    response = googleimagesdownload()
 
-    # creating list of arguments
-    arguments = {
-        "keywords": query,
-        "limit": lim,
-        "format": "jpg",
-        "no_directory": "no_directory"
-    }
+    URL = "https://www.google.com.tr/search?q=%s&source=lnms&tbm=isch" % query
+    page = get(URL)
 
-    # passing the arguments to the function
-    paths = response.download(arguments)
-    lst = paths[0][query]
-    await event.client.send_file(
-        await event.client.get_input_entity(event.chat_id), lst)
-    shutil.rmtree(os.path.dirname(os.path.abspath(lst[0])))
+    soup = BeautifulSoup(page.content, 'html.parser')
+    imgclass = soup.find_all("img", {"class": "t0fcAb"})
+    i = 0
+    resimler = []
+    while i < lim:
+        resimler.append(imgclass[i]['src'])
+        i += 1
+
+    print(resimler)
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), file=resimler, force_document=True)
     await event.delete()
 
 

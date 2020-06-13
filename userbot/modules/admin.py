@@ -14,20 +14,21 @@ Grup yönetmenize yardımcı olacak UserBot modülü
 from asyncio import sleep
 from os import remove
 
-from telethon.errors import (ChatAdminRequiredError,
+from telethon.errors import (BadRequestError, ChatAdminRequiredError,
                              ImageProcessFailedError, PhotoCropSizeSmallError,
                              UserAdminInvalidError)
-from telethon.errors.rpcerrorlist import (MessageTooLongError)
+from telethon.errors.rpcerrorlist import (UserIdInvalidError,
+                                          MessageTooLongError)
 from telethon.tl.functions.channels import (EditAdminRequest,
                                             EditBannedRequest,
                                             EditPhotoRequest)
 from telethon.tl.functions.messages import UpdatePinnedMessageRequest
-from telethon.tl.types import (ChannelParticipantsAdmins,
+from telethon.tl.types import (PeerChannel, ChannelParticipantsAdmins,
                                ChatAdminRights, ChatBannedRights,
                                MessageEntityMentionName, MessageMediaPhoto,
-                               ChannelParticipantsBots, User)
-
-from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, WARN_MODE, WARN_LIMIT
+                               ChannelParticipantsBots, User, InputPeerChat)
+from telethon.events import ChatAction
+from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, bot, WARN_MODE, WARN_LIMIT
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 # =================== CONSTANT ===================
@@ -139,9 +140,12 @@ async def gbanmsg(moot):
 
     gbanned = is_gbanned(str(moot.sender_id))
     if gbanned == str(moot.sender_id):
+        print(moot.chat_id)
         try:
-            await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id, BANNED_RIGHTS))
-        except:
+            cet = InputPeerChat(moot.chat_id)
+            await moot.client.edit_permissions(cet, moot.sender_id)
+        except Exception as e:
+            print(e)
             return
         await moot.reply("```Sen kötü birisisin! Daha fazla seni burda tutmuyacağım. Bays!```")
 
@@ -331,6 +335,7 @@ async def ban(bon):
     chat = await bon.get_chat()
     admin = chat.admin_rights
     creator = chat.creator
+    import datetime
 
     if not admin and not creator:
         await bon.edit(NO_ADMIN)
@@ -369,10 +374,12 @@ async def ban(bon):
         return
     # Mesajı silin ve ardından komutun
     # incelikle yapıldığını söyleyin
+    BANLAYAN = await bot.get_me()
+    SONMESAJ = PLUGIN_MESAJLAR['ban'].replace("$username", f"@{user.username}" if user.username else "[{}](tg://user?id={})".format(user.first_name, user.id)).replace("$id", "`" + str(user.id) + "`").replace("$date", datetime.datetime.strftime(datetime.datetime.now(), '%c')).replace("$from", f"@{BANLAYAN.username}" if BANLAYAN.username else "[{}](tg://user?id={})".format(BANLAYAN.first_name, BANLAYAN.id))
     if reason:
-        await bon.edit(f"`{str(user.id)}` {PLUGIN_MESAJLAR['ban']}\nNedeni: {reason}")
+        await bon.edit(f"{SONMESAJ}\nNedeni: {reason}")
     else:
-        await bon.edit(f"`{str(user.id)}` {PLUGIN_MESAJLAR['ban']}")
+        await bon.edit(f"{SONMESAJ}")
     # Yasaklama işlemini günlüğe belirtelim
     if BOTLOG:
         await bon.client.send_message(
@@ -477,10 +484,14 @@ async def spider(spdr):
 
 async def mutmsg(spdr, user, reason):
     # Fonksiyonun yapıldığını duyurun
+    import datetime
+
+    BANLAYAN = await bot.get_me()
+    SONMESAJ = PLUGIN_MESAJLAR['mute'].replace("$username", f"@{user.username}" if user.username else "[{}](tg://user?id={})".format(user.first_name, user.id)).replace("$id", "`" + str(user.id) + "`").replace("$date", datetime.datetime.strftime(datetime.datetime.now(), '%c')).replace("$from", f"@{BANLAYAN.username}" if BANLAYAN.username else "[{}](tg://user?id={})".format(BANLAYAN.first_name, BANLAYAN.id))
     if reason:
-        await spdr.edit(f"`{PLUGIN_MESAJLAR['mute']}`\nNedeni: {reason}")
+        await spdr.edit(f"{SONMESAJ}\nNedeni: {reason}")
     else:
-        await spdr.edit(f"`{PLUGIN_MESAJLAR['mute']}`")
+        await spdr.edit(f"{SONMESAJ}")
 
     # Susturma işlemini günlüğe belirtelim
     if BOTLOG:
