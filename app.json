@@ -27,6 +27,14 @@
       "description": "İsteğe bağlıdır, almak için @AsenaKaliciPlugin",
       "required": false
     },
+    "SPOTIFY_DC": {
+      "description": "Spotify bio için gerekli olan anahtar",
+      "required": false
+    },
+    "SPOTIFY_KEY": {
+      "description": "Spotify bio için gerekli olan anahtar",
+      "required": false
+    },
     "STRING_SESSION": {
       "description": "python3 GenerateStringSession.py dosyasını yerel olarak çalıştırarak bu değeri alın.",
       "required": true
