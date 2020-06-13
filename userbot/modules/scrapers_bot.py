@@ -6,17 +6,14 @@
 
 # Asena UserBot - Yusuf Usta
 
-import datetime
 from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
-from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from userbot.events import register
 from userbot import bot, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from time import sleep
 import os
 from telethon.tl.types import MessageMediaPhoto
 import asyncio
-from userbot.modules.admin import get_user_from_event
 
 def is_message_image(message):
     if message.media:

@@ -13,7 +13,6 @@
 import os
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
-from pySmartDL import SmartDL
 from telethon.tl import functions
 from telethon.tl.types import InputMessagesFilterDocument
 from userbot import CMD_HELP, AUTO_PP, ASYNC_POOL
