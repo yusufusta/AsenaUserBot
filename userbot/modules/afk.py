@@ -9,7 +9,7 @@
 
 """ AFK ile ilgili komutları içeren UserBot modülü """
 
-from random import choice, randint
+from random import randint
 from asyncio import sleep
 
 from telethon.events import StopPropagation

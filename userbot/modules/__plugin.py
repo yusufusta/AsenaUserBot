@@ -11,7 +11,7 @@ from telethon.tl.types import DocumentAttributeFilename, InputMessagesFilterDocu
 import importlib
 import time
 
-from userbot import CMD_HELP, bot, tgbot, PLUGIN_CHANNEL_ID
+from userbot import CMD_HELP, PLUGIN_CHANNEL_ID
 from userbot.events import register
 
 

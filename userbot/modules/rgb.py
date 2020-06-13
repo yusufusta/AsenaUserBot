@@ -17,7 +17,7 @@ import textwrap
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 from telethon.tl.types import InputMessagesFilterDocument
 from userbot.events import register 
-from userbot import CMD_HELP, bot
+from userbot import CMD_HELP
 
 @register(outgoing=True, pattern="^.rgb(?: |$)(.*)")
 async def sticklet(event):

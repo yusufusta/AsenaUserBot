@@ -1,13 +1,8 @@
-from asyncio import sleep
-from os import remove
-from telethon import events
-import asyncio
-from telethon.errors import (ChannelInvalidError, ChannelPrivateError, ChannelPublicGroupNaError, InviteHashEmptyError, InviteHashExpiredError, InviteHashInvalidError)
+from telethon.errors import (ChannelInvalidError, ChannelPrivateError, ChannelPublicGroupNaError)
 from emoji import emojize
 from telethon.tl.types import MessageActionChannelMigrateFrom, ChannelParticipantsAdmins
-from telethon.tl.functions.messages import GetHistoryRequest, CheckChatInviteRequest, GetFullChatRequest
+from telethon.tl.functions.messages import GetHistoryRequest, GetFullChatRequest
 from userbot.events import register
-from telethon.events import ChatAction
 from datetime import datetime
 from math import sqrt
 from telethon.tl.functions.channels import GetFullChannelRequest, GetParticipantsRequest
