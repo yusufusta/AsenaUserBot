@@ -140,7 +140,7 @@ async def pins(event):
         spec.loader.exec_module(mod)
     except Exception as e:
         await event.edit(f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
-        os.remove(os.getcwd() + "/userbot/modules/" + dosya)
+        os.remove("./userbot/modules/" + dosya)
         return
 
     dosy = open(dosya, "r").read()
