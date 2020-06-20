@@ -152,8 +152,8 @@ async def upstream(ups):
             )
             repo.__del__()
             return
-        await ups.edit('`[HEROKU MEMEZ]\
-                        \nUserBot Heroku dynosuna aktarılıyor, lütfen bekle...`'
+        await ups.edit('`[GÜNCELLEME]\
+                        \nUserBot\'unuz daha iyi olacağınıza emin olabilirsiniz :) Bu işlem maksimum 10 dakika sürmektedir.`'
                        )
         ups_rem.fetch(ac_br)
         repo.git.reset("--hard", "FETCH_HEAD")
