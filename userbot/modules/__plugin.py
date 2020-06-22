@@ -183,12 +183,14 @@ async def premove(event):
     await event.edit("`Plugin Siliniyor...`")
     i = 0
     a = 0
-    async for message in event.client.iter_messages(PLUGIN_CHANNEL_ID, search=modul):
+    async for message in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument, search=modul):
         await message.delete()
-        os.remove(f"./userbot/modules/{message.file.name}")
+        try:
+            os.remove(f"./userbot/modules/{message.file.name}")
+        except FileNotFoundError:
+            await event.reply("`Plugin dosyası zaten silinmiş.`")
 
         i += 1
-
         if i > 1:
             break
 
