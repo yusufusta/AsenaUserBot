@@ -27,7 +27,7 @@ async def degistir(event):
     try:
         import userbot.modules.sql_helper.galeri_sql as sql
     except:
-        event.edit("`SQL dışı mod'ta galeri çalışmaz!`")
+        await event.edit("`SQL dışı mod'ta galeri çalışmaz!`")
     secenek = event.pattern_match.group(1)
     secen = secenek.split(" ")
     if secen[0] == "ekle":

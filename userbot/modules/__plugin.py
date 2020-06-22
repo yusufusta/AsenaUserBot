@@ -110,7 +110,10 @@ async def plist(event):
         await event.edit("`Pluginler getiriliyor...`")
         yuklenen = "**İşte Yüklenen Pluginler:**\n\n"
         async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
-            dosyaismi = plugin.file.name.split(".")[1]
+            try:
+                dosyaismi = plugin.file.name.split(".")[1]
+            except:
+                continue
             if dosyaismi == "py":
                 yuklenen += f"▶️ {plugin.file.name}\n"
         await event.edit(yuklenen)

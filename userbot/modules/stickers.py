@@ -112,7 +112,7 @@ async def dizla(args):
                 while "120" in x.text:
                     pack += 1
                     packname = f"a{user.id}_by_{user.username}_{pack}"
-                    packnick = f"@{user.username}'s UserBot pack {pack}"
+                    packnick = f"@{user.username}'s @AsenaUserBot pack {pack}"
                     await args.edit("`Yetersiz paket alanından dolayı " + str(pack) +
                                     " numaralı pakete geçiliyor`")
                     await conv.send_message(packname)

@@ -58,6 +58,43 @@ from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotMo
 import io
 import glob
 
+@register(pattern="^.reddit ?(.*)", outgoing=True)
+async def reddit(event):
+    sub = event.pattern_match.group(1)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36 Avast/77.2.2153.120',
+    }       
+
+    if len(sub) < 1:
+        await event.edit("`Lütfen bir Subreddit hesabı belirtin. Örnek: ``.reddit kopyamakarna`")
+        return
+
+    kaynak = get(f"https://www.reddit.com/r/{sub}/hot.json?limit=1", headers=headers).json()
+
+    if not "kind" in kaynak:
+        if kaynak["error"] == 404:
+            await event.edit("`Böyle bir Subreddit bulunamadı.`")
+        elif kaynak["error"] == 429:
+            await event.edit("`Reddit yavaşlaman için uyarıyor.`")
+        else:
+            await event.edit("`Bir şeyler oldu ama... Neden oldu bilmiyorum.`")
+        return
+    else:
+        await event.edit("`Veriler getiriliyor...`")
+
+        veri = kaynak["data"]["children"][0]["data"]
+        mesaj = f"**{veri['title']}**\n⬆️{veri['score']}\n\nBy: __u/{veri['author']}__\n\n[Link](https://reddit.com{veri['permalink']})"
+        try:
+            resim = veri["url"]
+            with open(f"reddit.jpg", 'wb') as load:
+                load.write(get(resim).content)
+
+            await event.client.send_file(event.chat_id, "reddit.jpg", caption=mesaj)
+            os.remove("reddit.jpg")
+        except Exception as e:
+            print(e)
+            await event.edit(mesaj + "\n\n`" + veri["selftext"] + "`")
+
 @register(pattern="^.twit ?(.*)", outgoing=True)
 async def twit(event):
     hesap = event.pattern_match.group(1)
@@ -167,82 +204,6 @@ async def haber(event):
         i += 1
 
     await event.edit(f"**Son Dakika Haberler {cmd.title()}**" + HABERLER)
-
-@register(outgoing=True, pattern="^.song(?: |$)(.*)")
-async def port_song(event):
-    if event.fwd_from:
-        return
-    
-    cmd = event.pattern_match.group(1)
-    if len(cmd) < 1:
-        await event.edit("`Kullanım: .song şarkı ismi/youtube url/spotify url`") 
-
-    reply_to_id = event.message.id
-    if event.reply_to_msg_id:
-        reply_to_id = event.reply_to_msg_id
-        
-    await event.edit("`Şarkı aranıyor ve indiriliyor lütfen bekleyin!`")  
-    dosya = os.getcwd() 
-    os.system(f"spotdl --song {cmd} -f {dosya}")
-    await event.edit("`İndirme işlemi başarılı lütfen bekleyiniz.`")    
-
-    l = glob.glob("*.mp3")
-    if l[0]:
-        await event.edit("Şarkı yükleniyor!")
-        await event.client.send_file(
-            event.chat_id,
-            l[0],
-            force_document=True,
-            allow_cache=False,
-            reply_to=reply_to_id
-        )
-        await event.delete()
-    else:
-        await event.edit("`Aradığınız şarkı bulunamadı! Üzgünüm.`")   
-        return 
-    os.system("rm -rf *.mp3")
-    subprocess.check_output("rm -rf *.mp3",shell=True)
-
-@register(outgoing=True, pattern="^.songpl ?(.*)")
-async def songpl(event):
-    if event.fwd_from:
-        return
-    DELAY_BETWEEN_EDITS = 0.3
-    PROCESS_RUN_TIME = 100
-    cmd = event.pattern_match.group(1)
-
-    if len(cmd) < 1:
-        await event.edit("Kullanım: .songpl spotify playlist url")    
-
-    reply_to_id = event.message.id
-    if event.reply_to_msg_id:
-        reply_to_id = event.reply_to_msg_id
-    await event.edit("`Playlist aranıyor ve indiriliyor lütfen bekleyin!`")
-    dosya = os.getcwd() + "/playlist/" + "pl.pl"
-    klasor = os.getcwd() + "/playlist/"
-    sonuc = os.system(f"spotdl --playlist {cmd} --write-to=\"{dosya}\"")
-    sonuc2 = os.system(f"spotdl --list {dosya} -f {klasor}")
-    await event.edit("`İndirme başarılı! Şimdi yükleniyor.`")
-    l = glob.glob(f"{klasor}/*.mp3")
-    i = 0
-    if l[0]:
-        while i < len(l):
-            await event.reply("Şarkı gönderiliyor! Şarkı: " + l[i])
-            await event.client.send_file(
-                event.chat_id,
-                l[i],
-                force_document=True,
-                allow_cache=False,
-                caption=cmd,
-                reply_to=reply_to_id
-            )
-    else:
-        await event.edit("`Aradığınız playlist bulunamadı! Üzgünüm.`")   
-        return 
-    os.system(f"rm -rf {klasor}/*.mp3")
-    subprocess.check_output(f"rm -rf {klasor}/*.mp3",shell=True)
-    os.system(f"rm -rf {klasor}/*.pl")
-    subprocess.check_output(f"rm -rf {klasor}/*.pl",shell=True)
 
 @register(outgoing=True, pattern="^.karbon ?(.*)")
 async def karbon(e):
@@ -963,12 +924,6 @@ CMD_HELP.update({
 })
 CMD_HELP.update({'yt': '.yt <metin>\
         \nKullanım: YouTube üzerinde bir arama yapar.'})
-CMD_HELP.update({'song': 
-    '.song2 <şarkı>\
-    .song <youtube/spotify/şarkı>\
-        \nKullanım: Şarkı indirir.\
-    .songpl <spotify playlist url>\
-        \nKullanım: Spotify playlist indirir.'})
 CMD_HELP.update(
     {"ekşi": ".ekşi <başlık>\nKullanım: Ekşi sözlükten veri çekin."})
 CMD_HELP.update(

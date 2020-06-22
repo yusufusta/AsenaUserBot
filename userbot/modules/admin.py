@@ -21,8 +21,8 @@ from telethon.errors.rpcerrorlist import (UserIdInvalidError,
                                           MessageTooLongError)
 from telethon.tl.functions.channels import (EditAdminRequest,
                                             EditBannedRequest,
-                                            EditPhotoRequest)
-from telethon.tl.functions.messages import UpdatePinnedMessageRequest
+                                            EditPhotoRequest, InviteToChannelRequest)
+from telethon.tl.functions.messages import (UpdatePinnedMessageRequest, AddChatUserRequest)
 from telethon.tl.types import (PeerChannel, ChannelParticipantsAdmins,
                                ChatAdminRights, ChatBannedRights,
                                MessageEntityMentionName, MessageMediaPhoto,
@@ -71,6 +71,38 @@ MUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=True)
 
 UNMUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=False)
 # ================================================
+@register(outgoing=True, pattern="^.ekle ?(.*)")
+async def ekle(event):
+    if event.fwd_from:
+        return
+    to_add_users = event.pattern_match.group(1)
+    if event.is_private:
+        await event.edit("`Ekle komutu kullanıcıları sohbete ekler, özel mesaja değil!`")
+    else:
+        if not event.is_channel and event.is_group:
+            # https://lonamiwebs.github.io/Telethon/methods/messages/add_chat_user.html
+            for user_id in to_add_users.split(" "):
+                try:
+                    await event.client(AddChatUserRequest(
+                        chat_id=event.chat_id,
+                        user_id=user_id,
+                        fwd_limit=1000000
+                    ))
+                except Exception as e:
+                    await event.reply(str(e))
+            await event.edit("`Başarıyla eklendi`")
+        else:
+            # https://lonamiwebs.github.io/Telethon/methods/channels/invite_to_channel.html
+            for user_id in to_add_users.split(" "):
+                try:
+                    await event.client(InviteToChannelRequest(
+                        channel=event.chat_id,
+                        users=[user_id]
+                    ))
+                except Exception as e:
+                    await event.reply(str(e))
+            await event.edit("`Başarıyla eklendi`")
+
 @register(outgoing=True, pattern="^.gban(?: |$)(.*)")
 async def gbanspider(gspdr):
     """ .gban komutu belirlenen kişiyi küresel olarak yasaklar """

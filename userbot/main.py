@@ -127,14 +127,15 @@ try:
             else:
                 print("Bu Plugin Zaten Yüklü " + dosyaa)
                 dosya = dosyaa
-                break
+                continue 
+            
             try:
                 spec = importlib.util.spec_from_file_location("userbot.modules." + dosyaismi[0], dosya)
                 mod = importlib.util.module_from_spec(spec)
 
                 spec.loader.exec_module(mod)
             except Exception as e:
-                bot.send_message(KanalId, f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
+                print(f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
 
                 if os.path.exists("./userbot/modules/" + dosyaa):
                     os.remove("./userbot/modules/" + dosyaa)

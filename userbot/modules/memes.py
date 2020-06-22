@@ -372,6 +372,32 @@ HIT = [
 ]
 
 # ===========================================
+
+@register(outgoing=True, pattern="^.hayvan ?(.*)")
+async def hayvan(e):
+    arg = e.pattern_match.group(1)
+    if arg == "kedi":
+        args = "cat"
+    elif arg == "köpek":
+        args = "dog"
+    elif arg == "kuş":
+        args = "birb"
+    elif arg == "kurt":
+        args = "fox"
+    elif arg == "panda":
+        args = "panda"
+    else:
+        arg = "kedi"
+        args = "cat"
+
+    foto = requests.get(f'https://some-random-api.ml/img/{args}').json()["link"]
+    await e.delete()
+    await e.client.send_message(
+        e.chat_id,
+        f"`Rastgele bir {arg} fotoğrafı`",
+        file=foto
+    )
+
 @register(outgoing=True, pattern="^.karar$")
 async def karar(e):
     msaj = ""
@@ -852,17 +878,17 @@ async def scam(event):
     ]
     input_str = event.pattern_match.group(1)
     args = input_str.split()
-    if len(args) is 0:
+    if len(args) == 0:
         scam_action = choice(options)
         scam_time = randint(30, 60)
-    elif len(args) is 1:
+    elif len(args) == 1:
         try:
             scam_action = str(args[0]).lower()
             scam_time = randint(30, 60)
         except ValueError:
             scam_action = choice(options)
             scam_time = int(args[0])
-    elif len(args) is 2:
+    elif len(args) == 2:
         scam_action = str(args[0]).lower()
         scam_time = int(args[1])
     else:
@@ -905,7 +931,9 @@ async def typewriter(typew):
 
 CMD_HELP.update({
     "memes":
-    ".cowsay\
+    ".hayvan kedi/köpek/panda/kuş/kurt\
+\nKullanım: Rastgele bir hayvan fotoğrafı atar.\
+.cowsay\
 \nKullanım: bir şeyler söyleyen inek.\
 \n\n:/\
 \nKullanım: Kendinizi kontrol edin ;)\
