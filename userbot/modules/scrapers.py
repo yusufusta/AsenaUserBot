@@ -58,6 +58,33 @@ from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotMo
 import io
 import glob
 
+@register(pattern="^.tts2 (.*)", outgoing=True)
+async def tts2(query):
+    textx = await query.get_reply_message()
+    mesj = query.pattern_match.group(1)
+    parca = mesj.split(" ")[0]
+    if parca == "kadın":
+        cins = "female"
+    else:
+        cins = "male"
+
+    message = mesj.replace(parca, "")
+    if message:
+        pass
+    elif textx:
+        message = textx.text
+    else:
+        await query.edit(
+            "`Yazıdan sese çevirmek için bir metin gir. Kullanım: .tts2 erkek/kadın merhaba`")
+        return
+
+    mp3 = get(f"https://texttospeech.responsivevoice.org/v1/text:synthesize?text={message}&lang={TTS_LANG}&engine=g3&name=&pitch=0.5&rate=0.5&volume=1&key=AsenaUserbot&gender={cins}").content
+    with open("h.mp3", "wb") as audio:
+        audio.write(mp3)
+    await query.client.send_file(query.chat_id, "h.mp3", voice_note=True)
+    os.remove("h.mp3")
+    await query.delete()
+
 @register(pattern="^.reddit ?(.*)", outgoing=True)
 async def reddit(event):
     sub = event.pattern_match.group(1)
@@ -915,7 +942,9 @@ CMD_HELP.update(
 CMD_HELP.update({
     'tts':
     '.tts <metin>\
-        \nKullanım: Metni sese dönüştürür.\n.lang tts komutuyla varsayılan dili ayarlayabilirsin. (Türkçe ayarlı geliyor merak etme.)'
+        \nKullanım: Metni sese dönüştürür.\n.lang tts komutuyla varsayılan dili ayarlayabilirsin. (Türkçe ayarlı geliyor merak etme.)\
+    .tts2 <cinsiyet> <metin>\
+        \nKullanım: Metni sese dönüştürür.\n.lang tts komutuyla varsayılan dili ayarlayabilirsin.'
 })
 CMD_HELP.update({
     'trt':

@@ -47,3 +47,4 @@ async def durums(event):
 **Her Şey Normal ✅**
     """)
 
+CMD_HELP["durum"] = ".durum\nKullanım: Eklenen Apiler ve sürümleri gösterir."
