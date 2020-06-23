@@ -36,7 +36,7 @@ async def netease(event):
                                        [msg.id, response.id, respond.id])
     await event.delete()
 
-@register(outgoing=True, pattern="^.sdd(?: |$)(.*)")
+@register(outgoing=True, pattern="^.deez(?: |$)(.*)")
 async def sddd(event):
     if event.fwd_from:
         return
@@ -64,7 +64,7 @@ async def sddd(event):
                                              [msg_start.id, response.id, r.id, msg.id, details.id, song.id])
           await event.delete()
 
-@register(outgoing=True, pattern="^.smd(?: |$)(.*)")
+@register(outgoing=True, pattern="^.spot(?: |$)(.*)")
 async def smdd(event):
     if event.fwd_from:
         return
