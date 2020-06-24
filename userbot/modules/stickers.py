@@ -84,7 +84,7 @@ async def dizla(args):
                 emoji = splat[1]
 
         packname = f"a{user.id}_by_{user.username}_{pack}"
-        packnick = f"@{user.username}'s UserBot pack {pack}"
+        packnick = f"@{user.username}'s @AsenaUserBot pack {pack}"
         cmd = '/newpack'
         file = io.BytesIO()
 
