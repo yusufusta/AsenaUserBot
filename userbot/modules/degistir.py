@@ -35,7 +35,7 @@ async def degistir(event):
             else:
                 await event.edit(f"**Plugin mesajı silinemedi.** Hata: `{silme}`")
         else:
-            await event.edit("**Bilinmeyen plugin.** Mesajını silebileceğiniz pluginler: `afk/alive/pm/kickme`")
+            await event.edit("**Bilinmeyen plugin.** Mesajını silebileceğiniz pluginler: `afk/alive/pm/kickme/dızcı/ban/mute`")
     elif len(plugin) < 1:
         await event.edit("**Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute`")
     elif type(mesaj) == str:
