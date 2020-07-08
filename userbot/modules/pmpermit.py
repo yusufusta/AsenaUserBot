@@ -185,7 +185,7 @@ async def approvepm(apprvpm):
         await apprvpm.edit("`Kullanıcı halihazırda PM gönderebiliyor olmalıdır.`")
         return
 
-    await apprvpm.edit(f"[{name0}](tg://user?id={uid}) `kişisi PM gönderebilir!`")
+    await apprvpm.edit(PLUGIN_MESAJLAR['approve'])
 
     async for message in apprvpm.client.iter_messages(apprvpm.chat_id,
                                                       from_user='me',
@@ -218,8 +218,7 @@ async def disapprovepm(disapprvpm):
         aname = await disapprvpm.client.get_entity(disapprvpm.chat_id)
         name0 = str(aname.first_name)
 
-    await disapprvpm.edit(
-        f"[{name0}](tg://user?id={disapprvpm.chat_id}) `kişisinin PM atma izni kaldırıldı.`")
+    await disapprvpm.edit(PLUGIN_MESAJLAR['disapprove'])
 
     if BOTLOG:
         await disapprvpm.client.send_message(
