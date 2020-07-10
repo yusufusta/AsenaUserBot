@@ -237,12 +237,12 @@ async def blockpm(block):
         aname = replied_user.id
         name0 = str(replied_user.first_name)
         await block.client(BlockRequest(replied_user.id))
-        await block.edit("`Engellendin!`")
+        await block.edit(PLUGIN_MESAJLAR['block'])
         uid = replied_user.id
     else:
         await block.client(BlockRequest(block.chat_id))
         aname = await block.client.get_entity(block.chat_id)
-        await block.edit("`Engellendin!`")
+        await block.edit(PLUGIN_MESAJLAR['block'])
         name0 = str(aname.first_name)
         uid = block.chat_id
 
