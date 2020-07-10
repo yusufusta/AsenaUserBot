@@ -46,3 +46,4 @@ wikipedia>=1.4.0
 coffeehouse
 spotify_token
 twitter_scraper
+chromedriver-autoinstaller
