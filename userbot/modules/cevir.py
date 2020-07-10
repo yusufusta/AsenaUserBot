@@ -52,7 +52,7 @@ async def cevir(event):
 
         rep_msg = await event.get_reply_message()
 
-        if not event.is_reply or not rep_msg.audio:
+        if not event.is_reply or not (rep_msg.voice or rep_msg.audio):
             await event.edit("`Lütfen bir Ses'e yanıt verin.`")
             return
 

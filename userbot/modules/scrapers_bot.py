@@ -328,32 +328,35 @@ async def quotly(event):
     await event.edit("`Alıntı yapılıyor...`")
 
     async with bot.conversation(chat, exclusive=False, replies_are_responses=True) as conv:
-          response = None
-          try:
-                sayi = event.pattern_match.group(1)
-                if len(sayi) == 1:
-                    i = 1
-                    mesajlar = [event.reply_to_msg_id]
-                    while i <= int(sayi):
-                        mesajlar.append(event.reply_to_msg_id + i)
-                        i += 1
-                    msg = await event.client.forward_messages(chat, mesajlar, from_peer=event.chat_id)
-                else:
-                    msg = await reply_message.forward_to(chat)
-                response = await conv.wait_event(events.NewMessage(incoming=True,from_users=1031952739))
-          except YouBlockedUserError: 
-                await event.edit("`Lütfen @QuotLyBot engelini kaldırın ve tekrar deneyin`")
-                return
+        response = None
+        try:
+            sayi = event.pattern_match.group(1)
+            if len(sayi) == 1:
+                i = 1
+                mesajlar = [event.reply_to_msg_id]
+                while i <= int(sayi):
+                    mesajlar.append(event.reply_to_msg_id + i)
+                    i += 1
+                msg = await event.client.forward_messages(chat, mesajlar, from_peer=event.chat_id)
+            else:
+                msg = await reply_message.forward_to(chat)
+            response = await conv.wait_event(events.NewMessage(incoming=True,from_users=1031952739), timeout=10)
+        except YouBlockedUserError: 
+            await event.edit("`Lütfen @QuotLyBot engelini kaldırın ve tekrar deneyin`")
+            return
+        except asyncio.exceptions.TimeoutError:
+            await event.edit("`Botdan cevap alamadım!`")
+            return
 
-          if not response:
-              await event.edit("`Botdan cevap alamadım!`")
-          elif response.text.startswith("Merhaba!"):
-             await event.edit("`Gizlilik ayarları yüzenden alıntı yapamadım`")
-          else: 
-             await event.delete()
-             await response.forward_to(event.chat_id)
-          await conv.mark_read()
-          await conv.cancel_all()
+        if not response:
+            await event.edit("`Botdan cevap alamadım!`")
+        elif response.text.startswith("Merhaba!"):
+            await event.edit("`Gizlilik ayarları yüzenden alıntı yapamadım`")
+        else: 
+            await event.delete()
+            await response.forward_to(event.chat_id)
+        await conv.mark_read()
+        await conv.cancel_all()
 CMD_HELP.update({
     "sangmata": 
     ".sangmata \
