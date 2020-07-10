@@ -22,6 +22,7 @@ from pySmartDL import SmartDL
 from telethon.tl import functions
 
 from random import choice
+import chromedriver_autoinstaller
 
 DIZCILIK_STR = [
     "Çıkartmayı dızlıyorum...",
@@ -84,14 +85,17 @@ try:
     if idim in asenabl:
         bot.disconnect()
 
+    # ChromeDriver'ı Ayarlayalım #
+    chromedriver_autoinstaller.install()
+    
     # Galeri için değerler
     GALERI = {}
 
     # PLUGIN MESAJLARI AYARLIYORUZ
     PLUGIN_MESAJLAR = {}
-    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": str(choice(AFKSTR)), "kickme": "Güle Güle ben gidiyorum 🤠", "pm": UNAPPROVED_MSG, "dızcı": str(choice(DIZCILIK_STR)), "ban": "yasaklandı!", "mute": "sessize alındı!", "approve": "Bana mesaj gönderebilirsin!", "disapprove": "Artık bana mesaj gönderemezsin!"}
+    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": f"`{str(choice(AFKSTR))}`", "kickme": "`Güle Güle ben gidiyorum `🤠", "pm": UNAPPROVED_MSG, "dızcı": str(choice(DIZCILIK_STR)), "ban": "`Yasaklandı!`", "mute": "`Sessize alındı!`", "approve": "`Bana mesaj gönderebilirsin!`", "disapprove": "`Artık bana mesaj gönderemezsin!`", "block": "`Engellendin!`"}
 
-    PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm", "dızcı", "ban", "mute", "approve", "disapprove"]
+    PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm", "dızcı", "ban", "mute", "approve", "disapprove", "block"]
     for mesaj in PLUGIN_MESAJLAR_TURLER:
         dmsj = MSJ_SQL.getir_mesaj(mesaj)
         if dmsj == False:
@@ -100,7 +104,7 @@ try:
             PLUGIN_MESAJLAR[mesaj] = dmsj
 
     if PLUGIN_CHANNEL_ID != None:
-        print("Pluginler Yükleniyor")
+        LOGS.info("Pluginler Yükleniyor")
         try:
             KanalId = bot.get_entity(PLUGIN_CHANNEL_ID)
             DOGRU = 1
@@ -125,7 +129,7 @@ try:
             if not os.path.exists("./userbot/modules/" + dosyaa):
                 dosya = bot.download_media(plugin, "./userbot/modules/")
             else:
-                print("Bu Plugin Zaten Yüklü " + dosyaa)
+                LOGS.info("Bu Plugin Zaten Yüklü " + dosyaa)
                 dosya = dosyaa
                 continue 
             
@@ -135,7 +139,7 @@ try:
 
                 spec.loader.exec_module(mod)
             except Exception as e:
-                print(f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
+                LOGS.info(f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
 
                 if os.path.exists("./userbot/modules/" + dosyaa):
                     os.remove("./userbot/modules/" + dosyaa)
@@ -170,7 +174,7 @@ for module_name in ALL_MODULES:
 
 LOGS.info("Botunuz çalışıyor! Herhangi bir sohbete .alive yazarak Test edin."
           " Yardıma ihtiyacınız varsa, Destek grubumuza gelin t.me/AsenaSupport")
-LOGS.info("Bot sürümünüz Asena v1.7")
+LOGS.info("Bot sürümünüz Asena v1.9")
 
 """
 if len(argv) not in (1, 3, 4):

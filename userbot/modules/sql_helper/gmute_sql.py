@@ -31,6 +31,14 @@ def gmute(sender):
     SESSION.add(adder)
     SESSION.commit()
 
+def gmutelist():
+    try:
+        return SESSION.query(GMute).all()
+    except BaseException:
+        return None
+    finally:
+        SESSION.close()
+
 
 def ungmute(sender):
     rem = SESSION.query(GMute).get((str(sender)))

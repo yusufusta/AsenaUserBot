@@ -26,7 +26,7 @@ async def durums(event):
     await event.edit(f"""
 **Python Sürümü:** `{python_version()}`
 **TeleThon Sürümü:** `{version.__version__}` 
-**Asena Sürümü:** `1.8`
+**Asena Sürümü:** `1.9`
 
 **Plugin Sayısı:** `{len(CMD_HELP)}`
 

@@ -23,13 +23,11 @@ async def capture(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--test-type")
-    chrome_options.binary_location = GOOGLE_CHROME_BIN
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
-                              options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     input_str = url.pattern_match.group(1)
     link_match = match(r'\bhttps?://.*\.\S+', input_str)
     if link_match:
@@ -71,5 +69,5 @@ CMD_HELP.update({
     "ss":
     ".ss <url>\
     \nKullanım: Belirtilen web sitesinden bir ekran görüntüsü alır ve gönderir.\
-    \nGeçerli bir site bağlantısı örneği: `https://devotag.com`"
+    \nGeçerli bir site bağlantısı örneği: `https://quiec.tech`"
 })

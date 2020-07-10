@@ -24,6 +24,9 @@ from urllib.parse import quote_plus
 from urllib.error import HTTPError
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
 from urbandict import define
@@ -46,7 +49,8 @@ from userbot.events import register
 from telethon.tl.types import DocumentAttributeAudio
 from userbot.modules.upload_download import progress, humanbytes, time_formatter
 from google_images_download import google_images_download
-
+import base64, binascii
+import random
 CARBONLANG = "auto"
 TTS_LANG = "tr"
 TRT_LANG = "tr"
@@ -279,15 +283,13 @@ async def carbon_api(e):
     url = CARBON.format(code=code, lang=CARBONLANG)
     chrome_options = Options()
     chrome_options.add_argument("--headless")
-    chrome_options.binary_location = GOOGLE_CHROME_BIN
     chrome_options.add_argument("--window-size=1920x1080")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-gpu")
     prefs = {'download.default_directory': './'}
     chrome_options.add_experimental_option('prefs', prefs)
-    driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
-                              options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     await e.edit("`İşleniyor...\nTamamlanma Oranı: 50%`")
     download_path = './'
@@ -335,21 +337,18 @@ async def ceviri(e):
         pcode = str(pcode[8:])
     elif textx:
         pcode = str(textx.message)  # Girilen metin, modüle aktarılıyor.
-    code = quote_plus(pcode)  # Çözülmüş url'ye dönüştürülüyor.
     url = "http://www.tamga.org/2016/01/web-tabanl-gokturkce-cevirici-e.html"
     chrome_options = Options()
     chrome_options.add_argument("--headless")
-    chrome_options.binary_location = GOOGLE_CHROME_BIN
     chrome_options.add_argument("--window-size=1920x1080")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-gpu")
-    driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
-                              options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
-    Latin = driver.find_element_by_name("Latin_Metin").send_keys(pcode)
+    driver.find_element_by_name("Latin_Metin").send_keys(pcode)
     Turk = driver.find_element_by_name("Göktürk_Metin").get_attribute("value")
-    e.edit(Turk)
+    await e.edit(f"**Çeviri: Türkçe -> KökTürkçe**\n\n**Verilen Metin:** `{pcode}`\n**Çıktı:** `{Turk}`")
 
 
 @register(outgoing=True, pattern="^.img (.*)")
@@ -375,8 +374,6 @@ async def img_sampler(event):
     while i < lim:
         resimler.append(imgclass[i]['src'])
         i += 1
-
-    print(resimler)
     await event.client.send_file(await event.client.get_input_entity(event.chat_id), file=resimler, force_document=True)
     await event.delete()
 

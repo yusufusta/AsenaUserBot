@@ -310,7 +310,7 @@ async def voicy(event):
             await event.edit(f"**Bir şeyler duydum: **`{response.text}`")
 
 @register(outgoing=True, pattern="^.q(?: |$)(.*)")
-async def _(event):
+async def quotly(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
@@ -330,13 +330,20 @@ async def _(event):
     async with bot.conversation(chat, exclusive=False, replies_are_responses=True) as conv:
           response = None
           try:
-              msg = await reply_message.forward_to(chat)
-              response = await conv.get_response(message=msg, timeout=5)
+                sayi = event.pattern_match.group(1)
+                if len(sayi) == 1:
+                    i = 1
+                    mesajlar = [event.reply_to_msg_id]
+                    while i <= int(sayi):
+                        mesajlar.append(event.reply_to_msg_id + i)
+                        i += 1
+                    msg = await event.client.forward_messages(chat, mesajlar, from_peer=event.chat_id)
+                else:
+                    msg = await reply_message.forward_to(chat)
+                response = await conv.wait_event(events.NewMessage(incoming=True,from_users=1031952739))
           except YouBlockedUserError: 
-              await event.edit("`Lütfen @QuotLyBot engelini kaldırın ve tekrar deneyin`")
-              return
-          except Exception as e:
-              print(e.__class__)
+                await event.edit("`Lütfen @QuotLyBot engelini kaldırın ve tekrar deneyin`")
+                return
 
           if not response:
               await event.edit("`Botdan cevap alamadım!`")
@@ -361,6 +368,6 @@ CMD_HELP.update({
     ".voicy \
     \nKullanım: Sesi yazıya çevirin.\n",
     "quotly": 
-    ".q \
+    ".q <sayı>\
     \nKullanım: Metninizi çıkartmaya dönüştürün.\n"
 })
