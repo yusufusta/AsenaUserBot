@@ -33,7 +33,7 @@ async def liste(event):
         await event.edit("`Küresel olarak yasaklanan kullanıcılar getiriliyor...`")
         mesaj = ""
         for user in gbanlist():
-            mesaj += f"**ID: **`{user.sender}`"
+            mesaj += f"**ID: **`{user.sender}`\n"
 
         if len(mesaj) > 4000:
             await event.edit("`Wow! Baya bir kişi yasaklamışsınız. Dosya olarak gönderiyorum...`")
@@ -51,7 +51,7 @@ async def liste(event):
         await event.edit("`Küresel olarak susturulan kullanıcılar getiriliyor...`")
         mesaj = ""
         for user in gmutelist():
-            mesaj += f"**ID: **`{user.sender}`"
+            mesaj += f"**ID: **`{user.sender}`\n"
 
         if len(mesaj) > 4000:
             await event.edit("`Wow! Baya bir kişi susturmuşsunuz. Dosya olarak gönderiyorum...`")
