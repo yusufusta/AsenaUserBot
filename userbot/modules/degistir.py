@@ -58,4 +58,4 @@ async def degistir(event):
             await event.edit("**Bilinmeyen plugin.** Değiştirebileceğiniz pluginler: `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
 
 CMD_HELP.update({'degistir': '.değiştir <modül> <mesaj>\
-        \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/blcok`'})
+        \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`'})

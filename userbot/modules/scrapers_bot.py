@@ -332,9 +332,10 @@ async def quotly(event):
         try:
             sayi = event.pattern_match.group(1)
             if len(sayi) == 1:
+                sayi = int(sayi)
                 i = 1
                 mesajlar = [event.reply_to_msg_id]
-                while i <= int(sayi):
+                while i < sayi:
                     mesajlar.append(event.reply_to_msg_id + i)
                     i += 1
                 msg = await event.client.forward_messages(chat, mesajlar, from_peer=event.chat_id)
@@ -344,10 +345,13 @@ async def quotly(event):
         except YouBlockedUserError: 
             await event.edit("`Lütfen @QuotLyBot engelini kaldırın ve tekrar deneyin`")
             return
-        except asyncio.exceptions.TimeoutError:
+        except asyncio.TimeoutError:
             await event.edit("`Botdan cevap alamadım!`")
             return
-
+        except ValueError:
+            await event.edit("`Sadece sayı girebilirsiniz! Örnek: ``.q 2`")
+            return
+            
         if not response:
             await event.edit("`Botdan cevap alamadım!`")
         elif response.text.startswith("Merhaba!"):

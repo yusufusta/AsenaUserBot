@@ -30,7 +30,11 @@ async def deezl(event):
             return
         sarkilar = await conv.wait_event(events.NewMessage(incoming=True,from_users=595898211))
         await event.client.send_read_acknowledge(conv.chat_id)
-        if sarkilar.buttons[0][0].text == "No results":
+        if sarkilar.audio:
+            await event.client.send_read_acknowledge(conv.chat_id)
+            await event.client.send_message(event.chat_id, f"@AsenaUserBot ile yüklendi.", file=sarkilar.message)
+            await event.delete()
+        elif sarkilar.buttons[0][0].text == "No results":
             await event.edit("`Aradığınız şarkı bulunamadı! Üzgünüm.`")
         else:
             await sarkilar.click(0)

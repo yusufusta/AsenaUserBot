@@ -59,14 +59,13 @@ async def cevir(event):
         await event.edit("`Efekt uygulanıyor...`")
         if efekt in EFEKTLER:
             indir = await rep_msg.download_media()
-            ses = await asyncio.create_subprocess_shell(
-                f"ffmpeg -i '{indir}' {KOMUT[efekt]} output.ogg")
+            ses = await asyncio.create_subprocess_shell(f"ffmpeg -i '{indir}' {KOMUT[efekt]} output.mp3")
             await ses.communicate()
-            await event.client.send_file(event.chat_id, "output.ogg", reply_to=rep_msg, caption="@AsenaUserBot `ile efekt uygulandı.`")
+            await event.client.send_file(event.chat_id, "output.mp3", reply_to=rep_msg, caption="@AsenaUserBot `ile efekt uygulandı.`")
             
             await event.delete()
             os.remove(indir)
-            os.remove("output.ogg")
+            os.remove("output.mp3")
         else:
             await event.edit("**Belirttiğiniz efekt bulunamadı! **`Kullanılabileceğiniz efektler: ``çocuk/robot/earrape/hızlı/parazit/yankı`")
     elif islem == "gif":

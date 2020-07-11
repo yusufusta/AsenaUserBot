@@ -26,6 +26,9 @@ async def filter_incoming_handler(handler):
                 await handler.edit("`Bot Non-SQL modunda çalışıyor!!`")
                 return
             name = handler.raw_text
+            if handler.chat_id == -1001420605284 or handler.chat_id == -1001363514260:
+                return
+
             filters = get_filters(handler.chat_id)
             if not filters:
                 return
@@ -49,6 +52,8 @@ async def genel_filter(handler):
                 from userbot.modules.sql_helper.filter_sql import get_filters
             except AttributeError:
                 await handler.edit("`Bot Non-SQL modunda çalışıyor!!`")
+                return
+            if handler.chat_id == -1001420605284 or handler.chat_id == -1001363514260:
                 return
             name = handler.raw_text
             filters = get_filters("GENEL")
