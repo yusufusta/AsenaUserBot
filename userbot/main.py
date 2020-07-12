@@ -86,7 +86,10 @@ try:
         bot.disconnect()
 
     # ChromeDriver'ı Ayarlayalım #
-    chromedriver_autoinstaller.install()
+    try:
+        chromedriver_autoinstaller.install()
+    except:
+        pass
     
     # Galeri için değerler
     GALERI = {}

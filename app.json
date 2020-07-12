@@ -217,10 +217,7 @@
     }
   },
   "addons": [{
-    "plan": "heroku-postgresql",
-    "options": {
-      "version": "9.5"
-    }
+    "plan": "heroku-postgresql"
   }],
   "buildpacks": [{
     "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
