@@ -19,12 +19,11 @@ GMute.__table__.create(checkfirst=True)
 
 def is_gmuted(sender_id):
     try:
-        return SESSION.query(GMute).all()
+        return SESSION.query(GMute).filter(GMute.sender == str(sender_id)).all()
     except BaseException:
         return None
     finally:
         SESSION.close()
-
 
 def gmute(sender):
     adder = GMute(str(sender))
