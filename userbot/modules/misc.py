@@ -175,7 +175,7 @@ CMD_HELP.update(
 CMD_HELP.update({
     'repo':
     '.repo\
-\nKullanım: Seden UserBot GitHub reposu'
+\nKullanım: Asena UserBot GitHub reposu'
 })
 
 CMD_HELP.update({

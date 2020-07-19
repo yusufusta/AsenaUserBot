@@ -77,9 +77,9 @@ async def upstream(ups):
         origin = repo.create_remote('upstream', off_repo)
         origin.fetch()
         force_update = True
-        repo.create_head('master', origin.refs.seden)
-        repo.heads.seden.set_tracking_branch(origin.refs.sql)
-        repo.heads.seden.checkout(True)
+        repo.create_head('master', origin.refs.asena)
+        repo.heads.asena.set_tracking_branch(origin.refs.sql)
+        repo.heads.asena.checkout(True)
 
     ac_br = repo.active_branch.name
     if ac_br != 'master':
@@ -87,7 +87,7 @@ async def upstream(ups):
             f'**[Güncelleyici]:**` Galiba Asena botunu modifiye ettin ve kendi branşını kullanıyorsun: ({ac_br}). '
             'Bu durum güncelleyicinin kafasını karıştırıyor,'
             'Güncelleme nereden çekilecek?'
-            'Lütfen seden botunu resmi repodan kullan.`')
+            'Lütfen asena botunu resmi repodan kullan.`')
         repo.__del__()
         return
 
@@ -182,6 +182,7 @@ async def upstream(ups):
         await ups.edit('`Güncelleme başarıyla tamamlandı!\n'
                        'Yeniden başlatılıyor...`')
         # Bot için Heroku üzerinde yeni bir instance oluşturalım.
+        args = [sys.executable, "-m", "pip", "install", "-r", 'requirements.txt']
         args = [sys.executable, "main.py"]
         execle(sys.executable, *args, environ)
         return
