@@ -96,13 +96,13 @@ async def genelfilter(event):
         return
     mesj = split_quotes(event.pattern_match.group(1))
 
-    if len(mesj) == 2:
+    if len(mesj) != 0:
         keyword = mesj[0]
-        string = mesj[1]
-    elif len(mesj) == 1:
-        await event.edit("`Lütfen filter'e yanıt olarak bir mesaj verin! Örnek: ``.genelfilter \"selamın aleyküm\" as` ya da `.filter sa as`")
-        return
-    elif len(mesj) == 0:
+        try:
+            string = mesj[1]
+        except IndexError:
+            string = ""
+    else:
         await event.edit("`Kullanım: ``.genelfilter \"selamın aleyküm\" as` ya da `.genelfilter sa as`")
         return
 
@@ -147,13 +147,13 @@ async def add_new_filter(new_handler):
         return
     mesj = split_quotes(new_handler.pattern_match.group(1))
 
-    if len(mesj) == 2:
+    if len(mesj) != 0:
         keyword = mesj[0]
-        string = mesj[1]
-    elif len(mesj) == 1:
-        await new_handler.edit("`Lütfen filter'e yanıt olarak bir mesaj verin! Örnek: ``.filter \"selamın aleyküm\" as` ya da `.filter sa as`")
-        return
-    elif len(mesj) == 0:
+        try:
+            string = mesj[1]
+        except IndexError:
+            string = ""
+    else:
         await new_handler.edit("`Kullanım: ``.filter \"selamın aleyküm\" as` ya da `.filter sa as`")
         return
 
