@@ -48,12 +48,20 @@ async def permitpm(event):
                     prevmsg = LASTMSG[event.chat_id]
                     # Eğer önceden gönderilmiş mesaj farklıysa unapprove mesajı tekrardan gönderilir.
                     if event.text != prevmsg:
-                        async for message in event.client.iter_messages(
+                        if PLUGIN_MESAJLAR['pm'] == str:
+                            async for message in event.client.iter_messages(
                                 event.chat_id,
                                 from_user='me',
                                 search=PLUGIN_MESAJLAR['pm']):
-                            await message.delete()
-                        await event.reply(PLUGIN_MESAJLAR['pm'])
+                                    await message.delete()
+                            await event.reply(PLUGIN_MESAJLAR['pm'])
+                        else: 
+                            async for message in event.client.iter_messages(
+                                event.chat_id,
+                                from_user='me',
+                                limit=PM_AUTO_BAN_LIMIT + 1):
+                                    await message.delete()
+                            await event.reply(PLUGIN_MESAJLAR['pm'])
                     LASTMSG.update({event.chat_id: event.text})
                 else:
                     await event.reply(PLUGIN_MESAJLAR['pm'])
@@ -98,7 +106,6 @@ async def permitpm(event):
                             " kişisi sadece bir hayal kırıklığı idi. PM'ni meşgul ettiği için engellendi.",
                         )
 
-
 @register(disable_edited=True, outgoing=True, disable_errors=True)
 async def auto_accept(event):
     """ İlk mesajı atan sizseniz otomatik olarak onaylanır. """
@@ -120,11 +127,19 @@ async def auto_accept(event):
             async for message in event.client.iter_messages(event.chat_id,
                                                             reverse=True,
                                                             limit=1):
-                if message.message is not PLUGIN_MESAJLAR['pm'] and message.from_id == self_user.id:
-                    try:
-                        approve(event.chat_id)
-                    except IntegrityError:
-                        return
+                if PLUGIN_MESAJLAR['pm'] is str:
+                    if message.message is not PLUGIN_MESAJLAR['pm'] and message.from_id == self_user.id:
+                        try:
+                            approve(event.chat_id)
+                        except IntegrityError:
+                            return
+                else:
+                    if message is not PLUGIN_MESAJLAR['pm'] and message.from_id == self_user.id:
+                        try:
+                            approve(event.chat_id)
+                        except IntegrityError:
+                            return
+
 
                 if is_approved(event.chat_id) and BOTLOG:
                     await event.client.send_message(

@@ -14,6 +14,47 @@ import re
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
 
+SMART_OPEN = '"'
+SMART_CLOSE = '"'
+START_CHAR = ('\'', '"', SMART_OPEN)
+
+def remove_escapes(text: str):
+    counter = 0
+    res = ""
+    is_escaped = False
+    while counter < len(text):
+        if is_escaped:
+            res += text[counter]
+            is_escaped = False
+        elif text[counter] == "\\":
+            is_escaped = True
+        else:
+            res += text[counter]
+        counter += 1
+    return res
+
+def split_quotes(text: str):
+    if any(text.startswith(char) for char in START_CHAR):
+        counter = 1  # ignore first char -> is some kind of quote
+        while counter < len(text):
+            if text[counter] == "\\":
+                counter += 1
+            elif text[counter] == text[0] or (text[0] == SMART_OPEN and text[counter] == SMART_CLOSE):
+                break
+            counter += 1
+        else:
+            return text.split(None, 1)
+
+        # 1 to avoid starting quote, and counter is exclusive so avoids ending
+        key = remove_escapes(text[1:counter].strip())
+        # index will be in range, or `else` would have been executed and returned
+        rest = text[counter + 1:].strip()
+        if not key:
+            key = text[0] + text[0]
+        return list(filter(None, [key, rest]))
+    else:
+        return text.split(None, 1)
+
 
 @register(incoming=True, disable_edited=True, disable_errors=True)
 async def filter_incoming_handler(handler):
@@ -31,7 +72,10 @@ async def filter_incoming_handler(handler):
 
             filters = get_filters(handler.chat_id)
             if not filters:
-                return
+                filters = get_filters("GENEL")
+                if not filters:
+                    return
+
             for trigger in filters:
                 pro = re.fullmatch(trigger.keyword, name, flags=re.IGNORECASE)
                 if pro and trigger.f_mesg_id:
@@ -43,49 +87,24 @@ async def filter_incoming_handler(handler):
     except AttributeError:
         pass
 
-@register(incoming=True, disable_edited=True, disable_errors=True)
-async def genel_filter(handler):
-    """ Gelen mesajın filtre tetikleyicisi içerip içermediğini kontrol eder """
-    try:
-        if not (await handler.get_sender()).bot:
-            try:
-                from userbot.modules.sql_helper.filter_sql import get_filters
-            except AttributeError:
-                await handler.edit("`Bot Non-SQL modunda çalışıyor!!`")
-                return
-            if handler.chat_id == -1001420605284 or handler.chat_id == -1001363514260:
-                return
-            name = handler.raw_text
-            filters = get_filters("GENEL")
-            if not filters:
-                return
-            for trigger in filters:
-                pro = re.fullmatch(trigger.keyword, name, flags=re.IGNORECASE)
-                if pro and trigger.f_mesg_id:
-                    msg_o = await handler.client.get_messages(
-                        entity=BOTLOG_CHATID, ids=int(trigger.f_mesg_id))
-                    await handler.reply(msg_o.message, file=msg_o.media)
-                elif pro and trigger.reply:
-                    await handler.reply(trigger.reply)
-    except AttributeError:
-        pass
-
-
-@register(outgoing=True, pattern="^.genelfilter (\w*)")
+@register(outgoing=True, pattern="^.genelfilter (.*)")
 async def genelfilter(event):
     try:
         from userbot.modules.sql_helper.filter_sql import add_filter
     except AttributeError:
         await event.edit("`Bot Non-SQL modunda çalışıyor!!`")
         return
-    mesj = event.text
+    mesj = split_quotes(event.pattern_match.group(1))
 
-    if '"' in mesj:
-        keyword = re.findall(r"\"(.*)\"", mesj)[0]
-        string = re.findall(r"\"\s\S*.\s\S*", mesj)[0].replace('" ', "")
-    else:
-        keyword = event.pattern_match.group(1)
-        string = event.text.partition(keyword)[2]
+    if len(mesj) == 2:
+        keyword = mesj[0]
+        string = mesj[1]
+    elif len(mesj) == 1:
+        await event.edit("`Lütfen filter'e yanıt olarak bir mesaj verin! Örnek: ``.genelfilter \"selamın aleyküm\" as` ya da `.filter sa as`")
+        return
+    elif len(mesj) == 0:
+        await event.edit("`Kullanım: ``.genelfilter \"selamın aleyküm\" as` ya da `.genelfilter sa as`")
+        return
 
     msg = await event.get_reply_message()
     msg_id = None
@@ -118,7 +137,7 @@ async def genelfilter(event):
         await event.edit(success.format(keyword, 'güncellendi'))
 
 
-@register(outgoing=True, pattern="^.filter (\w*)")
+@register(outgoing=True, pattern="^.filter (.*)")
 async def add_new_filter(new_handler):
     """ .filter komutu bir sohbete yeni filtreler eklemeye izin verir """
     try:
@@ -126,14 +145,17 @@ async def add_new_filter(new_handler):
     except AttributeError:
         await new_handler.edit("`Bot Non-SQL modunda çalışıyor!!`")
         return
-    mesj = new_handler.text
+    mesj = split_quotes(new_handler.pattern_match.group(1))
 
-    if '"' in mesj:
-        keyword = re.findall(r"\"(.*)\"", mesj)[0]
-        string = re.findall(r"\"\s\S*.\s\S*", mesj)[0].replace('" ', "")
-    else:
-        keyword = new_handler.pattern_match.group(1)
-        string = new_handler.text.partition(keyword)[2]
+    if len(mesj) == 2:
+        keyword = mesj[0]
+        string = mesj[1]
+    elif len(mesj) == 1:
+        await new_handler.edit("`Lütfen filter'e yanıt olarak bir mesaj verin! Örnek: ``.filter \"selamın aleyküm\" as` ya da `.filter sa as`")
+        return
+    elif len(mesj) == 0:
+        await new_handler.edit("`Kullanım: ``.filter \"selamın aleyküm\" as` ya da `.filter sa as`")
+        return
 
     msg = await new_handler.get_reply_message()
     msg_id = None
@@ -284,8 +306,8 @@ CMD_HELP.update({
     \nKullanım: Seçilen filtreyi durdurur.\
     \n\n.rmbotfilters <marie/rose>\
     \nKullanım: Grup yönetimi botlarındaki tüm filtreleri temizler. (Şu anlık Rose, Marie ve Marie klonları destekleniyor.)\
-    \n\n.genelfilter <filtrelenecek kelime> <cevaplanacak metin> ya da bir mesajı .filter <filtrelenecek kelime>\
+    \n\n.genelfilter <filtrelenecek kelime> <cevaplanacak metin> ya da bir mesajı .genelfilter <filtrelenecek kelime>\
     \nKullanım: Genel filtre ekler\
-    \n\n.stop <filtre>\
+    \n\n.genelstop <filtre>\
     \nKullanım: Seçilen genel filtreyi durdurur."
 })

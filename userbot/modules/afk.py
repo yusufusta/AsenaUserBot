@@ -30,8 +30,12 @@ async def mention_afk(mention):
         if ISAFK:
             if mention.sender_id not in USERS:
                 if AFKREASON:
-                    await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                        \nSebep: `{AFKREASON}`")
+                    if PLUGIN_MESAJLAR['afk'] is str:
+                        await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
+                            \nSebep: `{AFKREASON}`")
+                    else:
+                        msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
+                        await msj.reply("Sebep: `{AFKREASON}`")
                 else:
                     await mention.reply(PLUGIN_MESAJLAR['afk'])
                 USERS.update({mention.sender_id: 1})
@@ -39,8 +43,12 @@ async def mention_afk(mention):
             elif mention.sender_id in USERS:
                 if USERS[mention.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
-                        await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
+                        if PLUGIN_MESAJLAR['afk'] is str:
+                            await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
                             \nSebep: `{AFKREASON}`")
+                        else:
+                            msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
+                            await msj.reply("Sebep: `{AFKREASON}`")
                     else:
                         await mention.reply(PLUGIN_MESAJLAR['afk'])
                     USERS[mention.sender_id] = USERS[mention.sender_id] + 1
@@ -78,8 +86,12 @@ async def afk_on_pm(sender):
             elif apprv and sender.sender_id in USERS:
                 if USERS[sender.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
-                        await sender.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                        \nSebep: `{AFKREASON}`")
+                        if PLUGIN_MESAJLAR['afk'] is str:
+                            await sender.reply(f"{PLUGIN_MESAJLAR['afk']}\
+                            \nSebep: `{AFKREASON}`")
+                        else:
+                            msj = await sender.reply(PLUGIN_MESAJLAR['afk'])
+                            await msj.reply("Sebep: `{AFKREASON}`")
                     else:
                         await sender.reply(PLUGIN_MESAJLAR['afk'])
                     USERS[sender.sender_id] = USERS[sender.sender_id] + 1

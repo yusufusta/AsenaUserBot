@@ -14,6 +14,7 @@ import os
 import requests
 from telethon.tl.types import InputMessagesFilterDocument
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
+from telethon.tl.functions.channels import GetMessagesRequest
 from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
 from .modules import ALL_MODULES
 import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
@@ -104,8 +105,13 @@ try:
         if dmsj == False:
             PLUGIN_MESAJLAR[mesaj] = ORJ_PLUGIN_MESAJLAR[mesaj]
         else:
-            PLUGIN_MESAJLAR[mesaj] = dmsj
-
+            if dmsj.startswith("MEDYA_"):
+                medya = int(dmsj.split("MEDYA_")[1])
+                medya = bot.get_messages(PLUGIN_CHANNEL_ID, ids=medya)
+                print(medya)
+                PLUGIN_MESAJLAR[mesaj] = medya
+            else:
+                PLUGIN_MESAJLAR[mesaj] = dmsj
     if PLUGIN_CHANNEL_ID != None:
         LOGS.info("Pluginler Yükleniyor")
         try:
@@ -152,7 +158,6 @@ try:
             CMD_HELP[ndosya] = "Bu Plugin Dışarıdan Yüklenmiştir"
     else:
         bot.send_message("me", f"`Lütfen pluginlerin kalıcı olması için PLUGIN_CHANNEL_ID'i ayarlayın.`")
-
 except PhoneNumberInvalidError:
     print(INVALID_PH)
     exit(1)

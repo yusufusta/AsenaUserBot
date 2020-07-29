@@ -172,13 +172,8 @@ async def gbanmsg(moot):
 
     gbanned = is_gbanned(str(moot.sender_id))
     if gbanned == str(moot.sender_id):
-        print(moot.chat_id)
-        try:
-            cet = InputPeerChat(moot.chat_id)
-            await moot.client.edit_permissions(cet, moot.sender_id)
-        except Exception as e:
-            print(e)
-            return
+        await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id,
+                                           BANNED_RIGHTS))
         await moot.reply("```Sen kötü birisisin! Daha fazla seni burda tutmuyacağım. Bays!```")
 
 @register(outgoing=True, pattern="^.ungban(?: |$)(.*)")

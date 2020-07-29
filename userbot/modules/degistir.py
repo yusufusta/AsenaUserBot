@@ -10,7 +10,7 @@ import re
 import userbot.modules.sql_helper.mesaj_sql as sql
 from userbot import CMD_HELP
 from userbot.events import register
-from userbot.main import PLUGIN_MESAJLAR, ORJ_PLUGIN_MESAJLAR
+from userbot.main import PLUGIN_MESAJLAR, ORJ_PLUGIN_MESAJLAR, PLUGIN_CHANNEL_ID
 
 @register(outgoing=True, pattern="^.değiştir ?(.*)")
 async def degistir(event):
@@ -30,10 +30,14 @@ async def degistir(event):
         if plugin in TURLER:
             if event.is_reply:
                 reply = await event.get_reply_message()
+                if reply.media:
+                    mesaj = await reply.forward_to(PLUGIN_CHANNEL_ID)
+                    PLUGIN_MESAJLAR[plugin] = reply
+                    sql.ekle_mesaj(plugin, f"MEDYA_{mesaj.id}")
+                    return await event.edit(f"Plugin(`{plugin}`) için medyanız ayarlandı.")
                 PLUGIN_MESAJLAR[plugin] = reply.text
                 sql.ekle_mesaj(plugin, reply.text)
-                await event.edit(f"Plugin(`{plugin}`) için mesajınız ayarlandı.")
-                return
+                return await event.edit(f"Plugin(`{plugin}`) için mesajınız ayarlandı.")   
 
             silme = sql.sil_mesaj(plugin)
             if silme == True:

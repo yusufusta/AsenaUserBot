@@ -122,7 +122,11 @@ async def pipcheck(pip):
 
 @register(outgoing=True, pattern="^.alive$")
 async def amialive(e):
-    await e.edit(f"{PLUGIN_MESAJLAR['alive']}")
+    if PLUGIN_MESAJLAR['alive'] == str:
+        await e.edit(f"{PLUGIN_MESAJLAR['alive']}")
+    else:
+        await e.delete()
+        await e.respond(PLUGIN_MESAJLAR['alive'])
 
 
 CMD_HELP.update(
