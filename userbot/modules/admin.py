@@ -172,10 +172,12 @@ async def gbanmsg(moot):
 
     gbanned = is_gbanned(str(moot.sender_id))
     if gbanned == str(moot.sender_id):
-        await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id,
+        try:
+            await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id,
                                            BANNED_RIGHTS))
-        await moot.reply("```Sen kötü birisisin! Daha fazla seni burda tutmuyacağım. Bays!```")
-
+            await moot.reply("```Sen kötü birisisin! Daha fazla seni burda tutmuyacağım. Bays!```")
+        except:
+            return
 @register(outgoing=True, pattern="^.ungban(?: |$)(.*)")
 async def ungban(un_gban):
     """ .ungban komutu belirlenen kişinin küresel susturulmasını kaldırır """
