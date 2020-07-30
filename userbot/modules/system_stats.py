@@ -17,6 +17,7 @@ from os import remove
 from userbot import CMD_HELP
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
+
 # ================= CONSTANT =================
 DEFAULTUSER = uname().node
 # ============================================
@@ -119,10 +120,9 @@ async def pipcheck(pip):
     else:
         await pip.edit("`Bir örnek görmek için .asena pip komutunu kullanın.`")
 
-
 @register(outgoing=True, pattern="^.alive$")
 async def amialive(e):
-    if PLUGIN_MESAJLAR['alive'] == str:
+    if type(PLUGIN_MESAJLAR['alive']) == str:
         await e.edit(f"{PLUGIN_MESAJLAR['alive']}")
     else:
         await e.delete()

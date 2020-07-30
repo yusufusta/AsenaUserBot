@@ -48,7 +48,7 @@ async def permitpm(event):
                     prevmsg = LASTMSG[event.chat_id]
                     # Eğer önceden gönderilmiş mesaj farklıysa unapprove mesajı tekrardan gönderilir.
                     if event.text != prevmsg:
-                        if PLUGIN_MESAJLAR['pm'] == str:
+                        if type(PLUGIN_MESAJLAR['afk']) is str:
                             async for message in event.client.iter_messages(
                                 event.chat_id,
                                 from_user='me',
@@ -127,7 +127,7 @@ async def auto_accept(event):
             async for message in event.client.iter_messages(event.chat_id,
                                                             reverse=True,
                                                             limit=1):
-                if PLUGIN_MESAJLAR['pm'] is str:
+                if type(PLUGIN_MESAJLAR['afk']) is str:
                     if message.message is not PLUGIN_MESAJLAR['pm'] and message.from_id == self_user.id:
                         try:
                             approve(event.chat_id)

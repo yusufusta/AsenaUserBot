@@ -19,7 +19,6 @@ from userbot import (AFKREASON, COUNT_MSG, CMD_HELP, ISAFK, BOTLOG,
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 
-
 @register(incoming=True, disable_edited=True)
 async def mention_afk(mention):
     """ Bu fonksiyon biri sizi etiketlediğinde sizin AFK olduğunuzu bildirmeye yarar."""
@@ -30,7 +29,7 @@ async def mention_afk(mention):
         if ISAFK:
             if mention.sender_id not in USERS:
                 if AFKREASON:
-                    if PLUGIN_MESAJLAR['afk'] is str:
+                    if type(PLUGIN_MESAJLAR['afk']) is str:
                         await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
                             \nSebep: `{AFKREASON}`")
                     else:
@@ -86,7 +85,7 @@ async def afk_on_pm(sender):
             elif apprv and sender.sender_id in USERS:
                 if USERS[sender.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
-                        if PLUGIN_MESAJLAR['afk'] is str:
+                        if type(PLUGIN_MESAJLAR['afk']) is str:
                             await sender.reply(f"{PLUGIN_MESAJLAR['afk']}\
                             \nSebep: `{AFKREASON}`")
                         else:

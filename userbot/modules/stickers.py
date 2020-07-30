@@ -15,11 +15,11 @@ import urllib.request
 from os import remove
 from PIL import Image
 from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto
-from userbot import bot, CMD_HELP
+from userbot import bot, CMD_HELP, PAKET_ISMI
 from userbot.events import register
 from telethon.tl.functions.messages import GetStickerSetRequest
-from telethon.tl.types import InputStickerSetID
-from telethon.tl.types import DocumentAttributeSticker
+from telethon.tl.types import InputStickerSetShortName, InputStickerSetID, DocumentAttributeSticker
+from telethon.errors.rpcerrorlist import StickersetInvalidError
 from userbot.main import PLUGIN_MESAJLAR
 
 @register(outgoing=True, pattern="^.dızla")
@@ -83,8 +83,8 @@ async def dizla(args):
                 # Kullanıcı sadece özel emoji istedi, varsayılan pakete eklemek istiyor.
                 emoji = splat[1]
 
-        packname = f"a{user.id}_by_{user.username}_{pack}"
-        packnick = f"@{user.username}'s @AsenaUserBot pack {pack}"
+        packname = f"a{user.id}_by_{user.id}_{pack}"
+        packnick = f"@{user.username} {PAKET_ISMI} {pack}"
         cmd = '/newpack'
         file = io.BytesIO()
 
@@ -96,12 +96,18 @@ async def dizla(args):
             packname += "_anim"
             packnick += " (Animasyonlu)"
             cmd = '/newanimated'
+        try:
+            await args.client(GetStickerSetRequest(
+                stickerset=InputStickerSetShortName(
+                    short_name=packname
+                )
+            ))
+            paket = True
+        except StickersetInvalidError:
+            paket = False
 
-        response = urllib.request.urlopen(
-            urllib.request.Request(f'http://t.me/addstickers/{packname}'))
-        htmlstr = response.read().decode("utf8").split('\n')
-
-        if "  A <strong>Telegram</strong> user has created the <strong>Sticker&nbsp;Set</strong>." not in htmlstr:
+        
+        if paket is True:
             async with bot.conversation('Stickers') as conv:
                 await conv.send_message('/addsticker')
                 await conv.get_response()
@@ -111,13 +117,13 @@ async def dizla(args):
                 x = await conv.get_response()
                 while "120" in x.text:
                     pack += 1
-                    packname = f"a{user.id}_by_{user.username}_{pack}"
-                    packnick = f"@{user.username}'s @AsenaUserBot pack {pack}"
+                    packname = f"a{user.id}_by_{user.id}_{pack}"
+                    packnick = f"@{user.username} {PAKET_ISMI} {pack}"
                     await args.edit("`Yetersiz paket alanından dolayı " + str(pack) +
                                     " numaralı pakete geçiliyor`")
                     await conv.send_message(packname)
                     x = await conv.get_response()
-                    if x.text == "Geçersiz paket seçildi.":
+                    if x.text == "Invalid pack selected.":
                         await conv.send_message(cmd)
                         await conv.get_response()
                         # Kullanıcının sürekli bildirim almamasını sağlar.

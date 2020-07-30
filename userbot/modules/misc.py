@@ -95,8 +95,7 @@ async def bot_support(wannahelp):
 
 @register(outgoing=True, pattern="^.creator$")
 async def creator(e):
-    await e.edit("Bu bot \n"
-                 "[Yusuf Usta](https://t.me/Qulec) tarafından geliştirilmiştir. \n")
+    await e.edit("Bu bot @Fusuf tarafından geliştirilmiştir.")
 
 
 @register(outgoing=True, pattern="^.readme$")
@@ -175,7 +174,7 @@ CMD_HELP.update(
 CMD_HELP.update({
     'repo':
     '.repo\
-\nKullanım: Seden UserBot GitHub reposu'
+\nKullanım: Asena UserBot GitHub reposu'
 })
 
 CMD_HELP.update({
