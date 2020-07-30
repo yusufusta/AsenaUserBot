@@ -214,6 +214,11 @@
       "description": "Galeri plugini içindir. Profil fotoğraflarıı kaç saniye de bir değişsin?",
       "value": "60",
       "required": false
+    },
+    "PAKET_ISMI": {
+      "description": "Dızla komutu paket ismini belirleyin. Paket ismi şöyle olacaktır: @KullanıcıAdın verdiğin değer 1",
+      "value": "@AsenaUserBot Paketi",
+      "required": false
     }
   },
   "addons": [{
