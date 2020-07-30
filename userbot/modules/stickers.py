@@ -83,7 +83,7 @@ async def dizla(args):
                 # Kullanıcı sadece özel emoji istedi, varsayılan pakete eklemek istiyor.
                 emoji = splat[1]
 
-        packname = f"a{user.id}_by_{user.username}_{pack}"
+        packname = f"{user.username}_{pack}"
         packnick = f"@{user.username}'s @AsenaUserBot pack {pack}"
         cmd = '/newpack'
         file = io.BytesIO()
@@ -111,7 +111,7 @@ async def dizla(args):
                 x = await conv.get_response()
                 while "120" in x.text:
                     pack += 1
-                    packname = f"a{user.id}_by_{user.username}_{pack}"
+                    packname = f"{user.username}_{pack}"
                     packnick = f"@{user.username}'s @AsenaUserBot pack {pack}"
                     await args.edit("`Yetersiz paket alanından dolayı " + str(pack) +
                                     " numaralı pakete geçiliyor`")
