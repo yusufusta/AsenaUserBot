@@ -208,6 +208,8 @@ PM_AUTO_BAN_LIMIT = int(os.environ.get("PM_AUTO_BAN_LIMIT", 4))
 SPOTIFY_DC = os.environ.get("SPOTIFY_DC", None)
 SPOTIFY_KEY = os.environ.get("SPOTIFY_KEY", None)
 
+PAKET_ISMI = os.environ.get("PAKET_ISMI", "@AsenaUserBot Paketi")
+
 # CloudMail.ru ve MEGA.nz ayarlama
 if not os.path.exists('bin'):
     os.mkdir('bin')
