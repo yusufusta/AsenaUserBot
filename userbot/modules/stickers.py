@@ -1,242 +1,209 @@
-# Copyright (C) 2019 The Raphielscape Company LLC.
+# Copyright (C) 2020 The Raphielscape Company LLC.
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# Licensed under the Raphielscape Public License, Version 1.d (the "License");
 # you may not use this file except in compliance with the License.
 #
-
-# Asena UserBot - Yusuf Usta
-
-
-""" Çıkartma oluşturmak ya da çalmak için yapılmış UserBot modülüdür. Teşekkürler @rupansh """
+""" Paperplane module for kanging stickers or making new ones. """
 
 import io
 import math
 import urllib.request
-from os import remove
 from PIL import Image
-from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto
-from userbot import bot, CMD_HELP, PAKET_ISMI
+
+from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto, InputPeerNotifySettings
+from telethon.tl.functions.account import UpdateNotifySettingsRequest
+
+from userbot import CMD_HELP, bot, PAKET_ISMI
 from userbot.events import register
-from telethon.tl.functions.messages import GetStickerSetRequest
-from telethon.tl.types import InputStickerSetShortName, InputStickerSetID, DocumentAttributeSticker
-from telethon.errors.rpcerrorlist import StickersetInvalidError
 from userbot.main import PLUGIN_MESAJLAR
 
-@register(outgoing=True, pattern="^.dızla")
-async def dizla(args):
-    """ .dızla komutu çıkartmaları başka paketten alır ya da yeni bir çıkartma oluşturur. """
+PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break. \
+A pack can't have more than 120 stickers at the moment."
+PACK_DOESNT_EXIST = "  A <strong>Telegram</strong> user has created the <strong>Sticker&nbsp;Set</strong>."
+
+
+@register(outgoing=True, pattern="^.dızla($| )?((?![0-9]).+?)? ?([0-9]*)?")
+async def kang(event):
+    await event.edit(f"`{PLUGIN_MESAJLAR['dızcı']}`")
     user = await bot.get_me()
+    pack_username = ''
     if not user.username:
-        user.username = user.first_name
-    message = await args.get_reply_message()
-    photo = None
-    emojibypass = False
-    is_anim = False
-    emoji = None
+        try:
+            user.first_name.decode('ascii')
+            pack_username = user.first_name
+        except UnicodeDecodeError: # User's first name isn't ASCII, use ID instead
+            pack_username = user.id
+    else: pack_username = user.username
 
-    if message and message.media:
-        if isinstance(message.media, MessageMediaPhoto):
-            await args.edit(f"`{PLUGIN_MESAJLAR['dızcı']}`")
-            photo = io.BytesIO()
-            photo = await bot.download_media(message.photo, photo)
-        elif "image" in message.media.document.mime_type.split('/'):
-            await args.edit(f"`{PLUGIN_MESAJLAR['dızcı']}`")
-            photo = io.BytesIO()
-            await bot.download_file(message.media.document, photo)
-            if (DocumentAttributeFilename(file_name='sticker.webp') in
-                    message.media.document.attributes):
-                emoji = message.media.document.attributes[1].alt
-                emojibypass = True
-        elif "tgsticker" in message.media.document.mime_type:
-            await args.edit(f"`{PLUGIN_MESAJLAR['dızcı']}`")
-            await bot.download_file(message.media.document,
-                                    'AnimatedSticker.tgs')
+    textx = await event.get_reply_message()
+    emoji = event.pattern_match.group(2)
+    number = int(event.pattern_match.group(3) or 1) # If no number specified, use 1
+    new_pack = False
 
-            attributes = message.media.document.attributes
-            for attribute in attributes:
-                if isinstance(attribute, DocumentAttributeSticker):
-                    emoji = attribute.alt
-
-            emojibypass = True
-            is_anim = True
-            photo = 1
-        else:
-            await args.edit("`Desteklenmeyen dosya!`")
-            return
+    if textx.photo or textx.sticker: message = textx
+    elif event.photo or event.sticker: message = event
     else:
-        await args.edit("`Bunu dızlayamam...`")
+        await event.edit("`Dızlayabilmem için bana sticker veya fotoğraf vermen gerek!`")
         return
 
-    if photo:
-        splat = args.text.split()
-        if not emojibypass:
+    sticker = io.BytesIO()
+    await bot.download_media(message, sticker)
+    sticker.seek(0)
+
+    if not sticker:
+        await event.edit("`Sticker indirilemedi! Fotoğraf veya sticker gönderdiğinize emin olun.`")
+        return
+
+    is_anim = message.file.mime_type == "application/x-tgsticker"
+    if not is_anim:
+        img = await resize_photo(sticker)
+        sticker.name = "sticker.png"
+        sticker.seek(0)
+        img.save(sticker, "PNG")
+
+    # The user didn't specify an emoji...
+    if not emoji:
+        if message.file.emoji: # ...but the sticker has one
+            emoji = message.file.emoji
+        else: # ...and the sticker doesn't have one either
             emoji = "🤔"
-        pack = 1
-        if len(splat) == 3:
-            pack = splat[2]  # Kullanıcı ikisini de gönderebilir
-            emoji = splat[1]
-        elif len(splat) == 2:
-            if splat[1].isnumeric():
-                # Kullanıcı başka pakete eklemek istiyor.
-                pack = int(splat[1])
-            else:
-                # Kullanıcı sadece özel emoji istedi, varsayılan pakete eklemek istiyor.
-                emoji = splat[1]
 
-        packname = f"a{user.id}_by_{user.id}_{pack}"
-        packnick = f"@{user.username} {PAKET_ISMI} {pack}"
-        cmd = '/newpack'
-        file = io.BytesIO()
+    packname = f"a{user.id}_by_{pack_username}_{number}{'_anim' if is_anim else ''}"
+    packtitle = (f"@{user.username or user.first_name} {PAKET_ISMI} "
+                f"{number}{' animasyonlu' if is_anim else ''}")
+    response = urllib.request.urlopen(
+            urllib.request.Request(f'http://t.me/addstickers/{packname}'))
+    htmlstr = response.read().decode("utf8").split('\n')
+    new_pack = PACK_DOESNT_EXIST in htmlstr
 
-        if not is_anim:
-            image = await resize_photo(photo)
-            file.name = "sticker.png"
-            image.save(file, "PNG")
-        else:
-            packname += "_anim"
-            packnick += " (Animasyonlu)"
-            cmd = '/newanimated'
-        try:
-            await args.client(GetStickerSetRequest(
-                stickerset=InputStickerSetShortName(
-                    short_name=packname
+    if new_pack:
+        await event.edit("`Sticker paketi oluşturulmamış! Yeni paket oluşturuluyor...`")
+        await newpack(is_anim, sticker, emoji, packtitle, packname)
+    else:
+        async with bot.conversation(429000) as conv:
+            # Cancel any pending command
+            await conv.send_message('/cancel')
+            await conv.get_response()
+
+            # Send the add sticker command
+            await conv.send_message('/addsticker')
+            await conv.get_response()
+
+            # Send the pack name
+            await conv.send_message(packname)
+            x = await conv.get_response()
+
+            # Check if the selected pack is full
+            while x.text == PACK_FULL:
+                # Switch to a new pack, create one if it doesn't exist
+                number += 1
+                packname = f"a{user.id}_by_{pack_username}_{number}{'_anim' if is_anim else ''}"
+                packtitle = (f"@{user.username or user.first_name} {PAKET_ISMI} "
+                            f"{number}{' animated' if is_anim else ''}")
+
+                await event.edit(
+                    f"`Yetersiz paket alanından dolayı {number} sayılı pakete geçiliyor...`"
                 )
-            ))
-            paket = True
-        except StickersetInvalidError:
-            paket = False
 
-        
-        if paket is True:
-            async with bot.conversation('Stickers') as conv:
-                await conv.send_message('/addsticker')
-                await conv.get_response()
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
                 await conv.send_message(packname)
                 x = await conv.get_response()
-                while "120" in x.text:
-                    pack += 1
-                    packname = f"a{user.id}_by_{user.id}_{pack}"
-                    packnick = f"@{user.username} {PAKET_ISMI} {pack}"
-                    await args.edit("`Yetersiz paket alanından dolayı " + str(pack) +
-                                    " numaralı pakete geçiliyor`")
-                    await conv.send_message(packname)
-                    x = await conv.get_response()
-                    if x.text == "Invalid pack selected.":
-                        await conv.send_message(cmd)
-                        await conv.get_response()
-                        # Kullanıcının sürekli bildirim almamasını sağlar.
-                        await bot.send_read_acknowledge(conv.chat_id)
-                        await conv.send_message(packnick)
-                        await conv.get_response()
-                        # Kullanıcının sürekli bildirim almamasını sağlar.
-                        await bot.send_read_acknowledge(conv.chat_id)
-                        if is_anim:
-                            await conv.send_file('AnimatedSticker.tgs')
-                            remove('AnimatedSticker.tgs')
-                        else:
-                            file.seek(0)
-                            await conv.send_file(file, force_document=True)
-                        await conv.get_response()
-                        await conv.send_message(emoji)
-                        # Kullanıcının sürekli bildirim almamasını sağlar.
-                        await bot.send_read_acknowledge(conv.chat_id)
-                        await conv.get_response()
-                        await conv.send_message("/publish")
-                        if is_anim:
-                            await conv.get_response()
-                            await conv.send_message(f"<{packnick}>")
-                        # Kullanıcının sürekli bildirim almamasını sağlar.
-                        await conv.get_response()
-                        await bot.send_read_acknowledge(conv.chat_id)
-                        await conv.send_message("/skip")
-                        # Kullanıcının sürekli bildirim almamasını sağlar.
-                        await bot.send_read_acknowledge(conv.chat_id)
-                        await conv.get_response()
-                        await conv.send_message(packname)
-                        # Kullanıcının sürekli bildirim almamasını sağlar.
-                        await bot.send_read_acknowledge(conv.chat_id)
-                        await conv.get_response()
-                        # Kullanıcının sürekli bildirim almamasını sağlar.
-                        await bot.send_read_acknowledge(conv.chat_id)
-                        await args.edit(f"`Çıkartma başka bir pakete eklendi.\
-                            \nBu paket yeni oluşturuldu.\
-                            \nYeni paket [burada](t.me/addstickers/{packname}) bulunabilir.",
-                                        parse_mode='md')
-                        return
-                if is_anim:
-                    await conv.send_file('AnimatedSticker.tgs')
-                    remove('AnimatedSticker.tgs')
-                else:
-                    file.seek(0)
-                    await conv.send_file(file, force_document=True)
-                rsp = await conv.get_response()
-                if "Sorry, the file type is invalid." in rsp.text:
-                    await args.edit(
-                        "`Çıkartma ekleme başarısız, ` @Stickers `botu ile elle eklemeyi deneyin.`"
-                    )
-                    return
-                await conv.send_message(emoji)
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
-                await conv.get_response()
-                await conv.send_message('/done')
-                await conv.get_response()
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
-        else:
-            await args.edit("`Yeni paket oluşturuluyor...`")
-            async with bot.conversation('Stickers') as conv:
-                await conv.send_message(cmd)
-                await conv.get_response()
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
-                await conv.send_message(packnick)
-                await conv.get_response()
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
-                if is_anim:
-                    await conv.send_file('AnimatedSticker.tgs')
-                    remove('AnimatedSticker.tgs')
-                else:
-                    file.seek(0)
-                    await conv.send_file(file, force_document=True)
-                rsp = await conv.get_response()
-                if "Sorry, the file type is invalid." in rsp.text:
-                    await args.edit(
-                        "`Çıkartma ekleme başarısız, ` @Stickers `botu ile elle eklemeyi deneyin.`"
-                    )
-                    return
-                await conv.send_message(emoji)
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
-                await conv.get_response()
-                await conv.send_message("/publish")
-                if is_anim:
-                    await conv.get_response()
-                    await conv.send_message(f"<{packnick}>")
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await conv.get_response()
-                await bot.send_read_acknowledge(conv.chat_id)
-                await conv.send_message("/skip")
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
-                await conv.get_response()
-                await conv.send_message(packname)
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
-                await conv.get_response()
-                # Kullanıcının sürekli bildirim almamasını sağlar.
-                await bot.send_read_acknowledge(conv.chat_id)
+                if x.text == "Invalid pack selected.": # That pack doesn't exist
+                    await newpack(is_anim, sticker, emoji, packtitle, packname)
 
-        await args.edit(f"`Çıkartma başarıyla pakete eklendi.`\
-            \nPaket [şurada](t.me/addstickers/{packname}) bulunabilir.",
+                    # Read all unread messages
+                    await bot.send_read_acknowledge(429000)
+                    # Unmute Stickers bot back
+                    muted = await bot(UpdateNotifySettingsRequest(
+                        peer=429000,
+                        settings=InputPeerNotifySettings(mute_until=None))
+                    )
+
+                    await event.edit(
+                        f"`Sticker {number}{'(animasyonlu)' if is_anim else ''} sayılı pakete eklendi, "
+                        f"{emoji} emojisi ile birlikte! "
+                        f"Paket `[burada](t.me/addstickers/{packname})`bulunabilinir.`",
                         parse_mode='md')
+                    return
 
+            # Upload the sticker file
+            if is_anim:
+                upload = await message.client.upload_file(sticker, file_name="AnimatedSticker.tgs")
+                await conv.send_file(upload, force_document=True)
+            else:
+                sticker.seek(0)
+                await conv.send_file(sticker, force_document=True)
+            await conv.get_response()
+
+            # Send the emoji
+            await conv.send_message(emoji)
+            await conv.get_response()
+
+            # Finish editing the pack
+            await conv.send_message('/done')
+            await conv.get_response()
+
+    # Read all unread messages
+    await bot.send_read_acknowledge(429000)
+    # Unmute Stickers bot back
+    muted = await bot(UpdateNotifySettingsRequest(
+        peer=429000,
+        settings=InputPeerNotifySettings(mute_until=None))
+    )
+
+    await event.edit(
+        f"`Sticker {number}{'(animasyonlu)' if is_anim else ''} sayılı pakete eklendi, "
+        f"{emoji} emojisi ile birlikte! "
+        f"Paket `[burada](t.me/addstickers/{packname})` bulunabilinir.`",
+        parse_mode='md')
+
+
+async def newpack(is_anim, sticker, emoji, packtitle, packname):
+    async with bot.conversation(429000) as conv:
+        # Cancel any pending command
+        await conv.send_message('/cancel')
+        await conv.get_response()
+
+        # Send new pack command
+        if is_anim:
+            await conv.send_message('/newanimated')
+        else:
+            await conv.send_message('/newpack')
+        await conv.get_response()
+
+        # Give the pack a name
+        await conv.send_message(packtitle)
+        await conv.get_response()
+
+        # Upload sticker file
+        if is_anim:
+            upload = await bot.upload_file(sticker, file_name="AnimatedSticker.tgs")
+            await conv.send_file(upload, force_document=True)
+        else:
+            sticker.seek(0)
+            await conv.send_file(sticker, force_document=True)
+        await conv.get_response()
+
+        # Send the emoji
+        await conv.send_message(emoji)
+        await conv.get_response()
+
+        # Publish the pack
+        await conv.send_message("/publish")
+        if is_anim:
+            await conv.get_response()
+            await conv.send_message(f"<{packtitle}>")
+        await conv.get_response()
+
+        # Skip pack icon selection
+        await conv.send_message("/skip")
+        await conv.get_response()
+
+        # Send packname
+        await conv.send_message(packname)
+        await conv.get_response()
 
 async def resize_photo(photo):
-    """ Fotoğrafı 512x512 boyutuna getirir. """
+    """ Resize the given photo to 512x512 """
     image = Image.open(photo)
     maxsize = (512, 512)
     if (image.width and image.height) < 512:
@@ -260,49 +227,6 @@ async def resize_photo(photo):
     return image
 
 
-@register(outgoing=True, pattern="^.dızbilgisi$")
-async def dizbilgisi(event):
-    if not event.is_reply:
-        await event.edit("`Hiçlikten bir bilgi çekemem, sence yapabilir miyim?!`")
-        return
-
-    rep_msg = await event.get_reply_message()
-    if not rep_msg.document:
-        await event.edit("`Paket detaylarını görmek için bir çıkartmayı yanıtlayın`")
-        return
-
-    try:
-        stickerset_attr = rep_msg.document.attributes[1]
-        await event.edit(
-            "`Bu paketten detaylar alınıyor, lütfen bekleyin..`")
-    except BaseException:
-        await event.edit("`Bu bir çıkartma değil. Bir çıkartmayı yanıtlayın.`")
-        return
-
-    if not isinstance(stickerset_attr, DocumentAttributeSticker):
-        await event.edit("`Bu bir çıkartma değil. Bir çıkartmayı yanıtlayın.`")
-        return
-
-    get_stickerset = await bot(
-        GetStickerSetRequest(
-            InputStickerSetID(
-                id=stickerset_attr.stickerset.id,
-                access_hash=stickerset_attr.stickerset.access_hash)))
-    pack_emojis = []
-    for document_sticker in get_stickerset.packs:
-        if document_sticker.emoticon not in pack_emojis:
-            pack_emojis.append(document_sticker.emoticon)
-
-    OUTPUT = f"**Sticker başlığı:** `{get_stickerset.set.title}\n`" \
-        f"**Sticker kısa adı:** `{get_stickerset.set.short_name}`\n" \
-        f"**Resmi mi:** `{get_stickerset.set.official}`\n" \
-        f"**Arşivlenmiş mi:** `{get_stickerset.set.archived}`\n" \
-        f"**Paketteki çıkartma sayısı:** `{len(get_stickerset.packs)}`\n" \
-        f"**Paketteki emoji sayısı:**\n{' '.join(pack_emojis)}"
-
-    await event.edit(OUTPUT)
-
-
 CMD_HELP.update({
     "stickers":
     ".dızla\
@@ -312,7 +236,4 @@ CMD_HELP.update({
 \n\n.dızla [numara]\
 \nKullanım: Çıkartmayı ya da resmi belirtilen pakete ekler fakat emoji olarak şu kullanılır: 🤔 \
 \n\n.dızla [emoji(ler)] [numara]\
-\nKullanım: Çıkartmayı ya da resmi belirtilen pakete ekler ve belirttiğiniz emoji çıkartmanın emojisi olarak kullanılır.\
-\n\n.dızbilgisi\
-\nKullanım: Çıkartma paketi hakkında bilgi verir."
-})
+\nKullanım: Çıkartmayı ya da resmi belirtilen pakete ekler ve belirttiğiniz emoji çıkartmanın emojisi olarak kullanılır."})
