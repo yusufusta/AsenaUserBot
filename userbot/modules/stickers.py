@@ -82,7 +82,7 @@ async def kang(event):
         await event.edit("`Sticker paketi oluşturulmamış! Yeni paket oluşturuluyor...`")
         await newpack(is_anim, sticker, emoji, packtitle, packname, message)
     else:
-        async with bot.conversation(429000) as conv:
+        async with bot.conversation("Stickers") as conv:
             # Cancel any pending command
             await conv.send_message('/cancel')
             await conv.get_response()
@@ -113,7 +113,7 @@ async def kang(event):
                     await newpack(is_anim, sticker, emoji, packtitle, packname)
 
                     # Read all unread messages
-                    await bot.send_read_acknowledge(429000)
+                    await bot.send_read_acknowledge("stickers")
                     # Unmute Stickers bot back
                     muted = await bot(UpdateNotifySettingsRequest(
                         peer=429000,
@@ -145,7 +145,7 @@ async def kang(event):
 
                 response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
                 await bot.send_read_acknowledge(350549033)
-                await event.client.forward_messages(429000, response.message, 350549033)
+                await event.client.forward_messages("stickers", response.message, 350549033)
 
             # Send the emoji
             await conv.send_message(emoji)
@@ -171,7 +171,7 @@ async def kang(event):
 
 
 async def newpack(is_anim, sticker, emoji, packtitle, packname, message):
-    async with bot.conversation(429000) as conv:
+    async with bot.conversation("stickers") as conv:
         # Cancel any pending command
         await conv.send_message('/cancel')
         await conv.get_response()
