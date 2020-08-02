@@ -12,6 +12,7 @@ from PIL import Image
 
 from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto, InputPeerNotifySettings
 from telethon.tl.functions.account import UpdateNotifySettingsRequest
+from telethon.errors.rpcerrorlist import YouBlockedUserError
 
 from userbot import CMD_HELP, bot, PAKET_ISMI
 from userbot.events import register
@@ -142,7 +143,11 @@ async def kang(event):
         
             if "Sorry, the image dimensions are invalid." in kontrol.text:
                 await event.edit("`Sticker's kabul etmedi. İkinci yöntem deneniyor...`")
-                await event.client.send_file("@ezstickerbot", message, force_document=True)
+                try:
+                    await bot.send_file("@ezstickerbot", message, force_document=True)
+                except YouBlockedUserError:
+                    return await event.edit("`Lütfen` @EzStickerBot `engelini açın ve tekrar deneyin!`")
+
                 response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
                 await bot.send_read_acknowledge(350549033)
                 await event.client.forward_messages(429000, response.message, 350549033)
