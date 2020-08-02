@@ -78,11 +78,6 @@ async def kang(event):
     htmlstr = response.read().decode("utf8").split('\n')
     new_pack = PACK_DOESNT_EXIST in htmlstr
 
-    await bot(UpdateNotifySettingsRequest(
-        peer=429000,
-        settings=InputPeerNotifySettings(mute_until=2**31-1)) # Mute forever
-    )
-
     if new_pack:
         await event.edit("`Sticker paketi oluşturulmamış! Yeni paket oluşturuluyor...`")
         await newpack(is_anim, sticker, emoji, packtitle, packname, message)
