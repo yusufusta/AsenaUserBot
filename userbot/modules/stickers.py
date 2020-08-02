@@ -16,6 +16,7 @@ from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from userbot import CMD_HELP, bot, PAKET_ISMI
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
+from telethon import events
 
 PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break. \
 A pack can't have more than 120 stickers at the moment."
@@ -76,9 +77,14 @@ async def kang(event):
     htmlstr = response.read().decode("utf8").split('\n')
     new_pack = PACK_DOESNT_EXIST in htmlstr
 
+    await bot(UpdateNotifySettingsRequest(
+        peer=429000,
+        settings=InputPeerNotifySettings(mute_until=2**31-1)) # Mute forever
+    )
+
     if new_pack:
         await event.edit("`Sticker paketi oluşturulmamış! Yeni paket oluşturuluyor...`")
-        await newpack(is_anim, sticker, emoji, packtitle, packname)
+        await newpack(is_anim, sticker, emoji, packtitle, packname, message)
     else:
         async with bot.conversation(429000) as conv:
             # Cancel any pending command
@@ -132,7 +138,14 @@ async def kang(event):
             else:
                 sticker.seek(0)
                 await conv.send_file(sticker, force_document=True)
-            await conv.get_response()
+            kontrol = await conv.get_response()
+        
+            if "Sorry, the image dimensions are invalid." in kontrol.text:
+                await event.edit("`Sticker's kabul etmedi. İkinci yöntem deneniyor...`")
+                await event.client.send_file("@ezstickerbot", message, force_document=True)
+                response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
+                await bot.send_read_acknowledge(350549033)
+                await event.client.forward_messages(429000, response.message, 350549033)
 
             # Send the emoji
             await conv.send_message(emoji)
@@ -157,7 +170,7 @@ async def kang(event):
         parse_mode='md')
 
 
-async def newpack(is_anim, sticker, emoji, packtitle, packname):
+async def newpack(is_anim, sticker, emoji, packtitle, packname, message):
     async with bot.conversation(429000) as conv:
         # Cancel any pending command
         await conv.send_message('/cancel')
@@ -181,7 +194,13 @@ async def newpack(is_anim, sticker, emoji, packtitle, packname):
         else:
             sticker.seek(0)
             await conv.send_file(sticker, force_document=True)
-        await conv.get_response()
+        kontrol = await conv.get_response()
+        
+        if "Sorry, the image dimensions are invalid." in kontrol.text:
+            await bot.send_file("@ezstickerbot", message, force_document=True)
+            response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
+            await bot.send_read_acknowledge(350549033)
+            await bot.forward_messages(429000, response.message, 350549033)
 
         # Send the emoji
         await conv.send_message(emoji)
