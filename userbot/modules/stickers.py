@@ -142,12 +142,20 @@ async def kang(event):
                     await bot.send_file("@ezstickerbot", message, force_document=True)
                 except YouBlockedUserError:
                     return await event.edit("`Lütfen` @EzStickerBot `engelini açın ve tekrar deneyin!`")
+
+                try:
+                    response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
+                    if "Please temporarily use" in response.text:
+                        await bot.send_file("@EzStickerBotBackupBot", message, force_document=True)
+                        response = await conv.wait_event(events.NewMessage(incoming=True,from_users=891811251))
+                
+                    await bot.send_read_acknowledge(350549033)
+                    await event.client.forward_messages("stickers", response.message, 350549033)
                 except:
                     await bot.send_file("@EzStickerBotBackupBot", message, force_document=True)
-
-                response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
-                await bot.send_read_acknowledge(350549033)
-                await event.client.forward_messages("stickers", response.message, 350549033)
+                    response = await conv.wait_event(events.NewMessage(incoming=True,from_users=891811251))
+                    await bot.send_read_acknowledge(891811251)
+                    await event.client.forward_messages("stickers", response.message, 891811251)
 
             # Send the emoji
             await conv.send_message(emoji)
@@ -197,12 +205,21 @@ async def newpack(is_anim, sticker, emoji, packtitle, packname, message):
             sticker.seek(0)
             await conv.send_file(sticker, force_document=True)
         kontrol = await conv.get_response()
-        
-        if "Sorry, the image dimensions are invalid." in kontrol.text:
+        if kontrol.message.startswith("Sorry"):
             await bot.send_file("@ezstickerbot", message, force_document=True)
-            response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
-            await bot.send_read_acknowledge(350549033)
-            await bot.forward_messages(429000, response.message, 350549033)
+            try:
+                response = await conv.wait_event(events.NewMessage(incoming=True,from_users=350549033))
+                if "Please temporarily use" in response.text:
+                    await bot.send_file("@EzStickerBotBackupBot", message, force_document=True)
+                    response = await conv.wait_event(events.NewMessage(incoming=True,from_users=891811251))
+                
+                    await bot.send_read_acknowledge(350549033)
+                    await bot.forward_messages("stickers", response.message, 350549033)
+            except:
+                await bot.send_file("@EzStickerBotBackupBot", message, force_document=True)
+                response = await conv.wait_event(events.NewMessage(incoming=True,from_users=891811251))
+                await bot.send_read_acknowledge(891811251)
+                await bot.forward_messages("stickers", response.message, 891811251)
 
         # Send the emoji
         await conv.send_message(emoji)
