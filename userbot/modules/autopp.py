@@ -143,10 +143,10 @@ CMD_HELP.update({
 CMD_HELP.update({
     "autovideo": 
     "`.autovideo` \
-    \n**Kullanım:** Bu komut yanıt verdipiniz videoyu profil video yapar \
+    \n**Kullanım:** Bu komut yanıt verdiğiniz videoyu profil video yapar \
     \nve bir saat veya tarih veya istediğiniz bir yazı ekler. Bu saat her dakika değişir. \
     \nEğer botun kendi yazısını kullanmak istiyorsanız ekstradan bir şey yazmayın.\
     \nKendi yazınızı eklemek istiyorsanız .autovideo yazı şeklinde kullanın. \
     \nAyrıca kendi yazınıza `$saat` ve `$tarih` ile saat ve tarih ekleyebilirsiniz. \
-    \n\n**Örnek: ** `.autovideo ahanda saat $tarih bu da tarih $tarih`"
+    \n\n**Örnek: ** `.autovideo ahan saat $saat bu da tarih $tarih`"
 })
