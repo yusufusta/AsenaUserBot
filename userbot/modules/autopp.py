@@ -8,7 +8,7 @@
 #
 # @NaytSeyd tarafından portlanmıştır.
 # @frknkrc44 tarafından düzenlenmiştir.
-
+# @Fusuf tarafından AutoVideo yazılmıştır.
 
 import os
 from datetime import datetime
@@ -21,8 +21,63 @@ import asyncio
 import random
 import shutil
 import requests
+import time
+from telethon.errors import VideoFileInvalidError
 
-@register(outgoing=True, pattern="^.autopp ?(.*)")
+# Before kang; please ask to @fusuf :) #
+@register(outgoing=True, pattern="^.autovideo ?(.*)$")
+async def autovideo(event):
+    if 'autovideo' in ASYNC_POOL:
+        await event.edit("`Görünüşe göre profil videonuz zaten otomatik olarak değişiyor.`")
+        return
+
+    if not event.reply_to_msg_id:
+        return await event.edit("`Lütfen bir videoya yanıt verin!`")
+    else:
+        await event.edit("`Profil videonuz ayarlanıyor...`")
+        
+        # Telethon doesn't support download profile-video so ... #
+        reply = await event.get_reply_message()
+        video = await reply.download_media()
+        yazi = event.pattern_match.group(1)
+
+    try:
+        os.remove("./pp.mp4")
+    except:
+        pass
+
+    try:
+        await event.client(functions.photos.UploadProfilePhotoRequest(
+            video=await event.client.upload_file(video)
+        ))
+    except VideoFileInvalidError:
+        return await event.edit("`Verdiğiniz videoyu profil videosu olarak yükleyemem!`\n\n**İpucu: **`Telegram uygulamanızdan bir videoyu profil videosu yapın ardından onu indirip bana verirseniz autovideo plugini sorunsuz çalışacaktır!`")
+    
+    ASYNC_POOL.append('autovideo')
+
+    await event.edit("`Profil videosu değişmeye başladı :)!`")
+    while "autovideo" in ASYNC_POOL:
+        saat = time.strftime("%H\.%M")
+        tarih = time.strftime("%d\/%m\/%Y")
+
+        if yazi:
+            yazi = yazi.replace("$saat", saat).replace("$tarih", tarih)
+            KOMUT = f"text=\'{yazi}\' :expansion=normal: y=h-line_h-10:x=(mod(5*n\,w+tw)-tw): fontcolor=white: fontsize=30: box=1: boxcolor=black@0.5: boxborderw=5: shadowx=2: shadowy=2"
+        else:
+            KOMUT = f"text=\'Saat\: {saat} Tarih\: {tarih} {yazi}\' :expansion=normal: y=h-line_h-10:x=(mod(5*n\,w+tw)-tw): fontcolor=white: fontsize=30: box=1: boxcolor=black@0.5: boxborderw=5: shadowx=2: shadowy=2"
+
+        ses = await asyncio.create_subprocess_shell(f"ffmpeg -y -i '{video}' -vf drawtext=\"{KOMUT}\" pp.mp4")
+        await ses.communicate()
+
+        await event.client(functions.photos.UploadProfilePhotoRequest(
+            video=await event.client.upload_file("pp.mp4")
+        ))
+        os.remove("./pp.mp4")
+        await asyncio.sleep(60)
+
+    os.remove(video)
+
+@register(outgoing=True, pattern="^.autopp (.*)")
 async def autopic(event):
     if 'autopic' in ASYNC_POOL:
         await event.edit("`Görünüşe göre profil fotoğrafınız zaten otomatik olarak değişiyor.`")

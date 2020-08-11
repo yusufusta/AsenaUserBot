@@ -15,7 +15,7 @@ from telethon.tl import functions
 from userbot import CMD_HELP, ASYNC_POOL
 from userbot.events import register
 
-@register(outgoing=True, pattern="^.auto ?(.*)")
+@register(outgoing=True, pattern="^.auto (.*)")
 async def auto(event):
     metod = event.pattern_match.group(1).lower()
     
