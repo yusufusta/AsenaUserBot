@@ -87,7 +87,7 @@ async def upstream(ups):
             f'**[Güncelleyici]:**` Galiba Asena botunu modifiye ettin ve kendi branşını kullanıyorsun: ({ac_br}). '
             'Bu durum güncelleyicinin kafasını karıştırıyor,'
             'Güncelleme nereden çekilecek?'
-            'Lütfen seden botunu resmi repodan kullan.`')
+            'Lütfen Asena botunu resmi repodan kullan.`')
         repo.__del__()
         return
 
