@@ -13,6 +13,13 @@ from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
 from asyncio import sleep
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("notes")
+
+# ████████████████████████████████ #
+
 @register(outgoing=True, pattern="^.notes$")
 async def notes_active(svd):
     """ .notes komutu sohbette kaydedilmiş tüm notları listeler. """
@@ -21,11 +28,11 @@ async def notes_active(svd):
     except AttributeError:
         await svd.edit("`Bot Non-SQL modunda çalışıyor!!`")
         return
-    message = "`Bu sohbette kaydedilmiş not bulunamadı`"
+    message = LANG['NOT_FOUND']
     notes = get_notes(svd.chat_id)
     for note in notes:
-        if message == "`Bu sohbette kaydedilmiş not bulunamadı`":
-            message = "Bu sohbette kayıtlı notlar:\n"
+        if message == LANG['NOT_FOUND']:
+            message = f"{LANG['NOTES']}:\n"
             message += "`#{}`\n".format(note.keyword)
         else:
             message += "`#{}`\n".format(note.keyword)
@@ -42,10 +49,10 @@ async def remove_notes(clr):
         return
     notename = clr.pattern_match.group(1)
     if rm_note(clr.chat_id, notename) is False:
-        return await clr.edit(" **{}** `notu bulunamadı`".format(notename))
+        return await clr.edit(" **{}** `{}`".format(notename, LANG['CLEAR_NOT_FOUND']))
     else:
         return await clr.edit(
-            "**{}** `notu başarıyla silindi`".format(notename))
+            "**{}** `{}`".format(notename, LANG['CLEAR']))
 
 
 @register(outgoing=True, pattern=r"^.save (\w*)")
@@ -81,11 +88,11 @@ async def add_note(fltr):
     elif fltr.reply_to_msg_id and not string:
         rep_msg = await fltr.get_reply_message()
         string = rep_msg.text
-    success = "`Not başarıyla {}. ` #{} `komutuyla notu çağırabilirsiniz`"
+    success = "`{} {}. ` #{} `{}`"
     if add_note(str(fltr.chat_id), keyword, string, msg_id) is False:
-        return await fltr.edit(success.format('güncellendi', keyword))
+        return await fltr.edit(success.format(LANG['SUCCESS'], 'güncellendi', keyword, LANG['CALL']))
     else:
-        return await fltr.edit(success.format('eklendi', keyword))
+        return await fltr.edit(success.format(LANG['SUCCESS'], 'eklendi', keyword, LANG['CALL']))
 
 
 @register(pattern=r"#\w*",
@@ -120,33 +127,6 @@ async def incom_note(getnt):
     except AttributeError:
         pass
 
-
-@register(outgoing=True, pattern="^.rmbotnotes (.*)")
-async def kick_marie_notes(kick):
-    """ .rmbotnotes komutu Marie'de (ya da onun tabanındaki botlarda) \
-        kayıtlı olan notları silmeye yarar. """
-    bot_type = kick.pattern_match.group(1).lower()
-    if bot_type not in ["marie", "rose"]:
-        await kick.edit("`Bu bot henüz desteklenmiyor.`")
-        return
-    await kick.edit("```Tüm notlar temizleniyor...```")
-    await sleep(3)
-    resp = await kick.get_reply_message()
-    filters = resp.text.split("-")[1:]
-    for i in filters:
-        if bot_type == "marie":
-            await kick.reply("/clear %s" % (i.strip()))
-        if bot_type == "rose":
-            i = i.replace('`', '')
-            await kick.reply("/clear %s" % (i.strip()))
-        await sleep(0.3)
-    await kick.respond(
-        "```Botlardaki notlar başarıyla temizlendi.```")
-    if BOTLOG:
-        await kick.client.send_message(
-            BOTLOG_CHATID, "Şu sohbetteki tüm notları temizledim: " + str(kick.chat_id))
-
-
 CMD_HELP.update({
     "notes":
     "\
@@ -157,7 +137,4 @@ CMD_HELP.update({
 \n\n.notes\
 \nKullanım: Bir sohbetteki tüm notları çağırır.\
 \n\n.clear <not adı>\
-\nKullanım: Belirtilen notu siler.\
-\n\n.rmbotnotes <marie/rose>\
-\nKullanım: Grup yönetimi botlarındaki tüm notları temizler. (Şu anlık Rose, Marie ve Marie klonları destekleniyor.)"
-})
+\nKullanım: Belirtilen notu siler."})

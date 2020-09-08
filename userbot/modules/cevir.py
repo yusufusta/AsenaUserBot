@@ -1,6 +1,6 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
+# Licensed under the  GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
@@ -13,24 +13,31 @@ import io
 import os
 import asyncio
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("cevir")
+
+# ████████████████████████████████ #
+
 @register(outgoing=True, pattern="^.çevir ?(foto|ses|gif)? ?(.*)")
 async def cevir(event):
     islem = event.pattern_match.group(1)
     try:
         if len(islem) < 1:
-            await event.edit("**Bilinmeyen komut!** `Kullanım: .çevir foto/ses/gif`")
+            await event.edit(LANG['INVALID_COMMAND'])
             return
     except:
-        await event.edit("**Bilinmeyen komut!** `Kullanım: .çevir foto/ses/gif`")
+        await event.edit(LANG['INVALID_COMMAND'])
         return
 
     if islem == "foto":
         rep_msg = await event.get_reply_message()
 
         if not event.is_reply or not rep_msg.sticker:
-            await event.edit("`Lütfen bir Sticker'a yanıt verin.`")
+            await event.edit(LANG['NEED_REPLY'])
             return
-        await event.edit("`Fotoğraf'a çeviriliyor...`")
+        await event.edit(LANG['CONVERTING_TO_PHOTO'])
         foto = io.BytesIO()
         foto = await event.client.download_media(rep_msg.sticker, foto)
 
@@ -47,16 +54,16 @@ async def cevir(event):
         efekt = event.pattern_match.group(2)
 
         if len(efekt) < 1:
-            await event.edit("`Lütfen bir efekt belirtin. Kullanbilecek efektler: ``çocuk/robot/earrape/hızlı/parazit/yankı`")
+            await event.edit(LANG['NEED_EFECT'])
             return
 
         rep_msg = await event.get_reply_message()
 
         if not event.is_reply or not (rep_msg.voice or rep_msg.audio):
-            await event.edit("`Lütfen bir Ses'e yanıt verin.`")
+            await event.edit(LANG['NEED_SOUND'])
             return
 
-        await event.edit("`Efekt uygulanıyor...`")
+        await event.edit(LANG['EFECTING'])
         if efekt in EFEKTLER:
             indir = await rep_msg.download_media()
             ses = await asyncio.create_subprocess_shell(f"ffmpeg -i '{indir}' {KOMUT[efekt]} output.mp3")
@@ -67,25 +74,25 @@ async def cevir(event):
             os.remove(indir)
             os.remove("output.mp3")
         else:
-            await event.edit("**Belirttiğiniz efekt bulunamadı! **`Kullanılabileceğiniz efektler: ``çocuk/robot/earrape/hızlı/parazit/yankı`")
+            await event.edit(LANG['NOT_FOUND_EFECT'])
     elif islem == "gif":
         rep_msg = await event.get_reply_message()
 
         if not event.is_reply or not rep_msg.video:
-            await event.edit("`Lütfen bir Video'ya yanıt verin.`")
+            await event.edit(LANG['NEED_VIDEO'])
             return
 
-        await event.edit("`Gif'e çeviriliyor...`")
+        await event.edit(LANG['CONVERTING_TO_GIF'])
         video = io.BytesIO()
         video = await event.client.download_media(rep_msg.video)
         gif = await asyncio.create_subprocess_shell(f"ffmpeg -i '{video}' -filter_complex 'fps=20,scale=320:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse' out.gif")
         await gif.communicate()
-        await event.edit("`Gif yükleniyor...`")
+        await event.edit(LANG['UPLOADING_TO_GIF'])
 
         try:
-            await event.client.send_file(event.chat_id, "out.gif",reply_to=rep_msg, caption="@AsenaUserBot `ile Gif'e çevirildi.`")
+            await event.client.send_file(event.chat_id, "out.gif",reply_to=rep_msg, caption=LANG['WITH_ASENA_GIF'])
         except:
-            await event.edit("`Gif'e çeviremedim :/`")
+            await event.edit(LANG['ERROR'])
             await event.delete()
             os.remove("out.gif")
             os.remove(video)
@@ -95,7 +102,7 @@ async def cevir(event):
             os.remove(video)
 
     else:
-        await event.edit("**Bilinmeyen komut!** `Kullanım: .çevir ses/foto`")
+        await event.edit(LANG['INVALID_COMMAND'])
         return
 
 CMD_HELP["cevir"] = ".çevir foto/gif/ses <çocuk/robot/earrape/hızlı/parazit/yankı>\n**Foto:** Yanıt verdiğiniz Sticker'ı fotoğrafa çevirir.\n**Gif:** Yanıt verdiğiniz videoyu Gif'e çevirir.\n**Ses:** Yanıt verdiğiniz Ses'e efektler uygular. Efektler: çocuk/robot/earrape/hızlı/parazit/yankı."

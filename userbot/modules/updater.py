@@ -24,6 +24,13 @@ from userbot.events import register
 requirements_path = path.join(
     path.dirname(path.dirname(path.dirname(__file__))), 'requirements.txt')
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("updater")
+
+# ████████████████████████████████ #
+
 
 async def gen_chlog(repo, diff):
     ch_log = ''
@@ -49,28 +56,26 @@ async def update_requirements():
 @register(outgoing=True, pattern=r"^\.update(?: |$)(.*)")
 async def upstream(ups):
     ".update komutu ile botunun güncel olup olmadığını denetleyebilirsin."
-    await ups.edit("`Güncellemeler denetleniyor...`")
+    await ups.edit(LANG['DETECTING'])
     conf = ups.pattern_match.group(1)
     off_repo = UPSTREAM_REPO_URL
     force_update = False
 
     try:
-        txt = "`Güncelleme başarısız oldu!"
-        txt += "Bazı sorunlarla karşılaştık.`\n\n**LOG:**\n"
+        txt = "`Güncelleme başarısız oldu! Bazı sorunlarla karşılaştık.`\n\n**LOG:**\n"
         repo = Repo()
     except NoSuchPathError as error:
-        await ups.edit(f'{txt}\n`{error} klasörü bulunamadı.`')
+        await ups.edit(f'{txt}\n`{error} {LANG["NOT_FOUND"]}.`')
         repo.__del__()
         return
     except GitCommandError as error:
-        await ups.edit(f'{txt}\n`Git hatası! {error}`')
+        await ups.edit(f'{txt}\n`{LANG["GIT_ERROR"]} {error}`')
         repo.__del__()
         return
     except InvalidGitRepositoryError as error:
         if conf != "now":
             await ups.edit(
-                f"`{error} klasörü bir git reposu gibi görünmüyor.\
-            \nFakat bu sorunu .update now komutuyla botu zorla güncelleyerek çözebilirsin.`"
+                f"`{error} {LANG['NOT_GIT']}`"
             )
             return
         repo = Repo.init()
@@ -83,11 +88,7 @@ async def upstream(ups):
 
     ac_br = repo.active_branch.name
     if ac_br != 'master':
-        await ups.edit(
-            f'**[Güncelleyici]:**` Galiba Asena botunu modifiye ettin ve kendi branşını kullanıyorsun: ({ac_br}). '
-            'Bu durum güncelleyicinin kafasını karıştırıyor,'
-            'Güncelleme nereden çekilecek?'
-            'Lütfen Asena botunu resmi repodan kullan.`')
+        await ups.edit(LANG['INVALID_BRANCH'])
         repo.__del__()
         return
 
@@ -102,15 +103,14 @@ async def upstream(ups):
     changelog = await gen_chlog(repo, f'HEAD..upstream/{ac_br}')
 
     if not changelog and not force_update:
-        await ups.edit(
-            f'\n`Botun` **tamamen güncel!** `Branch:` **{ac_br}**\n')
+        await ups.edit(LANG['UPDATE'].format(ac_br))
         repo.__del__()
         return
 
     if conf != "now" and not force_update:
-        changelog_str = f'**{ac_br} için yeni güncelleme mevcut!\n\nDeğişiklikler:**\n`{changelog}`'
+        changelog_str = LANG['WAS_UPDATE'].format(ac_br, changelog)
         if len(changelog_str) > 4096:
-            await ups.edit("`Değişiklik listesi çok büyük, dosya olarak görüntülemelisin.`")
+            await ups.edit(LANG['BIG'])
             file = open("degisiklikler.txt", "w+")
             file.write(changelog_str)
             file.close()
@@ -122,14 +122,13 @@ async def upstream(ups):
             remove("degisiklikler.txt")
         else:
             await ups.edit(changelog_str)
-        await ups.respond('`Güncellemeyi yapmak için \".update now\" komutunu kullan.`')
+        await ups.respond(LANG['DO_UPDATE'])
         return
 
     if force_update:
-        await ups.edit(
-            '`Güncel stabil userbot kodu zorla eşitleniyor...`')
+        await ups.edit(LANG['FORCE_UPDATE'])
     else:
-        await ups.edit('`Bot güncelleştiriliyor...`')
+        await ups.edit(LANG['UPDATING'])
     # Bot bir Heroku dynosunda çalışıyor, bu da bazı sıkıntıları beraberinde getiriyor.
     if HEROKU_APIKEY is not None:
         import heroku3
@@ -137,9 +136,7 @@ async def upstream(ups):
         heroku_app = None
         heroku_applications = heroku.apps()
         if not HEROKU_APPNAME:
-            await ups.edit(
-                '`[HEROKU MEMEZ] Güncelleyiciyi kullanabilmek için HEROKU_APPNAME değişkenini tanımlamalısın.`'
-            )
+            await ups.edit(LANG['INVALID_APPNAME'])
             repo.__del__()
             return
         for app in heroku_applications:
@@ -148,13 +145,11 @@ async def upstream(ups):
                 break
         if heroku_app is None:
             await ups.edit(
-                f'{txt}\n`Heroku değişkenleri yanlış veya eksik tanımlanmış.`'
+                LANG['INVALID_HEROKU'].format(txt)
             )
             repo.__del__()
             return
-        await ups.edit('`[GÜNCELLEME]\
-                        \nUserBot\'unuz daha iyi olacağınıza emin olabilirsiniz :) Bu işlem maksimum 10 dakika sürmektedir.`'
-                       )
+        await ups.edit(LANG['HEROKU_UPDATING'])
         ups_rem.fetch(ac_br)
         repo.git.reset("--hard", "FETCH_HEAD")
         heroku_git_url = heroku_app.git_url.replace(
@@ -167,11 +162,10 @@ async def upstream(ups):
         try:
             remote.push(refspec="HEAD:refs/heads/master", force=True)
         except GitCommandError as error:
-            await ups.edit(f'{txt}\n`Karşılaşılan hatalar burada:\n{error}`')
+            await ups.edit(f'{txt}\n`{LANG["ERRORS"]}:\n{error}`')
             repo.__del__()
             return
-        await ups.edit('`Güncelleme başarıyla tamamlandı!\n'
-                       'Yeniden başlatılıyor...`')
+        await ups.edit(LANG['SUCCESSFULLY'])
     else:
         # Klasik güncelleyici, oldukça basit.
         try:
@@ -179,8 +173,7 @@ async def upstream(ups):
         except GitCommandError:
             repo.git.reset("--hard", "FETCH_HEAD")
         await update_requirements()
-        await ups.edit('`Güncelleme başarıyla tamamlandı!\n'
-                       'Yeniden başlatılıyor...`')
+        await ups.edit(LANG['SUCCESSFULLY'])
         # Bot için Heroku üzerinde yeni bir instance oluşturalım.
         args = [sys.executable, "main.py"]
         execle(sys.executable, *args, environ)

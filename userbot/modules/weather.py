@@ -21,6 +21,13 @@ from userbot import OPEN_WEATHER_MAP_APPID as OWM_API
 from userbot.events import register
 
 # ===== CONSTANT =====
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("weather")
+
+# ████████████████████████████████ #
+
 if WEATHER_DEFCITY:
     DEFCITY = WEATHER_DEFCITY
 else:
@@ -47,7 +54,7 @@ async def get_weather(weather):
 
     if not OWM_API:
         await weather.edit(
-            "`Önce` https://openweathermap.org/ `adresinden bir API anahtarı almalısın.`")
+            LANG['NEED_API_KEY'])
         return
 
     APPID = OWM_API
@@ -56,7 +63,7 @@ async def get_weather(weather):
         CITY = DEFCITY
         if not CITY:
             await weather.edit(
-                "`WEATHER_DEFCITY değişkeniyle bir şehri varsayılan olarak belirt, ya da komutu yazarken hangi şehrin hava durumunu istediğini de belirt!`"
+                LANG['NO_CITY']
             )
             return
     else:
@@ -76,7 +83,7 @@ async def get_weather(weather):
             try:
                 countrycode = timezone_countries[f'{country}']
             except KeyError:
-                await weather.edit("`Geçersiz ülke.`")
+                await weather.edit(LANG['INVALID_COUNTRY'])
                 return
             CITY = newcity[0].strip() + "," + countrycode.strip()
 
@@ -85,7 +92,7 @@ async def get_weather(weather):
     result = json.loads(request.text)
 
     if request.status_code != 200:
-        await weather.edit(f"`Geçersiz ülke.`")
+        await weather.edit(LANG['INVALID_COUNTRY'])
         return
 
     cityname = result['name']
@@ -126,15 +133,15 @@ async def get_weather(weather):
         return xx
 
     await weather.edit(
-        f"**Sıcaklık:** `{celsius(curtemp)}°C | {fahrenheit(curtemp)}°F`\n"
+        f"**{LANG['TEMP']}:** `{celsius(curtemp)}°C | {fahrenheit(curtemp)}°F`\n"
         +
-        f"**En Düşük Sıcaklık:** `{celsius(min_temp)}°C | {fahrenheit(min_temp)}°F`\n"
+        f"**{LANG['MIN_TEMP']}:** `{celsius(min_temp)}°C | {fahrenheit(min_temp)}°F`\n"
         +
-        f"**En Yüksek Sıcaklık:** `{celsius(max_temp)}°C | {fahrenheit(max_temp)}°F`\n"
-        + f"**Nem:** `{humidity}%`\n" +
-        f"**Rüzgar Hızı:** `{kmph[0]} kmh | {mph[0]} mph, {findir}`\n" +
-        f"**Gündoğumu:** `{sun(sunrise)}`\n" +
-        f"**Günbatımı:** `{sun(sunset)}`\n\n" + f"**{desc}**\n" +
+        f"**{LANG['MAX_TEMP']}:** `{celsius(max_temp)}°C | {fahrenheit(max_temp)}°F`\n"
+        + f"**{LANG['HUMIDITY']}:** `{humidity}%`\n" +
+        f"**{LANG['WIND_SPEED']}:** `{kmph[0]} kmh | {mph[0]} mph, {findir}`\n" +
+        f"**{LANG['SUNRISE']}:** `{sun(sunrise)}`\n" +
+        f"**{LANG['SUNSET']}:** `{sun(sunset)}`\n\n" + f"**{desc}**\n" +
         f"`{cityname}, {fullc_n}`\n" + f"`{time}`")
 
 

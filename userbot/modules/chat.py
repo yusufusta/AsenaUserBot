@@ -6,6 +6,12 @@
 
 # Asena UserBot - Yusuf Usta
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("cevir")
+
+# ████████████████████████████████ #
 
 """ Userid, chatid ve log komutlarını içeren UserBot modülü """
 
@@ -32,8 +38,8 @@ async def useridgetter(target):
                 name = "@" + message.forward.sender.username
             else:
                 name = "*" + message.forward.sender.first_name + "*"
-        await target.edit("**Kullanıcı Adı:** {} \n**Kullanıcı ID:** `{}`".format(
-            name, user_id))
+        await target.edit("**{}** {} \n**{}** `{}`".format(
+            LANG['USERNAME'], name, LANG['ID'], user_id))
 
 
 @register(outgoing=True, pattern="^.link(?: |$)(.*)")
@@ -53,7 +59,7 @@ async def permalink(mention):
 @register(outgoing=True, pattern="^.chatid$")
 async def chatidgetter(chat):
     """ .chatid komutu belirlenen grubun ID numarasını verir """
-    await chat.edit("Grup ID: `" + str(chat.chat_id) + "`")
+    await chat.edit(f"{LANG['GROUP']} `" + str(chat.chat_id) + "`")
 
 
 @register(outgoing=True, pattern=r"^.log(?: |$)([\s\S]*)")
@@ -72,7 +78,7 @@ async def log(log_text):
             return
         await log_text.edit("`Günlüğe Kaydedildi`")
     else:
-        await log_text.edit("`Bu özellik etkin olması için günlük alma açık olmalıdır!`")
+        await log_text.edit(LANG['NEED_LOG'])
     await sleep(2)
     await log_text.delete()
 
@@ -93,7 +99,7 @@ async def unmute_chat(unm_e):
         await unm_e.edit('`SQL dışı modda çalışıyor!`')
         return
     unkread(str(unm_e.chat_id))
-    await unm_e.edit("```Sohbetin sesi açıldı```")
+    await unm_e.edit(LANG['UNMUTED'])
     await sleep(2)
     await unm_e.delete()
 
@@ -108,7 +114,7 @@ async def mute_chat(mute_e):
         return
     await mute_e.edit(str(mute_e.chat_id))
     kread(str(mute_e.chat_id))
-    await mute_e.edit("`Sohbet susturuldu!`")
+    await mute_e.edit(LANG['MUTED'])
     await sleep(2)
     await mute_e.delete()
     if BOTLOG:

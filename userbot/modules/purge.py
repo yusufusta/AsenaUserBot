@@ -16,6 +16,12 @@ from telethon.errors import rpcbaseerrors
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("purge")
+
+# ████████████████████████████████ #
 
 @register(outgoing=True, pattern="^.purge$")
 async def fastpurger(purg):
@@ -34,14 +40,13 @@ async def fastpurger(purg):
                 await purg.client.delete_messages(chat, msgs)
                 msgs = []
     else:
-        await purg.edit("`Temizlemeye başlamak için bir mesaja ihtiyacım var.`")
+        await purg.edit(LANG['NEED_MSG'])
         return
 
     if msgs:
         await purg.client.delete_messages(chat, msgs)
     done = await purg.client.send_message(
-        purg.chat_id, f"`Hızlı temizlik tamamlandı!`\
-        \n{str(count)} tane mesaj silindi.")
+        purg.chat_id, LANG['NEED_MSG'] % str(count))
 
     if BOTLOG:
         await purg.client.send_message(
@@ -67,7 +72,7 @@ async def purgeme(delme):
 
     smsg = await delme.client.send_message(
         delme.chat_id,
-        "`Temizlik tamamlandı` " + str(count) + " tane mesaj silindi.",
+        LANG['PURGED_ME'] % str(count)
     )
     if BOTLOG:
         await delme.client.send_message(

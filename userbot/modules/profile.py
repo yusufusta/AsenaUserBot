@@ -24,16 +24,23 @@ from userbot import bot, CMD_HELP
 from userbot.events import register
 
 # ====================== CONSTANT ===============================
-INVALID_MEDIA = "```Medya geçerli değil.```"
-PP_CHANGED = "```Profil resmi başarıyla değiştirildi.```"
-PP_TOO_SMOL = "```Bu resim çok küçük, daha büyük bir resim kullanın.```"
-PP_ERROR = "```Resim işlenirken bir hata oluştu.```"
+# ██████ LANGUAGE CONSTANTS ██████ #
 
-BIO_SUCCESS = "```Biyografi başarıyla değiştirildi.```"
+from userbot.language import get_value
+LANG = get_value("profile")
 
-NAME_OK = "```Adın başarıyla değiştirildi.```"
-USERNAME_SUCCESS = "```Kullanıcı adın başarıyla değiştirildi.```"
-USERNAME_TAKEN = "```Kullanıcı adı müsait değil.```"
+# ████████████████████████████████ #
+
+INVALID_MEDIA = LANG['INVALID_MEDIA']
+PP_CHANGED = LANG['PP_CHANGED']
+PP_TOO_SMOL = LANG['PP_TOO_SMOL']
+PP_ERROR = LANG['PP_ERROR']
+
+BIO_SUCCESS = LANG['BIO_SUCCESS']
+
+NAME_OK = LANG['NAME_OK']
+USERNAME_SUCCESS = LANG['USERNAME_SUCCESS']
+USERNAME_TAKEN = LANG['USERNAME_TAKEN']
 # ===============================================================
 
 
@@ -139,11 +146,11 @@ async def count(event):
         else:
             print(d)
 
-    result += f"`Kullanıcılar:`\t**{u}**\n"
-    result += f"`Gruplar:`\t**{g}**\n"
-    result += f"`Süpergruplar:`\t**{c}**\n"
-    result += f"`Kanallar:`\t**{bc}**\n"
-    result += f"`Botlar:`\t**{b}**"
+    result += f"`{LANG['USERS']}:`\t**{u}**\n"
+    result += f"`{LANG['GROUPS']}:`\t**{g}**\n"
+    result += f"`{LANG['SUPERGROUPS']}:`\t**{c}**\n"
+    result += f"`{LANG['CHANNELS']}:`\t**{bc}**\n"
+    result += f"`{LANG['BOTS']}:`\t**{b}**"
 
     await event.edit(result)
 
@@ -172,7 +179,7 @@ async def remove_profilepic(delpfp):
                        file_reference=sep.file_reference))
     await delpfp.client(DeletePhotosRequest(id=input_photos))
     await delpfp.edit(
-        f"`{len(input_photos)} adet profil fotoğrafı silindi.`")
+        LANG['DELPFP'] % len(input_photos))
 
 
 CMD_HELP.update({

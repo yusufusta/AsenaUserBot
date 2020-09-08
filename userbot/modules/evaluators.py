@@ -16,22 +16,28 @@ from sys import executable
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("evaluators")
+
+# ████████████████████████████████ #
 
 @register(outgoing=True, pattern="^.eval(?: |$)(.*)")
 async def evaluate(query):
     """ .eval komutu verilen Python ifadesini değerlendirir. """
     if query.is_channel and not query.is_group:
-        await query.edit("`Eval komutlarına kanallarda izin verilmiyor`")
+        await query.edit(LANG['FORBIDDEN_IN_CHANNEL'])
         return
 
     if query.pattern_match.group(1):
         expression = query.pattern_match.group(1)
     else:
-        await query.edit("``` Değerlendirmek için bir ifade verin. ```")
+        await query.edit(LANG['NEED_CODE'])
         return
 
-    if expression in ("userbot.session", "config.env"):
-        await query.edit("`Bu tehlikeli bir operasyon! İzin verilemedi!`")
+    if expression in ("userbot.session", "config.env", "env"):
+        await query.edit(LANG['WARNING'])
         return
 
     try:
@@ -46,23 +52,23 @@ async def evaluate(query):
                         query.chat_id,
                         "output.txt",
                         reply_to=query.id,
-                        caption="`Çıktı çok büyük, dosya olarak gönderiliyor`",
+                        caption=LANG['BIG_FILE'],
                     )
                     remove("output.txt")
                     return
-                await query.edit("**Sorgu: **\n`"
+                await query.edit(f"**{LANG['QUERY']}: **\n`"
                                  f"{expression}"
-                                 "`\n**Sonuç: **\n`"
+                                 f"`\n**{LANG['RESULT']}: **\n`"
                                  f"{evaluation}"
                                  "`")
         else:
-            await query.edit("**Sorgu: **\n`"
+            await query.edit(f"**{LANG['QUERY']}: **\n`"
                              f"{expression}"
-                             "`\n**Sonuç: **\n`Sonuç döndürülemedi / Yanlış`")
+                             f"`\n**{LANG['result']}: **\n`{LANG['EMPTY_RESULT']}`")
     except Exception as err:
-        await query.edit("**Sorgu: **\n`"
+        await query.edit(f"**{LANG['QUERY']}: **\n`"
                          f"{expression}"
-                         "`\n**İstisna: **\n"
+                         f"`\n**{LANG['ERROR']}: **\n"
                          f"`{err}`")
 
     if BOTLOG:
@@ -77,16 +83,15 @@ async def run(run_q):
     code = run_q.pattern_match.group(1)
 
     if run_q.is_channel and not run_q.is_group:
-        await run_q.edit("`Exec komutlarına kanallarda izin verilmiyor`")
+        await run_q.edit(LANG['FORBIDDEN_IN_CHANNEL'])
         return
 
     if not code:
-        await run_q.edit("``` Yürütmek için en az bir değişken gereklidir \
-.asena exec kullanarak örnek alabilirsiniz.```")
+        await run_q.edit(LANG['NEED_CODE'])
         return
 
-    if code in ("userbot.session", "config.env"):
-        await run_q.edit("`Bu tehlikeli bir operasyon! İzin verilemedi!`")
+    if code in ("userbot.session", "config.env", "env"):
+        await run_q.edit(LANG['WARNING'])
         return
 
     if len(code.splitlines()) <= 5:
@@ -116,19 +121,19 @@ async def run(run_q):
                 run_q.chat_id,
                 "output.txt",
                 reply_to=run_q.id,
-                caption="`Çıktı çok büyük, dosya olarak gönderiliyor`",
+                caption=LANG['BIG_FILE'],
             )
             remove("output.txt")
             return
-        await run_q.edit("**Sorgu: **\n`"
+        await run_q.edit(f"**{LANG['QUERY']}: **\n`"
                          f"{codepre}"
-                         "`\n**Sonuç: **\n`"
+                         f"`\n**{LANG['RESULT']}: **\n`"
                          f"{result}"
                          "`")
     else:
-        await run_q.edit("**Sorgu: **\n`"
+        await run_q.edit(f"**{LANG['QUERY']}: **\n`"
                          f"{codepre}"
-                         "`\n**Sonuç: **\n`Sonuç döndürülemedi / Yanlış`")
+                         f"`\n**{LANG['RESULT']}: **\n`{LANG['EMPTY_RESULT']}`")
 
     if BOTLOG:
         await run_q.client.send_message(
@@ -148,16 +153,15 @@ async def terminal_runner(term):
         uid = "Bu değil şef!"
 
     if term.is_channel and not term.is_group:
-        await term.edit("`Term komutlarına kanallarda izin verilmiyor`")
+        await term.edit(LANG['FORBIDDEN_IN_CHANNEL'])
         return
 
     if not command:
-        await term.edit("``` Yardım almak için .asena term yazarak \
-            örneğe bakabilirsin.```")
+        await term.edit(LANG['NEED_CODE'])
         return
 
-    if command in ("userbot.session", "config.env"):
-        await term.edit("`Bu tehlikeli bir operasyon! İzin verilemedi!`")
+    if command in ("userbot.session", "config.env", "env"):
+        await term.edit(LANG['WARNING'])
         return
 
     process = await asyncio.create_subprocess_shell(
@@ -176,7 +180,7 @@ async def terminal_runner(term):
             term.chat_id,
             "output.txt",
             reply_to=term.id,
-            caption="`Çıktı çok büyük, dosya olarak gönderiliyor`",
+            caption=LANG['BIG_FILE'],
         )
         remove("output.txt")
         return

@@ -18,12 +18,17 @@ from telethon.utils import get_input_location
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("whois")
+
+# ████████████████████████████████ #
 
 @register(pattern=".whois(?: |$)(.*)", outgoing=True)
 async def who(event):
-
     await event.edit(
-        "`*Global Network Zone* ' dan bazı verileri çalarken sıkı durun...`")
+        LANG['GETTING_DATA'])
 
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
@@ -33,9 +38,8 @@ async def who(event):
     try:
         photo, caption = await fetch_info(replied_user, event)
     except AttributeError:
-        event.edit("`Bu kullanıcının bilgilerini getiremedim.`")
-        return
-
+        return event.edit(LANG['FAILED_GETTING_DATA'])
+        
     message_id_to_reply = event.message.reply_to_msg_id
 
     if not message_id_to_reply:
@@ -100,7 +104,7 @@ async def fetch_info(replied_user, event):
                              offset=42,
                              max_id=0,
                              limit=80))
-    replied_user_profile_photos_count = "Kişinin profil resmi yükleme konusunda yardıma ihtiyacı var."
+    replied_user_profile_photos_count = LANG['NO_PROFILE_PHOTO']
     try:
         replied_user_profile_photos_count = replied_user_profile_photos.count
     except AttributeError as e:
@@ -111,7 +115,7 @@ async def fetch_info(replied_user, event):
     try:
         dc_id, location = get_input_location(replied_user.profile_photo)
     except Exception as e:
-        dc_id = "DC ID getiremedim!"
+        dc_id = LANG['NO_DC_ID']
         location = str(e)
     common_chat = replied_user.common_chats_count
     username = replied_user.user.username
@@ -124,26 +128,26 @@ async def fetch_info(replied_user, event):
                                                       str(user_id) + ".jpg",
                                                       download_big=True)
     first_name = first_name.replace(
-        "\u2060", "") if first_name else ("Bu kullanıcının adı yok")
+        "\u2060", "") if first_name else (LANG['NO_FIRST_NAME'])
     last_name = last_name.replace(
-        "\u2060", "") if last_name else ("Bu kullanıcının soyadı yok")
+        "\u2060", "") if last_name else (LANG['NO_LAST_NAME'])
     username = "@{}".format(username) if username else (
-        "Bu kullanıcının kullanıcı adı yok")
-    user_bio = "Bu kullanıcının hakkında hiçbir şey yok" if not user_bio else user_bio
+        LANG['NO_USER_NAME'])
+    user_bio = LANG['NO_BIO'] if not user_bio else user_bio
 
-    caption = "<b>KULLANICI BILGISI:</b>\n\n"
-    caption += f"İsim: {first_name}\n"
-    caption += f"Soyisim: {last_name}\n"
-    caption += f"Kullanıcı Adı: {username}\n"
-    caption += f"Veri merkezi ID: {dc_id}\n"
-    caption += f"Profil resim sayısı: {replied_user_profile_photos_count}\n"
-    caption += f"Bot mu: {is_bot}\n"
-    caption += f"Kısıtlı mı: {restricted}\n"
-    caption += f"Telegram tarafından doğrulandı mı: {verified}\n"
+    caption = f"<b>{LANG['USER_INFO']}:</b>\n\n"
+    caption += f"{LANG['NAME']}: {first_name}\n"
+    caption += f"{LANG['LASTNAME']}: {last_name}\n"
+    caption += f"{LANG['NICKNAME']}: {username}\n"
+    caption += f"{LANG['DC_ID']}: {dc_id}\n"
+    caption += f"{LANG['PROFILE_PHOTO_COUNT']}: {replied_user_profile_photos_count}\n"
+    caption += f"{LANG['IS_BOT']}: {is_bot}\n"
+    caption += f"{LANG['IS_RESTRICTED']}: {restricted}\n"
+    caption += f"{LANG['IS_VERIFIED']}: {verified}\n"
     caption += f"ID: <code>{user_id}</code>\n\n"
-    caption += f"Biyografi: \n<code>{user_bio}</code>\n\n"
-    caption += f"Bu kullanıcı ile ortak sohbetler: {common_chat}\n"
-    caption += f"Profil için kalıcı bağlantı: "
+    caption += f"{LANG['BIO']}: \n<code>{user_bio}</code>\n\n"
+    caption += f"{LANG['COMMON_CHAT']}: {common_chat}\n"
+    caption += f"{LANG['LINK']}: "
     caption += f"<a href=\"tg://user?id={user_id}\">{first_name}</a>"
 
     return photo, caption

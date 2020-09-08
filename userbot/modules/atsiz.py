@@ -1,11 +1,11 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# Licensed under the GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
 # Asena UserBot - Yusuf Usta
-#
+
 
 from random import choice
 from userbot import CMD_HELP

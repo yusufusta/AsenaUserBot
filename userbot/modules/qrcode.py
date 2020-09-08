@@ -10,17 +10,20 @@
 """ QR kodları ile ilgili komutları içeren UserBot modülü. """
 
 import os
-
 import qrcode
 import barcode
 from barcode.writer import ImageWriter
 from urllib3 import PoolManager
-
 from bs4 import BeautifulSoup
-
 from userbot import CMD_HELP
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("qrcode")
+
+# ████████████████████████████████ #
 
 @register(pattern=r"^.decode$", outgoing=True)
 async def parseqr(qr_e):
@@ -43,7 +46,7 @@ async def parseqr(qr_e):
 
     os.remove(downloaded_file_name)
     if not t_response:
-        await qr_e.edit("decode başarısız oldu.")
+        await qr_e.edit(LANG['ERROR'])
         return
     soup = BeautifulSoup(t_response, "html.parser")
     qr_contents = soup.find_all("pre")[0].text
@@ -53,9 +56,9 @@ async def parseqr(qr_e):
 @register(pattern=r".barcode(?: |$)([\s\S]*)", outgoing=True)
 async def barcode_read(event):
     """ .barcode komutu verilen içeriği içeren bir barkod oluşturur. """
-    await event.edit("`İşleniyor..`")
+    await event.edit(LANG['TRYING'])
     input_str = event.pattern_match.group(1)
-    message = "SÖZDİZİMİ: `.barcode <eklenecek uzun metin>`"
+    message = f"{LANG['USAGE']} `.barcode <{LANG['TEXT']}>`"
     reply_msg_id = event.message.id
     if input_str:
         message = input_str
@@ -98,7 +101,7 @@ async def barcode_read(event):
 async def make_qr(makeqr):
     """ .makeqr komutu verilen içeriği içeren bir QR kodu yapar. """
     input_str = makeqr.pattern_match.group(1)
-    message = "SÖZDİZİMİ: `.makeqr <eklenecek uzun metin>`"
+    message = f"{LANG['USAGE']}: `.makeqr <{LANG['TEXT']}>`"
     reply_msg_id = None
     if input_str:
         message = input_str

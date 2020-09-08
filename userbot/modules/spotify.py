@@ -1,3 +1,11 @@
+# Copyright (C) 2020 Yusuf Usta.
+#
+# Licensed under the GPL-3.0 License;
+# you may not use this file except in compliance with the License.
+#
+
+# Asena UserBot - Yusuf Usta
+
 from asyncio import sleep
 from json import loads
 from json.decoder import JSONDecodeError
@@ -14,11 +22,17 @@ from userbot import (BIO_PREFIX, BOTLOG, BOTLOG_CHATID, CMD_HELP, DEFAULT_BIO,
 from userbot.events import register
 
 # =================== CONSTANT ===================
-SPO_BIO_ENABLED = "`Spotify plugini aktif. Spotify'da dinlediğiniz şarkılar biyografinize yazılacak.`"
-SPO_BIO_DISABLED = "`Spotify plugini devre dışı. "
-SPO_BIO_DISABLED += "Biyografi orijinal haline döndü.`"
-SPO_BIO_RUNNING = "`Spotify plugini zaten çalışıyor.`"
-ERROR_MSG = "`Spotify plugini durdu. Bir hata alındı.`"
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("spotify")
+
+# ████████████████████████████████ #
+
+SPO_BIO_ENABLED = LANG['BIO_ENABLED']
+SPO_BIO_DISABLED = LANG['BIO_DISABLED']
+SPO_BIO_RUNNING = LANG['BIO_RUNNING']
+ERROR_MSG = LANG['ERROR']
 
 USERNAME = SPOTIFY_DC
 PASSWORD = SPOTIFY_KEY

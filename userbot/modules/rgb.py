@@ -19,6 +19,13 @@ from telethon.tl.types import InputMessagesFilterDocument
 from userbot.events import register 
 from userbot import CMD_HELP, bot
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("rgb")
+
+# ████████████████████████████████
+
 @register(outgoing=True, pattern="^.rgb(?: |$)(.*)")
 async def sticklet(event):
     R = random.randint(0,256)
@@ -29,11 +36,11 @@ async def sticklet(event):
     sticktext = event.pattern_match.group(1).strip()
 
     if len(sticktext) < 1:
-        await event.edit("`Lütfen komutun yanına bir metin yazın`")
+        await event.edit(LANG['NEED_TEXT'])
         return
 
     # Komutu düzenle
-    await event.edit("`Resme dönüştürülüyor...`")
+    await event.edit(LANG['CONVERTING'])
 
     # https://docs.python.org/3/library/textwrap.html#textwrap.wrap
     sticktext = textwrap.wrap(sticktext, width=10)

@@ -32,17 +32,22 @@ from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, bot, WARN_MO
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 # =================== CONSTANT ===================
-PP_TOO_SMOL = "`Görüntü çok küçük`"
-PP_ERROR = "`Görüntü işleme sırasında hata oluştu`"
-NO_ADMIN = "`Yönetici değilim!`"
-NO_PERM = "`Yeterli iznim yok!`"
-NO_SQL = "`SQL dışı modda çalışıyor!`"
+# ██████ LANGUAGE CONSTANTS ██████ #
 
-CHAT_PP_CHANGED = "`Grup resmi değiştirildi`"
-CHAT_PP_ERROR = "`Resmi güncellerken bazı sorunlar oluştu.`" \
-                "`Belki de bir yönetici değilim`" \
-                "`ya da yeterli haklara sahip değilim.`"
-INVALID_MEDIA = "`Geçersiz uzantı`"
+from userbot.language import get_value
+LANG = get_value("admin")
+
+# ████████████████████████████████ #
+
+PP_TOO_SMOL = LANG['PP_TOO_SMOL']
+PP_ERROR = LANG['PP_ERROR']
+NO_ADMIN = LANG['NO_ADMIN']
+NO_PERM = LANG['NO_PERM']
+NO_SQL = LANG['NO_SQL']
+
+CHAT_PP_CHANGED = LANG['CHAT_PP_CHANGED']
+CHAT_PP_ERROR = LANG['CHAT_PP_ERROR']
+INVALID_MEDIA = LANG['INVALID_MEDIA']
 
 BANNED_RIGHTS = ChatBannedRights(
     until_date=None,
@@ -77,7 +82,7 @@ async def ekle(event):
         return
     to_add_users = event.pattern_match.group(1)
     if event.is_private:
-        await event.edit("`Ekle komutu kullanıcıları sohbete ekler, özel mesaja değil!`")
+        await event.edit(LANG['EKLE_PRIVATE'])
     else:
         if not event.is_channel and event.is_group:
             # https://lonamiwebs.github.io/Telethon/methods/messages/add_chat_user.html
@@ -89,8 +94,8 @@ async def ekle(event):
                         fwd_limit=1000000
                     ))
                 except Exception as e:
-                    await event.reply(str(e))
-            await event.edit("`Başarıyla eklendi`")
+                    await event.edit(str(e))
+            await event.edit(LANG['EKLE'])
         else:
             # https://lonamiwebs.github.io/Telethon/methods/channels/invite_to_channel.html
             for user_id in to_add_users.split(" "):
@@ -101,7 +106,7 @@ async def ekle(event):
                     ))
                 except Exception as e:
                     await event.reply(str(e))
-            await event.edit("`Başarıyla eklendi`")
+            await event.edit(LANG['EKLE'])
 
 @register(outgoing=True, pattern="^.gban(?: |$)(.*)")
 async def gbanspider(gspdr):
@@ -131,19 +136,19 @@ async def gbanspider(gspdr):
 
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
-        await gspdr.edit("`Gban Hatası! Asena Yetkilisini küresel olarak yasaklayamam.`")
+        await gspdr.edit(LANG['BRAIN'])
         return
 
     # Başarı olursa bilgi ver
-    await gspdr.edit("`Yasaklanıyor...`")
+    await gspdr.edit(LANG['BANNING'])
     if gban(user.id) == False:
         await gspdr.edit(
-            '`Hata! Kullanıcı zaten küresel olarak yasaklanmış.`')
+            LANG['ALREADY_GBANNED'])
     else:
         if reason:
-            await gspdr.edit(f"`Kullanıcı küresel olarak yasaklandı!`Nedeni: {reason}")
+            await gspdr.edit(f"{LANG['GBANNED_REASON']} {reason}")
         else:
-            await gspdr.edit("`Kullanıcı küresel olarak yasaklandı!`")
+            await gspdr.edit(LANG['GBANNED'])
 
         if BOTLOG:
             await gspdr.client.send_message(
@@ -175,7 +180,7 @@ async def gbanmsg(moot):
         try:
             await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id,
                                            BANNED_RIGHTS))
-            await moot.reply("```Sen kötü birisisin! Daha fazla seni burda tutmuyacağım. Bays!```")
+            await moot.reply(LANG['GBAN_TEXT'])
         except:
             return
 @register(outgoing=True, pattern="^.ungban(?: |$)(.*)")
@@ -205,13 +210,13 @@ async def ungban(un_gban):
     else:
         return
 
-    await un_gban.edit('```Küresel yasaklama kaldırılıyor...```')
+    await un_gban.edit(LANG['UNGBANNING'])
 
     if ungban(user.id) is False:
-        await un_gban.edit("`Hata! Muhtemelen kullanıcının yasaklaması yok.`")
+        await un_gban.edit(LANG['NO_BANNED'])
     else:
         # Başarı olursa bilgi ver
-        await un_gban.edit("```Kullanıcının küresel yasaklaması kalktı```")
+        await un_gban.edit(LANG['UNGBANNED'])
 
         if BOTLOG:
             await un_gban.client.send_message(
@@ -224,7 +229,7 @@ async def ungban(un_gban):
 async def set_group_photo(gpic):
     """ .setgpic komutu ile grubunuzun fotoğrafını değiştirebilirsiniz """
     if not gpic.is_group:
-        await gpic.edit("`Bunun bir grup olduğunu sanmıyorum.`")
+        await gpic.edit(LANG['PRIVATE'])
         return
     replymsg = await gpic.get_reply_message()
     chat = await gpic.get_chat()
@@ -279,7 +284,7 @@ async def promote(promt):
                                  delete_messages=True,
                                  pin_messages=True)
 
-    await promt.edit("`Yetkilendiriliyor...`")
+    await promt.edit(LANG['PROMOTING'])
     user, rank = await get_user_from_event(promt)
     if not rank:
         rank = "Yönetici"  # Her ihtimale karşı.
@@ -292,7 +297,7 @@ async def promote(promt):
     try:
         await promt.client(
             EditAdminRequest(promt.chat_id, user.id, new_rights, rank))
-        await promt.edit("`Başarıyla yetkilendirildi!`")
+        await promt.edit(LANG['SUCCESS_PROMOTE'])
 
     # Telethon BadRequestError hatası verirse
     # yönetici yapma yetkimiz yoktur
@@ -321,7 +326,7 @@ async def demote(dmod):
         return
 
     # Eğer başarılı olursa, yetki düşürüleceğini beyan edelim
-    await dmod.edit("`Yetki düşürülüyor...`")
+    await dmod.edit(LANG['UNPROMOTING'])
     rank = "admeme"  # Burayı öylesine yazdım
     user = await get_user_from_event(dmod)
     user = user[0]
@@ -347,7 +352,7 @@ async def demote(dmod):
     except:
         await dmod.edit(NO_PERM)
         return
-    await dmod.edit("`Yetki başarıyla düşürüldü!`")
+    await dmod.edit(LANG['UNPROMOTE'])
 
     # Yetki düşürme işi başarılı olursa günlüğe belirtelim
     if BOTLOG:
@@ -379,12 +384,12 @@ async def ban(bon):
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
         await bon.edit(
-            "`Ban Hatası! Asena Yetkilisini yasaklayamam.`"
+            LANG['BRAIN']
         )
         return
 
     # Hedefi yasaklayacağınızı duyurun
-    await bon.edit("`Kullanıcı yollanıyor...`")
+    await bon.edit(LANG['BANNING'])
 
     try:
         await bon.client(EditBannedRequest(bon.chat_id, user.id,
@@ -399,14 +404,14 @@ async def ban(bon):
             await reply.delete()
     except:
         await bon.edit(
-            "`Mesaj atma hakkım yok! Ama yine de kullanıcı yasaklandı!`")
+            LANG['NO_PERM_BUT_BANNED'])
         return
     # Mesajı silin ve ardından komutun
     # incelikle yapıldığını söyleyin
     BANLAYAN = await bot.get_me()
     SONMESAJ = PLUGIN_MESAJLAR['ban'].replace("$username", f"@{user.username}" if user.username else "[{}](tg://user?id={})".format(user.first_name, user.id)).replace("$id", "`" + str(user.id) + "`").replace("$date", datetime.datetime.strftime(datetime.datetime.now(), '%c')).replace("$from", f"@{BANLAYAN.username}" if BANLAYAN.username else "[{}](tg://user?id={})".format(BANLAYAN.first_name, BANLAYAN.id))
     if reason:
-        await bon.edit(f"{SONMESAJ}\nNedeni: {reason}")
+        await bon.edit(f"{SONMESAJ}\n{LANG['REASON']}: {reason}")
     else:
         await bon.edit(f"{SONMESAJ}")
     # Yasaklama işlemini günlüğe belirtelim
@@ -430,7 +435,7 @@ async def nothanos(unbon):
         return
 
     # Her şey yolunda giderse...
-    await unbon.edit("`Yasak kaldırılıyor...`")
+    await unbon.edit(LANG['UNBANNING'])
 
     user = await get_user_from_event(unbon)
     user = user[0]
@@ -442,7 +447,7 @@ async def nothanos(unbon):
     try:
         await unbon.client(
             EditBannedRequest(unbon.chat_id, user.id, UNBAN_RIGHTS))
-        await unbon.edit("```Yasaklama başarıyla kaldırıldı```")
+        await unbon.edit(LANG['UNBANNED'])
 
         if BOTLOG:
             await unbon.client.send_message(
@@ -450,7 +455,7 @@ async def nothanos(unbon):
                 f"KULLANICI: [{user.first_name}](tg://user?id={user.id})\n"
                 f"GRUP: {unbon.chat.title}(`{unbon.chat_id}`)")
     except:
-        await unbon.edit("`Sanırım bu kişi yasaklama mantığım ile uyuşmuyor`")
+        await unbon.edit(LANG['EXCUSE_ME_WTF'])
 
 
 @register(outgoing=True, pattern="^.mute(?: |$)(.*)")
@@ -484,7 +489,7 @@ async def spider(spdr):
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
         await spdr.edit(
-            "`Mute Hatası! Asena Yetkilisini susturamam.`"
+            LANG['BRAIN']
         )
         return
 
@@ -492,13 +497,13 @@ async def spider(spdr):
 
     if user.id == self_user.id:
         await spdr.edit(
-            "`Üzgünüm ama kendime sessize alamam...\n(ヘ･_･)ヘ┳━┳`")
+            LANG['NO_MUTE_ME'])
         return
 
     # Hedefi sustaracağınızı duyurun
-    await spdr.edit("`Sessize alınıyor...`")
+    await spdr.edit(LANG['MUTING'])
     if mute(spdr.chat_id, user.id) is False:
-        return await spdr.edit('`Hata! Kullanıcı zaten sessize alındı.`')
+        return await spdr.edit(LANG['ALREADY_MUTED'])
     else:
         try:
             await spdr.client(
@@ -508,7 +513,7 @@ async def spider(spdr):
         except UserAdminInvalidError:
             await mutmsg(spdr, user, reason)
         except:
-            return await spdr.edit("`Sanırım bu kişi sessize alma mantığım ile uyuşmuyor`")
+            return await spdr.edit(LANG['WTF_MUTE'])
 
 
 async def mutmsg(spdr, user, reason):
@@ -518,7 +523,7 @@ async def mutmsg(spdr, user, reason):
     BANLAYAN = await bot.get_me()
     SONMESAJ = PLUGIN_MESAJLAR['mute'].replace("$username", f"@{user.username}" if user.username else "[{}](tg://user?id={})".format(user.first_name, user.id)).replace("$id", "`" + str(user.id) + "`").replace("$date", datetime.datetime.strftime(datetime.datetime.now(), '%c')).replace("$from", f"@{BANLAYAN.username}" if BANLAYAN.username else "[{}](tg://user?id={})".format(BANLAYAN.first_name, BANLAYAN.id))
     if reason:
-        await spdr.edit(f"{SONMESAJ}\nNedeni: {reason}")
+        await spdr.edit(f"{SONMESAJ}\n{LANG['REASON']}: {reason}")
     else:
         await spdr.edit(f"{SONMESAJ}")
 
@@ -550,7 +555,7 @@ async def unmoot(unmot):
         await unmot.edit(NO_SQL)
         return
 
-    await unmot.edit('```Sessizden çıkarılıyor...```')
+    await unmot.edit(LANG['UNMUTING'])
     user = await get_user_from_event(unmot)
     user = user[0]
     if user:
@@ -559,17 +564,17 @@ async def unmoot(unmot):
         return
 
     if unmute(unmot.chat_id, user.id) is False:
-        return await unmot.edit("`Hata! Kullanıcı zaten sessizden çıkarıldı.`")
+        return await unmot.edit(LANG['ALREADY_UNMUTED'])
     else:
 
         try:
             await unmot.client(
                 EditBannedRequest(unmot.chat_id, user.id, UNBAN_RIGHTS))
-            await unmot.edit("`Kullanıcı tekrardan konuşabilir!`")
+            await unmot.edit(LANG['UNMUTED'])
         except UserAdminInvalidError:
-            await unmot.edit("`Kullanıcı tekrardan konuşabilir!`")
+            await unmot.edit(LANG['UNMUTED'])
         except:
-            await unmot.edit("`Sanırım bu kişi sessizden çıkarma mantığım ile uyuşmuyor`")
+            await unmot.edit(LANG['WTF_MUTE'])
             return
 
         if BOTLOG:
@@ -640,13 +645,13 @@ async def ungmoot(un_gmute):
     else:
         return
 
-    await un_gmute.edit('```Küresel susturma kaldırılıyor...```')
+    await un_gmute.edit(LANG['GUNMUTING'])
 
     if ungmute(user.id) is False:
-        await un_gmute.edit("`Hata! Muhtemelen kullanıcının kısıtlanması yok.`")
+        await un_gmute.edit(LANG['NO_GMUTE'])
     else:
         # Başarı olursa bilgi ver
-        await un_gmute.edit("```Kullanıcı tekradan konuşabilir```")
+        await un_gmute.edit(LANG['UNMUTED'])
 
         if BOTLOG:
             await un_gmute.client.send_message(
@@ -683,19 +688,19 @@ async def gspider(gspdr):
 
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
-        await gspdr.edit("`Gmute Hatası! Asena Yetkilisini küresel olarak susturamam.`")
+        await gspdr.edit(LANG['BRAIN'])
         return
 
     # Başarı olursa bilgi ver
-    await gspdr.edit("`Susturuluyor...`")
+    await gspdr.edit(LANG['GMUTING'])
     if gmute(user.id) == False:
         await gspdr.edit(
-            '`Hata! Kullanıcı zaten küresel olarak susturuldu.`')
+            LANG['ALREADY_GMUTED'])
     else:
         if reason:
-            await gspdr.edit(f"`Kullanıcı küresel olarak susturuldu!`Nedeni: {reason}")
+            await gspdr.edit(f"{LANG['GMUTED']} {LANG['REASON']}: {reason}")
         else:
-            await gspdr.edit("`Kullanıcı küresel olarak susturuldu!`")
+            await gspdr.edit(LANG['GMUTED'])
 
         if BOTLOG:
             await gspdr.client.send_message(
@@ -710,18 +715,17 @@ async def rm_deletedacc(show):
 
     con = show.pattern_match.group(1).lower()
     del_u = 0
-    del_status = "`Silinmiş hesap bulunamadı, grup temiz`"
+    del_status = LANG['NO_ZOMBIE']
 
     if con != "clean":
-        await show.edit("`hayalet / silinmiş / zombi hesaplar aranıyor...`")
+        await show.edit(LANG['ZOMBIE'])
         async for user in show.client.iter_participants(show.chat_id):
 
             if user.deleted:
                 del_u += 1
                 await sleep(1)
         if del_u > 0:
-            del_status = f"**`Bu grupta` **{del_u}** `tane hayalet / silinmiş / zombi hesap bulundu,\
-            \ntemizlemek için --.zombies clean-- komutunu kullanın`"
+            del_status = LANG['ZOMBIES'].format(del_u)
         await show.edit(del_status)
         return
 
@@ -731,10 +735,10 @@ async def rm_deletedacc(show):
     creator = chat.creator
 
     if not admin and not creator:
-        await show.edit("`Yönetici değilim!`")
+        await show.edit(LANG['NO_ADMIN'])
         return
 
-    await show.edit("`Silinmiş hesaplar çıkarılıyor...`")
+    await show.edit(LANG['CLEANING'])
     del_u = 0
     del_a = 0
 
@@ -747,17 +751,17 @@ async def rm_deletedacc(show):
                 del_u -= 1
                 del_a += 1
             except:
-                await show.edit("`Bu grupta ban yetkim bulunmamakta`")
+                await show.edit(LANG['NO_BAN_YT'])
                 return
             await show.client(
                 EditBannedRequest(show.chat_id, user.id, UNBAN_RIGHTS))
             del_u += 1
 
     if del_u > 0:
-        del_status = f"**{del_u}** tane silinmiş hesap gruptan çıkarıldı"
+        del_status = f"**{del_u}** {LANG['DELETED']}"
 
     if del_a > 0:
-        del_status = f"**{del_u}** tane silinmiş hesap gruptan çıkarıldı \
+        del_status = f"**{del_u}** {LANG['DELETED']} \
         \n**{del_a}** tane silinmiş olan yönetici hesapları çıkartılamadı"
 
     await show.edit(del_status)
@@ -776,7 +780,7 @@ async def get_admin(show):
     """ .admins komutu girilen gruba ait yöneticileri listeler """
     info = await show.client.get_entity(show.chat_id)
     title = info.title if info.title else "this chat"
-    mentions = f'<b>{title} grubunun yöneticileri:</b> \n'
+    mentions = f'<b>{title} {LANG["ADMINS"]}:</b> \n'
     try:
         async for user in show.client.iter_participants(
                 show.chat_id, filter=ChannelParticipantsAdmins):
@@ -807,7 +811,7 @@ async def pin(msg):
     to_pin = msg.reply_to_msg_id
 
     if not to_pin:
-        await msg.edit("`Sabitlemek için herhangi bir mesaja yanıt verin`")
+        await msg.edit(LANG['NEED_MSG'])
         return
 
     options = msg.pattern_match.group(1)
@@ -824,7 +828,7 @@ async def pin(msg):
         await msg.edit(NO_PERM)
         return
 
-    await msg.edit("`Başarıyla sabitlendi!`")
+    await msg.edit(LANG['PINNED'])
 
     user = await get_user_from_id(msg.from_id, msg)
 
@@ -851,17 +855,17 @@ async def kick(usr):
 
     user, reason = await get_user_from_event(usr)
     if not user:
-        await usr.edit("`Kullanıcı bulunamadı.`")
+        await usr.edit(LANG['NOT_FOUND'])
         return
 
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
         await usr.edit(
-            "`Kick Hatası! Asena Yetkilisini gruptan tekmeleyemem.`"
+            LANG['BRAIN']
         )
         return
 
-    await usr.edit("`Çıkartılıyor...`")
+    await usr.edit(LANG['KICKING'])
 
     try:
         await usr.client.kick_participant(usr.chat_id, user.id)
@@ -872,11 +876,11 @@ async def kick(usr):
 
     if reason:
         await usr.edit(
-            f"[{user.first_name}](tg://user?id={user.id}) `gruptan atıldı !`\nNedeni: {reason}"
+            f"[{user.first_name}](tg://user?id={user.id}) `{LANG['KICKED']}`\n{LANG['REASON']}: {reason}"
         )
     else:
         await usr.edit(
-            f"[{user.first_name}](tg://user?id={user.id}) `gruptan atıldı !`")
+            f"[{user.first_name}](tg://user?id={user.id}) `{LANG['KICKED']}`")
 
     if BOTLOG:
         await usr.client.send_message(
@@ -1001,15 +1005,15 @@ async def unwarn(event):
         return
 
     # Başarı olursa bilgi ver
-    await event.edit("`Uyarı kaldırılıyor...`")
+    await event.edit(LANG['UNWARNING'])
     silme = warn.sil_warn(user.id)
     if silme == False:
-        await event.edit("`Bu kişi zaten hiç uyarılmamış!`")
+        await event.edit(LANG['UNWARNED'])
         return
 
     warnsayi = warn.getir_warn(user.id)
     
-    await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, uyarın kaldırıldı ama gene de dikkatli ol lütfen! Yeni durum: {warnsayi}/3`")
+    await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {LANG['UNWARN']} {warnsayi}/{WARN_LIMIT}`")
 
     if BOTLOG:
         await event.client.send_message(
@@ -1045,11 +1049,11 @@ async def warn(event):
 
     # Eğer kullanıcı sudo ise
     if user.id in BRAIN_CHECKER:
-        await event.edit("`Warn Hatası! Asena Yetkilisini uyaramam.`")
+        await event.edit(LANG['BRAIN'])
         return
 
     # Başarı olursa bilgi ver
-    await event.edit("`Uyarı atılıyor...`")
+    await event.edit(LANG['WARNING'])
     warn.ekle_warn(user.id)
     warnsayi = warn.getir_warn(user.id)
     if warnsayi >= WARN_LIMIT:
@@ -1058,7 +1062,7 @@ async def warn(event):
         else:
             await Warn_Gmute(event, warn, user)
         return
-    await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {warnsayi}/{WARN_LIMIT} kere uyarıldı; dikkatli ol lütfen!`")
+    await event.edit(f"[{user.first_name}](tg://user?id={user.id})`, {warnsayi}/{WARN_LIMIT} {LANG['WARN']}`")
 
     if BOTLOG:
         await event.client.send_message(

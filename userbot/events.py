@@ -25,16 +25,13 @@ def register(**args):
     """ Yeni bir etkinlik kaydedin. """
     pattern = args.get('pattern', None)
     disable_edited = args.get('disable_edited', False)
-    ignore_unsafe = args.get('ignore_unsafe', False)
-    unsafe_pattern = r'^[^/!#@\$A-Za-z]'
     groups_only = args.get('groups_only', False)
     trigger_on_fwd = args.get('trigger_on_fwd', False)
     trigger_on_inline = args.get('trigger_on_inline', False)
     disable_errors = args.get('disable_errors', False)
 
-    if pattern is not None and not pattern.startswith('(?i)'):
-        args['pattern'] = '(?i)' + pattern
-
+    if pattern:
+        args["pattern"] = pattern.replace("^.", "^[.,;!]")
     if "disable_edited" in args:
         del args['disable_edited']
 
@@ -52,10 +49,6 @@ def register(**args):
       
     if "trigger_on_inline" in args:
         del args['trigger_on_inline']
-
-    if pattern:
-        if not ignore_unsafe:
-            args['pattern'] = pattern.replace('^.', unsafe_pattern, 1)
 
     def decorator(func):
         async def wrapper(check):
@@ -83,8 +76,6 @@ def register(**args):
             except KeyboardInterrupt:
                 pass
             except BaseException:
-
-
                 if not disable_errors:
                     date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 

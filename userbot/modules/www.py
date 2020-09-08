@@ -16,11 +16,17 @@ from telethon import functions
 from userbot import CMD_HELP
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("www")
+
+# ████████████████████████████████ #
 
 @register(outgoing=True, pattern="^.speed$")
 async def speedtst(spd):
     """ .speed komutu sunucu hızını tespit etmek için SpeedTest kullanır. """
-    await spd.edit("`Hız testi yapılıyor ...`")
+    await spd.edit(LANG['SPEED'])
     test = Speedtest()
 
     test.get_best_server()
@@ -29,15 +35,15 @@ async def speedtst(spd):
     result = test.results.dict()
 
     await spd.edit("`"
-                   "Başlama Tarihi: "
+                   f"{LANG['STARTED_TIME']}"
                    f"{result['timestamp']} \n\n"
-                   "İndirme Hızı: "
+                   f"{LANG['DOWNLOAD_SPEED']}"
                    f"{speed_convert(result['download'])} \n"
-                   "Yükleme Hızı: "
+                   f"{LANG['UPLOAD_SPEED']}"
                    f"{speed_convert(result['upload'])} \n"
                    "Ping: "
                    f"{result['ping']} \n"
-                   "İnternet Servis Sağlayıcısı: "
+                   f"{LANG['ISP']}"
                    f"{result['client']['isp']}"
                    "`")
 

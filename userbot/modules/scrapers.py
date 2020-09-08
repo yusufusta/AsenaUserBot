@@ -97,7 +97,7 @@ async def reddit(event):
     }       
 
     if len(sub) < 1:
-        await event.edit("`Lütfen bir Subreddit hesabı belirtin. Örnek: ``.reddit kopyamakarna`")
+        await event.edit("`Lütfen bir Subreddit belirtin. Örnek: ``.reddit kopyamakarna`")
         return
 
     kaynak = get(f"https://www.reddit.com/r/{sub}/hot.json?limit=1", headers=headers).json()

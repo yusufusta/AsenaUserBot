@@ -26,6 +26,13 @@ from telethon.tl.types import DocumentAttributeVideo
 from userbot import LOGS, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, BOT_USERNAME
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("upload_download")
+
+# ████████████████████████████████ #
+
 def get_lst_of_files(input_directory, output_lst):
     filesinfolder = os.listdir(input_directory)
     for file_name in filesinfolder:
@@ -57,8 +64,8 @@ async def progress(current, total, event, start, type_of_ps, file_name=None):
                 time_formatter(estimated_total_time)
             )
         if file_name:
-            await event.edit("{}\nDosya Adı: `{}`\n{}".format(
-                type_of_ps, file_name, tmp))
+            await event.edit("{}\n{}: `{}`\n{}".format(
+                type_of_ps, LANG['FILENAME'], file_name, tmp))
         else:
             await event.edit("{}\n{}".format(type_of_ps, tmp))
 
@@ -84,7 +91,7 @@ def time_formatter(milliseconds: int) -> str:
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    tmp = ((str(days) + " gün, ") if days else "") + \
+    tmp = ((str(days) + f" {LANG['DAY']}, ") if days else "") + \
         ((str(hours) + " saat, ") if hours else "") + \
         ((str(minutes) + " dakika, ") if minutes else "") + \
         ((str(seconds) + " saniye, ") if seconds else "") + \
@@ -95,7 +102,7 @@ def time_formatter(milliseconds: int) -> str:
 @register(pattern=r".download(?: |$)(.*)", outgoing=True)
 async def download(target_file):
     """ .download komutu userbot sunucusuna dosya indirmenizi sağlar. """
-    await target_file.edit("İşleniyor...")
+    await target_file.edit(LANG['DOWNLOADING'])
     input_str = target_file.pattern_match.group(1)
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
@@ -129,11 +136,11 @@ async def download(target_file):
             estimated_total_time = downloader.get_eta(human=True)
             try:
                 current_message = f"{status}..\
-                \nBağlantı: {url}\
-                \nDosya adı: {file_name}\
+                \n{LANG['URL']}: {url}\
+                \n{LANG['FILENAME']}: {file_name}\
                 \n{progress_str}\
                 \n{humanbytes(downloaded)} of {humanbytes(total_length)}\
-                \nTahmini bitiş: {estimated_total_time}"
+                \n{LANG['ETA']}: {estimated_total_time}"
 
                 if round(diff %
                          10.00) == 0 and current_message != display_message:
@@ -142,10 +149,10 @@ async def download(target_file):
             except Exception as e:
                 LOGS.info(str(e))
         if downloader.isSuccessful():
-            await target_file.edit("`{}` konumuna indirme başarılı.".format(
+            await target_file.edit(LANG['SUCCESSFULLY'].format(
                 downloaded_file_name))
         else:
-            await target_file.edit("Geçersiz bağlantı\n{}".format(url))
+            await target_file.edit(LANG['INVALID_URL'].format(url))
     elif target_file.reply_to_msg_id:
         try:
             c_time = time.time()
@@ -154,15 +161,15 @@ async def download(target_file):
                 TEMP_DOWNLOAD_DIRECTORY,
                 progress_callback=lambda d, t: asyncio.get_event_loop(
                 ).create_task(
-                    progress(d, t, target_file, c_time, "İndiriliyor...")))
+                    progress(d, t, target_file, c_time, LANG['DOWNLOADING'])))
         except Exception as e:  # pylint:disable=C0103,W0703
             await target_file.edit(str(e))
         else:
-            await target_file.edit("`{}` konumuna indirme başarılı.".format(
+            await target_file.edit(LANG['SUCCESSFULLY'].format(
                 downloaded_file_name))
     else:
         await target_file.edit(
-            "Sunucuma indirmek için bir mesajı yanıtlayın.")
+            LANG['NEED_REPLY'])
 
 
 @register(pattern=r".uploadir (.*)", outgoing=True)
@@ -170,7 +177,7 @@ async def uploadir(udir_event):
     """ .uploadir komutu bir klasördeki tüm dosyaları uploadlamanıza yarar """
     input_str = udir_event.pattern_match.group(1)
     if os.path.exists(input_str):
-        await udir_event.edit("İşleniyor...")
+        await udir_event.edit(LANG['TRYING'])
         lst_of_files = []
         for r, d, f in os.walk(input_str):
             for file in f:
@@ -180,7 +187,7 @@ async def uploadir(udir_event):
         LOGS.info(lst_of_files)
         uploaded = 0
         await udir_event.edit(
-            " {} dosya bulundu. Upload birazdan başlayacak. Lütfen bekleyin :)".format(
+            LANG['FOUND_FILES'].format(
                 len(lst_of_files)))
         for single_file in lst_of_files:
             if os.path.exists(single_file):
@@ -197,7 +204,7 @@ async def uploadir(udir_event):
                         reply_to=udir_event.message.id,
                         progress_callback=lambda d, t: asyncio.get_event_loop(
                         ).create_task(
-                            progress(d, t, udir_event, c_time, "Uploadlanıyor...",
+                            progress(d, t, udir_event, c_time, LANG['UPLOADING'],
                                      single_file)))
                 else:
                     thumb_image = os.path.join(input_str, "thumb.jpg")
@@ -231,12 +238,12 @@ async def uploadir(udir_event):
                         ],
                         progress_callback=lambda d, t: asyncio.get_event_loop(
                         ).create_task(
-                            progress(d, t, udir_event, c_time, "Uploadlanıyor...",
+                            progress(d, t, udir_event, c_time, LANG['UPLOADING'],
                                      single_file)))
                 os.remove(single_file)
                 uploaded = uploaded + 1
         await udir_event.edit(
-            "{} dosya başarıyla uploadlandı.".format(uploaded))
+            LANG['SUCCESSFULLY_MULTI_UPLOADED'].format(uploaded))
     else:
         await udir_event.edit("404: Directory Not Found")
 
@@ -244,10 +251,10 @@ async def uploadir(udir_event):
 @register(pattern=r".upload (.*)", outgoing=True)
 async def upload(u_event):
     """ .upload komutu userbot sunucusundan dosya uploadlamaya yarar. """
-    await u_event.edit("İşleniyor...")
+    await u_event.edit(LANG['TRYING'])
     input_str = u_event.pattern_match.group(1)
     if input_str in ("userbot.session", "config.env"):
-        await u_event.edit("`Bu tehlikeli bir operasyon! Onaylanmadı!`")
+        await u_event.edit(LANG['WARNING'])
         return
     if os.path.exists(input_str):
         c_time = time.time()
@@ -259,16 +266,16 @@ async def upload(u_event):
             reply_to=u_event.message.id,
             progress_callback=lambda d, t: asyncio.get_event_loop(
             ).create_task(
-                progress(d, t, u_event, c_time, "Uploadlanıyor...", input_str)))
-        await u_event.edit("Upload başarılı !!")
+                progress(d, t, u_event, c_time, LANG['UPLOADING'], input_str)))
+        await u_event.edit(LANG['SUCCESSFULLY_UPLOADED'])
     else:
-        await u_event.edit("404: Dosya bulunamadı")
+        await u_event.edit(f"404: {LANG['NOT_FOUND']}")
 
 @register(pattern=r".unzip", outgoing=True)  
 async def zip(event):
     if event.fwd_from:
         return
-    mone = await event.edit("Dosya indiriliyor...")
+    mone = await event.edit(LANG['DOWNLOADING'])
     extracted = TEMP_DOWNLOAD_DIRECTORY + "extracted/"
     thumb_image_path = TEMP_DOWNLOAD_DIRECTORY + "/thumb_image.jpg"
     if not os.path.isdir(extracted):
@@ -284,7 +291,7 @@ async def zip(event):
                 reply_message,
                 TEMP_DOWNLOAD_DIRECTORY,
                 progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                    progress(d, t, mone, c_time, "`İndiriliyor...`")
+                    progress(d, t, mone, c_time, LANG['DOWNLOADING'])
                 )
             )
         except Exception as e:  # pylint:disable=C0103,W0703
@@ -292,13 +299,13 @@ async def zip(event):
         else:
             end = time.time()
             ms = end - start
-            await mone.edit("`{}, {} saniyede indirildi.`".format(downloaded_file_name, ms))
+            await mone.edit(LANG['DOWNLOADED'].format(downloaded_file_name, ms))
 
         with zipfile.ZipFile(downloaded_file_name, 'r') as zip_ref:
             zip_ref.extractall(extracted)
         filename = sorted(get_lst_of_files(extracted, []))
         #filename = filename + "/"
-        await event.edit("`İndirme başarılı! Dosya Zipten Çıkarılıyor!`")
+        await event.edit(LANG['UNZIPPING'])
         # r=root, d=directories, f = files
         for single_file in filename:
             if os.path.exists(single_file):
@@ -340,18 +347,18 @@ async def zip(event):
                     reply_to=event.message.id,
                     attributes=document_attributes,
                     progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                        progress(d, t, event, c_time, "trying to upload")
+                        progress(d, t, event, c_time, LANG['UPLOADING'])
                     )
                 )
                 os.remove(single_file)
         os.remove(downloaded_file_name)
     else:
-        await event.edit("`Lütfen bir Zip'e yanıt verin!`")
+        await event.edit(LANG['REPLY_TO_ZIP'])
 
 
 @register(outgoing=True, pattern="^.wupload ?(.+?|) (.*)")
 async def wupload(event):
-    await event.edit("`Dosya indiriliyor...`")
+    await event.edit(LANG['DOWNLOADING'])
     PROCESS_RUN_TIME = 100
     input_str = event.pattern_match.group(1)
     selected_transfer = event.pattern_match.group(2)
@@ -367,9 +374,9 @@ async def wupload(event):
                 TEMP_DOWNLOAD_DIRECTORY
             )
         else:
-            await event.edit("`Belirtilen host bulunamadı! Bulunan hostlar: anonfiles|transfer|filebin|tmpninja|anonymousfiles|megaupload|bayfiles|letsupload|vshare`")
+            await event.edit(LANG['NOT_FOUND_HOST'])
             return
-    await event.edit("`Dosya indirme işlemi başarılı. Yükleniyor...`")
+    await event.edit(LANG['WUPLOADING'])
     CMD_WEB = {
         "anonfiles": "curl -F \"file=@{full_file_path}\" https://anonfiles.com/api/upload",
         "transfer": "curl --upload-file \"{full_file_path}\" https://transfer.sh/{bare_local_name}",
@@ -389,7 +396,7 @@ async def wupload(event):
                         bare_local_name=filename
         )
     except KeyError:
-        await event.edit("`Bilinmeyen host sitesi. Yüklenebilir siteler: ` anonfiles|transfer|filebin|tmpninja|anonymousfiles|megaupload|bayfiles|letsupload|vshare")
+        await event.edit(LANG['NOT_FOUND_HOST'])
         return
     cmd = selected_one
     process = await asyncio.create_subprocess_shell(
@@ -400,7 +407,7 @@ async def wupload(event):
     t_response = stdout.decode().strip()
 
     zaman = time.time() - bas
-    await event.edit("`Başarılı bir şekilde yüklendi. Link alınıyor...`")
+    await event.edit(LANG['GETTING_LINK'])
     if t_response:
         try:
             t_response = json.dumps(json.loads(t_response), sort_keys=True, indent=4)

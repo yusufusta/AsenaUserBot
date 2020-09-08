@@ -15,7 +15,7 @@ import requests
 from telethon.tl.types import InputMessagesFilterDocument
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 from telethon.tl.functions.channels import GetMessagesRequest
-from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP
+from . import BRAIN_CHECKER, LOGS, bot, PLUGIN_CHANNEL_ID, CMD_HELP, LANGUAGE
 from .modules import ALL_MODULES
 import userbot.modules.sql_helper.mesaj_sql as MSJ_SQL
 import userbot.modules.sql_helper.galeri_sql as GALERI_SQL
@@ -24,6 +24,7 @@ from telethon.tl import functions
 
 from random import choice
 import chromedriver_autoinstaller
+from json import loads, JSONDecodeError
 
 DIZCILIK_STR = [
     "Çıkartmayı dızlıyorum...",
@@ -79,8 +80,10 @@ INVALID_PH = '\nHATA: Girilen telefon numarası geçersiz' \
 for i in ALL_ROWS:
     BRAIN_CHECKER.append(i[0])
 connect("learning-data-root.check").close()
+
 try:
     bot.start()
+
     idim = bot.get_me().id
     asenabl = requests.get('https://gitlab.com/Quiec/asen/-/raw/master/asen.json').json()
     if idim in asenabl:
@@ -182,7 +185,7 @@ for module_name in ALL_MODULES:
 
 LOGS.info("Botunuz çalışıyor! Herhangi bir sohbete .alive yazarak Test edin."
           " Yardıma ihtiyacınız varsa, Destek grubumuza gelin t.me/AsenaSupport")
-LOGS.info("Bot sürümünüz Asena v1.9")
+LOGS.info("Bot sürümünüz Asena v2.0")
 
 """
 if len(argv) not in (1, 3, 4):

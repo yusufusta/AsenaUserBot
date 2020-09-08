@@ -44,3 +44,5 @@ coffeehouse
 spotify_token
 twitter_scraper
 chromedriver-autoinstaller
+numpy
+Pillow

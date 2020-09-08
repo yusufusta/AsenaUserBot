@@ -16,8 +16,12 @@ import requests
 from userbot import CMD_HELP
 from userbot.events import register
 
-logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
-                    level=logging.WARNING)
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("ezanvakti")
+
+# ████████████████████████████████ #
 
 
 @register(outgoing=True, pattern="^.ezanvakti ?(.*)")
@@ -25,7 +29,7 @@ async def ezanvakti(event):
     konum = event.pattern_match.group(1).lower()
 
     if len(konum) < 1:
-        await event.edit("`Lütfen komutun yanına bir şehir belirtin.`")
+        await event.edit(LANG['NEED_CITY'])
         return
 
     url = f'https://api.quiec.tech/namaz.php?il={konum}'
@@ -33,7 +37,7 @@ async def ezanvakti(event):
     result = json.loads(request.text)
 
     if result[0] == '404':
-        await event.edit(f"`{konum} için bir bilgi bulunamadı.`")
+        await event.edit(f"`{konum} {LANG['NOT_FOUND']}`")
         return
         
     imsak = result[0]
@@ -43,14 +47,14 @@ async def ezanvakti(event):
     aksam = result[4]
     yatsi = result[5]
 
-    vakitler =(f"**Diyanet Namaz Vakitleri**\n\n" + 
-                 f"📍 **Yer: **`{konum}`\n\n" +
-                 f"🏙 **İmsak: ** `{imsak}`\n" +
-                 f"🌅 **Güneş: ** `{gunes}`\n" +
-                 f"🌇 **Öğle: ** `{ogle}`\n" +
-                 f"🌆 **İkindi: ** `{ikindi}`\n" +
-                 f"🌃 **Akşam: ** `{aksam}`\n" +
-                 f"🌌 **Yatsı: ** `{yatsi}`\n")
+    vakitler =(f"**{LANG['DIYANET']}**\n\n" + 
+                 f"📍 **{LANG['LOCATION']}: **`{konum}`\n\n" +
+                 f"🏙 **{LANG['IMSAK']}: ** `{imsak}`\n" +
+                 f"🌅 **{LANG['GUNES']}: ** `{gunes}`\n" +
+                 f"🌇 **{LANG['OGLE']}: ** `{ogle}`\n" +
+                 f"🌆 **{LANG['IKINDI']}: ** `{ikindi}`\n" +
+                 f"🌃 **{LANG['AKSAM']}: ** `{aksam}`\n" +
+                 f"🌌 **{LANG['YATSI']}: ** `{yatsi}`\n")
 
     await event.edit(vakitler)
 

@@ -20,6 +20,12 @@ from userbot.main import PLUGIN_MESAJLAR
 
 # ================= CONSTANT =================
 DEFAULTUSER = uname().node
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("system_stats")
+
+# ████████████████████████████████ #
 # ============================================
 
 @register(outgoing=True, pattern="^.sysd$")
@@ -39,7 +45,7 @@ async def sysdetails(sysd):
 
         await sysd.edit("`" + result + "`")
     except FileNotFoundError:
-        await sysd.edit("`Öncelikle neofetch modülünü yükleyin !!`")
+        await sysd.edit(LANG['NO_NEOFETCH'])
 
 
 @register(outgoing=True, pattern="^.botver$")
@@ -66,15 +72,15 @@ async def bot_ver(event):
         revout = str(stdout.decode().strip()) \
             + str(stderr.decode().strip())
 
-        await event.edit("`UserBot Versiyonu: "
+        await event.edit(f"`{LANG['VERSION']}: "
                          f"{verout}"
                          "` \n"
-                         "`Toplam değişiklik: "
+                         f"`{LANG['REVOUT']}: "
                          f"{revout}"
                          "`")
     else:
         await event.edit(
-            "Bu arada Asena seni çok seviyor. ❤"
+            "Tanrı Türk'ü Korusun 🐺"
         )
 
 
@@ -83,7 +89,7 @@ async def pipcheck(pip):
     """ .pip komutu python-pip araması yapar. """
     pipmodule = pip.pattern_match.group(1)
     if pipmodule:
-        await pip.edit("`Aranıyor . . .`")
+        await pip.edit(f"`{LANG['SEARCHING']} . . .`")
         invokepip = f"pip3 search {pipmodule}"
         pipc = await asyncrunapp(
             invokepip,
@@ -97,7 +103,7 @@ async def pipcheck(pip):
 
         if pipout:
             if len(pipout) > 4096:
-                await pip.edit("`Çıktı çok büyük, dosya olarak gönderiliyor.`")
+                await pip.edit(LANG['BIG'])
                 file = open("output.txt", "w+")
                 file.write(pipout)
                 file.close()
@@ -108,17 +114,17 @@ async def pipcheck(pip):
                 )
                 remove("output.txt")
                 return
-            await pip.edit("**Sorgu: **\n`"
+            await pip.edit(f"**{LANG['QUERY']}: **\n`"
                            f"{invokepip}"
-                           "`\n**Sonuç: **\n`"
+                           f"`\n**{LANG['RESULT']}: **\n`"
                            f"{pipout}"
                            "`")
         else:
-            await pip.edit("**Sorgu: **\n`"
+            await pip.edit(f"**{LANG['QUERY']}: **\n`"
                            f"{invokepip}"
-                           "`\n**Sonuç: **\n`Bir şey bulunamadı.`")
+                           f"`\n**{LANG['RESULT']}: **\n`{LANG['NOT_FOUND']}.`")
     else:
-        await pip.edit("`Bir örnek görmek için .asena pip komutunu kullanın.`")
+        await pip.edit(LANG['EXAMPLE'])
 
 @register(outgoing=True, pattern="^.alive$")
 async def amialive(e):

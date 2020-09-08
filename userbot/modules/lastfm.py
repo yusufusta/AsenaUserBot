@@ -23,14 +23,21 @@ from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, DEFAULT_BIO, BIO_PREFIX, la
 from userbot.events import register
 
 # =================== CONSTANT ===================
-LFM_BIO_ENABLED = "```last.fm'de oynatılan müziği biyografiye ekleme aktif.```"
-LFM_BIO_DISABLED = "```last.fm'de oynatılan müziği biyografiye ekleme devre dışı. Biyografi varsayılana çevrildi.```"
-LFM_BIO_RUNNING = "```last.fm'de oynatılan müziği biyografiye ekleme halihazırda aktif.```"
-LFM_BIO_ERR = "```Bir seçenek belirtilmedi.```"
-LFM_LOG_ENABLED = "```last.fm bot logları şu an aktif.```"
-LFM_LOG_DISABLED = "```last.fm bot logları devre dışı bırakıldı.```"
-LFM_LOG_ERR = "```Bir seçenek belirtilmedi.```"
-ERROR_MSG = "```last.fm modulü beklenmedik bir hatadan dolayı durduruldu.```"
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("lastfm")
+
+# ████████████████████████████████ #
+
+LFM_BIO_ENABLED = LANG['BIO_ENABLED']
+LFM_BIO_DISABLED = LANG['BIO_DISABLED']
+LFM_BIO_RUNNING = LANG['BIO_RUNNING']
+LFM_BIO_ERR = LANG['BIO_ERR']
+LFM_LOG_ENABLED = LANG['LOG_ENABLED']
+LFM_LOG_DISABLED = LANG['LOG_DISABLED']
+LFM_LOG_ERR = LANG['LOG_ERR']
+ERROR_MSG = LANG['ERROR_MSG']
 
 ARTIST = 0
 SONG = 0

@@ -18,6 +18,12 @@ from pytz import timezone as tz
 from userbot import CMD_HELP, COUNTRY, TZ_NUMBER
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("time")
+
+# ████████████████████████████████ #
 
 async def get_tz(con):
     """ Seçilen bölgenin saat dilimini elde etmek içindir. """
@@ -68,11 +74,11 @@ async def time_func(tdata):
         tz_num = TZ_NUMBER
         timezones = await get_tz(COUNTRY)
     else:
-        await tdata.edit(f"Burada saat  **{dt.now().strftime(t_form)}** ")
+        await tdata.edit(f"{LANG['CLOCK']}  **{dt.now().strftime(t_form)}** ")
         return
 
     if not timezones:
-        await tdata.edit("`Geçersiz ülke.`")
+        await tdata.edit(LANG['INVALID_COUNTRY'])
         return
 
     if len(timezones) == 1:
@@ -82,13 +88,13 @@ async def time_func(tdata):
             tz_num = int(tz_num)
             time_zone = timezones[tz_num - 1]
         else:
-            return_str = f"`{c_name} ülkesi birden fazla saat dilimine sahip:`\n\n"
+            return_str = f"`{c_name} {LANG['TOO_TIMEZONE']}:`\n\n"
 
             for i, item in enumerate(timezones):
                 return_str += f"`{i+1}. {item}`\n"
 
-            return_str += "\n`Şunlardan birini numara belirterek seçin."
-            return_str += f"`Örnek: .time {c_name} 2`"
+            return_str += f"\n`{LANG['CHOICE_TIMEZONE']}."
+            return_str += f"`{LANG['EXAMPLE']}: .time {c_name} 2`"
 
             await tdata.edit(return_str)
             return
@@ -97,12 +103,12 @@ async def time_func(tdata):
 
     if c_name != COUNTRY:
         await tdata.edit(
-            f"{c_name} ülkesinde saat  **{dtnow}**  ({time_zone} saat diliminde).")
+            f"{c_name} {LANG['IS_CLOCK']}  **{dtnow}**  ({time_zone} {LANG['IS_TZ']}).")
         return
 
     elif COUNTRY:
-        await tdata.edit(f"{COUNTRY} ülkesinde saat **{dtnow}**  "
-                         f"({time_zone} saat diliminde).")
+        await tdata.edit(f"{COUNTRY} {LANG['IS_CLOCK']} **{dtnow}**  "
+                         f"({time_zone} {LANG['IS_TZ']}).")
         return
 
 
@@ -130,11 +136,11 @@ async def date_func(dat):
         tz_num = TZ_NUMBER
         timezones = await get_tz(COUNTRY)
     else:
-        await dat.edit(f"Burada tarih: **{dt.now().strftime(d_form)}** ")
+        await dat.edit(f"{LANG['DATE']}: **{dt.now().strftime(d_form)}** ")
         return
 
     if not timezones:
-        await dat.edit("`Geçersiz ülke`")
+        await dat.edit(LANG['INVALID_COUNTRY'])
         return
 
     if len(timezones) == 1:
@@ -144,13 +150,13 @@ async def date_func(dat):
             tz_num = int(tz_num)
             time_zone = timezones[tz_num - 1]
         else:
-            return_str = f"`{c_name} ülkesi birden fazla saat dilimine sahip:`\n"
+            return_str = f"`{c_name} {LANG['TOO_TIMEZONE']}:`\n"
 
             for i, item in enumerate(timezones):
                 return_str += f"`{i+1}. {item}`\n"
 
-            return_str += "\n`Şunlardan birini numara belirterek seçin"
-            return_str += f"Örnek: .date {c_name} 2"
+            return_str += f"\n`{LANG['CHOICE_TIMEZONE']}"
+            return_str += f"{LANG['EXAMPLE']}: .date {c_name} 2"
 
             await dat.edit(return_str)
             return
@@ -159,12 +165,12 @@ async def date_func(dat):
 
     if c_name != COUNTRY:
         await dat.edit(
-            f"{c_name} ülkesinde tarih  **{dtnow}**  ({time_zone} saat diliminde).`")
+            f"{c_name} {LANG['IS_DATE']}  **{dtnow}**  ({time_zone} {LANG['IS_TZ']}).`")
         return
 
     elif COUNTRY:
-        await dat.edit(f"{COUNTRY} ülkesinde tarih **{dtnow}**"
-                       f"({time_zone} saat diliminde).")
+        await dat.edit(f"{COUNTRY} {LANG['IS_DATE']} **{dtnow}**"
+                       f"({time_zone} {LANG['IS_TZ']}).")
         return
 
 

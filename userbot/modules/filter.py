@@ -14,6 +14,13 @@ import re
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("filter")
+
+# ████████████████████████████████ #
+
 SMART_OPEN = '"'
 SMART_CLOSE = '"'
 START_CHAR = ('\'', '"', SMART_OPEN)
@@ -103,7 +110,7 @@ async def genelfilter(event):
         except IndexError:
             string = ""
     else:
-        await event.edit("`Kullanım: ``.genelfilter \"selamın aleyküm\" as` ya da `.genelfilter sa as`")
+        await event.edit(LANG['GENEL_USAGE'])
         return
 
     msg = await event.get_reply_message()
@@ -124,17 +131,17 @@ async def genelfilter(event):
             msg_id = msg_o.id
         else:
             await event.edit(
-                "`Bir medyanın filtreye karşılık olarak kaydedilebilmesi için BOTLOG_CHATID değerinin ayarlanması gerekli.`"
+                LANG['NEED_BOTLOG']
             )
             return
     elif event.reply_to_msg_id and not string:
         rep_msg = await event.get_reply_message()
         string = rep_msg.text
-    success = " **{}** `filtresi {}`"
+    success = " **{}** `{} {}`"
     if add_filter("GENEL", keyword, string, msg_id) is True:
-        await event.edit(success.format(keyword, 'eklendi'))
+        await event.edit(success.format(keyword, LANG['GENEL_FILTER'], LANG['ADDED']))
     else:
-        await event.edit(success.format(keyword, 'güncellendi'))
+        await event.edit(success.format(keyword, LANG['GENEL_FILTER'], LANG['UPDATED']))
 
 
 @register(outgoing=True, pattern="^.filter (.*)")
@@ -154,7 +161,7 @@ async def add_new_filter(new_handler):
         except IndexError:
             string = ""
     else:
-        await new_handler.edit("`Kullanım: ``.filter \"selamın aleyküm\" as` ya da `.filter sa as`")
+        await new_handler.edit(LANG['FILTER_USAGE'])
         return
 
     msg = await new_handler.get_reply_message()
@@ -175,17 +182,17 @@ async def add_new_filter(new_handler):
             msg_id = msg_o.id
         else:
             await new_handler.edit(
-                "`Bir medyanın filtreye karşılık olarak kaydedilebilmesi için BOTLOG_CHATID değerinin ayarlanması gerekli.`"
+                LANG['NEED_BOTLOG']
             )
             return
     elif new_handler.reply_to_msg_id and not string:
         rep_msg = await new_handler.get_reply_message()
         string = rep_msg.text
-    success = " **{}** `filtresi {}`"
+    success = " **{}** `{} {}`"
     if add_filter(str(new_handler.chat_id), keyword, string, msg_id) is True:
-        await new_handler.edit(success.format(keyword, 'eklendi'))
+        await new_handler.edit(success.format(keyword, LANG['GENEL_FILTER'], LANG['ADDED']))
     else:
-        await new_handler.edit(success.format(keyword, 'güncellendi'))
+        await new_handler.edit(success.format(keyword, LANG['GENEL_FILTER'], LANG['UPDATED']))
 
 @register(outgoing=True, pattern="^.genelstop (\w*)")
 async def remove_a_genel(r_handler):
@@ -202,10 +209,10 @@ async def remove_a_genel(r_handler):
         filt = r_handler.pattern_match.group(1)
 
     if not remove_filter("GENEL", filt):
-        await r_handler.edit(" **{}** `filtresi mevcut değil.`".format(filt))
+        await r_handler.edit(" **{}** `{}`".format(filt, LANG['NOT_FOUND']))
     else:
         await r_handler.edit(
-            "**{}** `filtresi başarıyla silindi`".format(filt))
+            "**{}** `{}`".format(filt, LANG['DELETED']))
 
 @register(outgoing=True, pattern="^.stop (\w*)")
 async def remove_a_filter(r_handler):
@@ -222,38 +229,10 @@ async def remove_a_filter(r_handler):
         filt = r_handler.pattern_match.group(1)
 
     if not remove_filter(r_handler.chat_id, filt):
-        await r_handler.edit(" **{}** `filtresi mevcut değil.`".format(filt))
+        await r_handler.edit(" **{}** `{}`".format(filt, LANG['NOT_FOUND']))
     else:
         await r_handler.edit(
-            "**{}** `filtresi başarıyla silindi`".format(filt))
-
-
-@register(outgoing=True, pattern="^.rmbotfilters (.*)")
-async def kick_marie_filter(event):
-    """ .rmfilters komutu Marie'de (ya da onun tabanındaki botlarda) \
-        kayıtlı olan notları silmeye yarar. """
-    cmd = event.text[0]
-    bot_type = event.pattern_match.group(1).lower()
-    if bot_type not in ["marie", "rose"]:
-        await event.edit("`Bu bot henüz desteklenmiyor.`")
-        return
-    await event.edit("```Tüm filtreler temizleniyor...```")
-    await sleep(3)
-    resp = await event.get_reply_message()
-    filters = resp.text.split("-")[1:]
-    for i in filters:
-        if bot_type.lower() == "marie":
-            await event.reply("/stop %s" % (i.strip()))
-        if bot_type.lower() == "rose":
-            i = i.replace('`', '')
-            await event.reply("/stop %s" % (i.strip()))
-        await sleep(0.3)
-    await event.respond(
-        "```Botlardaki filtreler başarıyla temizlendi.```")
-    if BOTLOG:
-        await event.client.send_message(
-            BOTLOG_CHATID, "Şu sohbetteki tüm filtreleri temizledim: " + str(event.chat_id))
-
+            "**{}** `{}`".format(filt, LANG['DELETED']))
 
 @register(outgoing=True, pattern="^.genelfilters$")
 async def genelfilters_active(event):
@@ -263,11 +242,11 @@ async def genelfilters_active(event):
     except AttributeError:
         await event.edit("`Bot Non-SQL modunda çalışıyor!!`")
         return
-    transact = "`Hiç genelfilter yok.`"
+    transact = LANG['GENELFILTERS']
     filters = get_filters("GENEL")
     for filt in filters:
-        if transact == "`Hiç genelfilter yok.`":
-            transact = "Genel filtreler:\n"
+        if transact == LANG['GENELFILTERS']:
+            transact = f"{LANG['GENEL_FILTERS']}\n"
             transact += "`{}`\n".format(filt.keyword)
         else:
             transact += "`{}`\n".format(filt.keyword)
@@ -282,11 +261,11 @@ async def filters_active(event):
     except AttributeError:
         await event.edit("`Bot Non-SQL modunda çalışıyor!!`")
         return
-    transact = "`Bu sohbette hiç filtre yok.`"
+    transact = LANG['FILTERS']
     filters = get_filters(event.chat_id)
     for filt in filters:
-        if transact == "`Bu sohbette hiç filtre yok.`":
-            transact = "Sohbetteki filtreler:\n"
+        if transact == LANG['FILTERS']:
+            transact = f"{LANG['_FILTERS']}\n"
             transact += "`{}`\n".format(filt.keyword)
         else:
             transact += "`{}`\n".format(filt.keyword)
@@ -304,8 +283,6 @@ CMD_HELP.update({
     \nDosyalardan çıkartmalara her türlü şeyle çalışır.\
     \n\n.stop <filtre>\
     \nKullanım: Seçilen filtreyi durdurur.\
-    \n\n.rmbotfilters <marie/rose>\
-    \nKullanım: Grup yönetimi botlarındaki tüm filtreleri temizler. (Şu anlık Rose, Marie ve Marie klonları destekleniyor.)\
     \n\n.genelfilter <filtrelenecek kelime> <cevaplanacak metin> ya da bir mesajı .genelfilter <filtrelenecek kelime>\
     \nKullanım: Genel filtre ekler\
     \n\n.genelstop <filtre>\

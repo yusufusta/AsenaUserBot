@@ -18,12 +18,19 @@ import sys
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("misc")
+
+# ████████████████████████████████ #
+
 @register(outgoing=True, pattern="^.resend")
 async def resend(event):
     await event.delete()
     m = await event.get_reply_message()
     if not m:
-        event.edit("`Bir dosyaya yanıt ver.`")
+        event.edit(LANG['REPLY_TO_FILE'])
         return
     await event.respond(m)
 
@@ -33,11 +40,11 @@ async def randomise(items):
     itemo = (items.text[8:]).split()
     if len(itemo) < 2:
         await items.edit(
-            "`2 veya daha fazla eşya gerekli. Daha fazla bilgi için .asena random komutunu gir.`"
+            LANG['NEED_MUCH_DATA_FOR_RANDOM']
         )
         return
     index = randint(1, len(itemo) - 1)
-    await items.edit("**Sorgu: **\n`" + items.text[8:] + "`\n**Çıktı: **\n`" +
+    await items.edit(f"**{LANG['QUERY']}: **\n`" + items.text[8:] + f"`\n**{LANG['RESULT']}: **\n`" +
                      itemo[index] + "`")
 
 
@@ -45,10 +52,10 @@ async def randomise(items):
 async def sleepybot(time):
     """ .sleep komutu Asena'nın birkaç saniye uyumasına olanak sağlar. """
     if " " not in time.pattern_match.group(1):
-        await time.reply("Kullanım Şekli: `.sleep [saniye]`")
+        await time.reply(LANG['SLEEP_DESC'])
     else:
         counter = int(time.pattern_match.group(1))
-        await time.edit("`Horlayarak uyuyorum...`")
+        await time.edit(LANG['SLEEPING'])
         await sleep(2)
         if BOTLOG:
             await time.client.send_message(
@@ -56,13 +63,13 @@ async def sleepybot(time):
                 "Botu" + str(counter) + "saniye uykuya bıraktın.",
             )
         await sleep(counter)
-        await time.edit("`Günaydın!`")
+        await time.edit(LANG['GOODMORNIN_YALL'])
 
 
 @register(outgoing=True, pattern="^.shutdown$")
 async def shutdown(event):
     """ .shutdown komutu botu kapatır. """
-    await event.edit("`Görüşürüz... *Windows XP kapanma sesi*`")
+    await event.edit(LANG['GOODBYE_MFRS'])
     if BOTLOG:
         await event.client.send_message(BOTLOG_CHATID, "#SHUTDOWN \n"
                                         "Bot kapatıldı.")
@@ -74,7 +81,7 @@ async def shutdown(event):
 
 @register(outgoing=True, pattern="^.restart$")
 async def restart(event):
-    await event.edit("`Bot yeniden başlatılıyor...`")
+    await event.edit(LANG['RESTARTING'])
     if BOTLOG:
         await event.client.send_message(BOTLOG_CHATID, "#RESTART \n"
                                         "Bot yeniden başlatıldı.")
@@ -90,17 +97,17 @@ async def restart(event):
 @register(outgoing=True, pattern="^.support$")
 async def bot_support(wannahelp):
     """ .support komutu destek grubumuzu verir. """
-    await wannahelp.edit("[Buradan](http://t.me/AsenaSupport) destek grubumuza ulaşabilirsiniz.")
+    await wannahelp.edit(LANG['SUPPORT_GROUP'])
 
 
 @register(outgoing=True, pattern="^.creator$")
 async def creator(e):
-    await e.edit("Bu bot @Fusuf tarafından geliştirilmiştir.")
+    await e.edit(LANG['CREATOR'])
 
 
 @register(outgoing=True, pattern="^.readme$")
 async def reedme(e):
-    await e.edit("[Asena README.md](https://github.com/quiec/AsenaUserBot/blob/master/README.md)")
+    await e.edit(LANG['CREATOR'])
 
 
 # Copyright (c) Gegham Zakaryan | 2019
@@ -121,7 +128,7 @@ async def repeat(rep):
 @register(outgoing=True, pattern="^.repo$")
 async def repo_is_here(wannasee):
     """ .repo komutunun tek yaptığı şey GitHub repomuzun bağlantısını vermek. """
-    await wannasee.edit("[Asena Repo](https://github.com/quiec/asenauserbot)")
+    await wannasee.edit(LANG['REPO'])
 
 @register(outgoing=True, pattern="^.raw$")
 async def raw(event):

@@ -15,9 +15,17 @@ from asyncio import sleep
 from telethon.events import StopPropagation
 
 from userbot import (AFKREASON, COUNT_MSG, CMD_HELP, ISAFK, BOTLOG,
-                     BOTLOG_CHATID, USERS, PM_AUTO_BAN)
+                     BOTLOG_CHATID, USERS, PM_AUTO_BAN, SON_GORULME)
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
+from time import time
+
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("afk")
+
+# ████████████████████████████████ #
 
 @register(incoming=True, disable_edited=True)
 async def mention_afk(mention):
@@ -31,10 +39,10 @@ async def mention_afk(mention):
                 if AFKREASON:
                     if type(PLUGIN_MESAJLAR['afk']) is str:
                         await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                            \nSebep: `{AFKREASON}`")
+                            \n{LANG['REASON']}: `{AFKREASON}`\n")
                     else:
                         msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
-                        await msj.reply(f"Sebep: `{AFKREASON}`")
+                        await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                 else:
                     await mention.reply(PLUGIN_MESAJLAR['afk'])
                 USERS.update({mention.sender_id: 1})
@@ -44,10 +52,10 @@ async def mention_afk(mention):
                     if AFKREASON:
                         if PLUGIN_MESAJLAR['afk'] is str:
                             await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                            \nSebep: `{AFKREASON}`")
+                            \{LANG['REASON']}: `{AFKREASON}`")
                         else:
                             msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
-                            await msj.reply(f"Sebep: `{AFKREASON}`")
+                            await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                     else:
                         await mention.reply(PLUGIN_MESAJLAR['afk'])
                     USERS[mention.sender_id] = USERS[mention.sender_id] + 1
@@ -76,8 +84,8 @@ async def afk_on_pm(sender):
         if apprv and ISAFK:
             if sender.sender_id not in USERS:
                 if AFKREASON:
-                    await sender.reply(f"Sahibim şu an AFK.\
-                    \nSebep: `{AFKREASON}`")
+                    await sender.reply(f"{LANG['AFK']}\
+                    \n{LANG['REASON']}: `{AFKREASON}`")
                 else:
                     await sender.reply(PLUGIN_MESAJLAR['afk'])
                 USERS.update({sender.sender_id: 1})
@@ -87,10 +95,10 @@ async def afk_on_pm(sender):
                     if AFKREASON:
                         if type(PLUGIN_MESAJLAR['afk']) is str:
                             await sender.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                            \nSebep: `{AFKREASON}`")
+                            \n{LANG['REASON']}: `{AFKREASON}`")
                         else:
                             msj = await sender.reply(PLUGIN_MESAJLAR['afk'])
-                            await msj.reply(f"Sebep: `{AFKREASON}`")
+                            await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                     else:
                         await sender.reply(PLUGIN_MESAJLAR['afk'])
                     USERS[sender.sender_id] = USERS[sender.sender_id] + 1
@@ -109,10 +117,12 @@ async def set_afk(afk_e):
     global AFKREASON
     if string:
         AFKREASON = string
-        await afk_e.edit(f"Artık AFK'yım.\
-        \nSebep: `{string}`")
+        await afk_e.edit(f"{LANG['IM_AFK']}\
+        \n{LANG['REASON']}: `{string}`")
     else:
-        await afk_e.edit("Artık AFK'yım.")
+        await afk_e.edit(LANG['IM_AFK'])
+
+    SON_GORULME = time()
     if BOTLOG:
         await afk_e.client.send_message(BOTLOG_CHATID, "#AFK\nAFK oldunuz.")
     ISAFK = True
@@ -128,7 +138,7 @@ async def type_afk_is_not_true(notafk):
     global AFKREASON
     if ISAFK:
         ISAFK = False
-        await notafk.respond("Artık AFK değilim.")
+        await notafk.respond(LANG['IM_NOT_AFK'])
         await sleep(2)
         if BOTLOG:
             await notafk.client.send_message(

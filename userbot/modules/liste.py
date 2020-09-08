@@ -1,6 +1,6 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
+# Licensed under the GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
@@ -13,52 +13,59 @@ import io
 import os
 import asyncio
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("liste")
+
+# ████████████████████████████████ #
+
 @register(outgoing=True, pattern="^.liste ?(gmute|gban)?")
 async def liste(event):
     liste = event.pattern_match.group(1)
     try:
         if len(liste) < 1:
-            await event.edit("**Bilinmeyen komut!** `Kullanım: .liste gmute/gban`")
+            await event.edit(LANG['WRONG_INPUT'])
             return
     except:
-        await event.edit("**Bilinmeyen komut!** `Kullanım: .liste gmute/gban`")
+        await event.edit(LANG['WRONG_INPUT'])
         return
     
     if liste == "gban":
         try:
             from userbot.modules.sql_helper.gban_sql import gbanlist
         except:
-            await event.edit("`Sql dışı mod'ta bu özellik çalışmaz!`")
+            await event.edit(LANG['NEED_SQL_MODE'])
             return
-        await event.edit("`Küresel olarak yasaklanan kullanıcılar getiriliyor...`")
+        await event.edit(LANG['GBANNED_USERS'])
         mesaj = ""
         for user in gbanlist():
             mesaj += f"**ID: **`{user.sender}`\n"
 
         if len(mesaj) > 4000:
-            await event.edit("`Wow! Baya bir kişi yasaklamışsınız. Dosya olarak gönderiyorum...`")
+            await event.edit(LANG['TOO_MANY_GBANNED'])
             open("gban_liste.txt", "w+").write(mesaj)
-            await event.client.send_message(event.chat_id, f"**Küresel olarak yasakladığınız kullanıcılar**\n\n**İpucu:** Yasakladığınız kullanıcılar hakkında daha fazla bilgi almak için `.whois id` kullanabilirsiniz.", file="gban_liste.txt")
+            await event.client.send_message(event.chat_id, LANG['GBAN_TXT'], file="gban_liste.txt")
             os.remove("gban_liste.txt")
         else:
-            await event.edit(f"**Küresel olarak yasakladığınız kullanıcılar:**\n{mesaj}\n\n**İpucu:** Yasakladığınız kullanıcılar hakkında daha fazla bilgi almak için `.whois id` kullanabilirsiniz.")
+            await event.edit(LANG['GBAN_LIST'] % mesaj)
     elif liste == "gmute":
         try:
             from userbot.modules.sql_helper.gmute_sql import gmutelist
         except:
-            await event.edit("`Sql dışı mod'ta bu özellik çalışmaz!`")
+            await event.edit(LANG['NEED_SQL_MODE'])
             return
-        await event.edit("`Küresel olarak susturulan kullanıcılar getiriliyor...`")
+        await event.edit(LANG['GMUTE_DATA'])
         mesaj = ""
         for user in gmutelist():
             mesaj += f"**ID: **`{user.sender}`\n"
 
         if len(mesaj) > 4000:
-            await event.edit("`Wow! Baya bir kişi susturmuşsunuz. Dosya olarak gönderiyorum...`")
+            await event.edit(LANG['TOO_MANY_GMUTED'])
             open("gmute_liste.txt", "w+").write(mesaj)
-            await event.client.send_message(event.chat_id, f"**Küresel olarak susturduğunuz kullanıcılar**\n\n**İpucu:** Susturduğunuz kullanıcılar hakkında daha fazla bilgi almak için `.whois id` kullanabilirsiniz.", file="gmute_liste.txt")
+            await event.client.send_message(event.chat_id, LANG['GMUTE_TXT'], file="gmute_liste.txt")
             os.remove("gmute_liste.txt")
         else:
-            await event.edit(f"**Küresel olarak susturduğunuz kullanıcılar:**\n{mesaj}\n\n**İpucu:** Susturduğunuz kullanıcılar hakkında daha fazla bilgi almak için `.whois id` kullanabilirsiniz.")
+            await event.edit(LANG['GMUTE_TXT'] % mesaj)
 
 CMD_HELP["liste"] = ".liste gban/gmute\nGbanladığınız ya da Gmutelediğiniz kişileri getirir."

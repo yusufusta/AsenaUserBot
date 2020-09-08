@@ -12,6 +12,12 @@ from requests import post
 from userbot import bot, OCR_SPACE_API_KEY, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("ocr")
+
+# ████████████████████████████████ #
 
 async def ocr_space_file(filename,
                          overlay=False,
@@ -46,7 +52,7 @@ async def ocr_space_file(filename,
 
 @register(pattern=r".ocr (.*)", outgoing=True)
 async def ocr(event):
-    await event.edit("`Okunuyor...`")
+    await event.edit(LANG['READING'])
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
     lang_code = event.pattern_match.group(1)
@@ -57,9 +63,9 @@ async def ocr(event):
     try:
         ParsedText = test_file["ParsedResults"][0]["ParsedText"]
     except BaseException:
-        await event.edit("`Bunu okuyamadım.`\n`Sanırım yeni gözlüklere ihtiyacım var.`")
+        await event.edit(LANG['CANT_READ'])
     else:
-        await event.edit(f"`İşte okuyabildiğim şey:`\n\n{ParsedText}"
+        await event.edit(f"`{LANG['READ']}`\n\n{ParsedText}"
                          )
     os.remove(downloaded_file_name)
 

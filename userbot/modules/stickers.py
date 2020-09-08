@@ -23,6 +23,13 @@ PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break
 A pack can't have more than 120 stickers at the moment."
 PACK_DOESNT_EXIST = "  A <strong>Telegram</strong> user has created the <strong>Sticker&nbsp;Set</strong>."
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("stickers")
+
+# ████████████████████████████████ #
+
 
 @register(outgoing=True, pattern="^.dızla($| )?((?![0-9]).+?)? ?([0-9]*)?")
 async def kang(event):
@@ -45,7 +52,7 @@ async def kang(event):
     if textx.photo or textx.sticker: message = textx
     elif event.photo or event.sticker: message = event
     else:
-        await event.edit("`Dızlayabilmem için bana sticker veya fotoğraf vermen gerek!`")
+        await event.edit(LANG['GIVE_STICKER'])
         return
 
     sticker = io.BytesIO()
@@ -53,7 +60,7 @@ async def kang(event):
     sticker.seek(0)
 
     if not sticker:
-        await event.edit("`Sticker indirilemedi! Fotoğraf veya sticker gönderdiğinize emin olun.`")
+        await event.edit(LANG['FAIL_DOWNLOAD'])
         return
 
     is_anim = message.file.mime_type == "application/x-tgsticker"
@@ -79,7 +86,7 @@ async def kang(event):
     new_pack = PACK_DOESNT_EXIST in htmlstr
 
     if new_pack:
-        await event.edit("`Sticker paketi oluşturulmamış! Yeni paket oluşturuluyor...`")
+        await event.edit(LANG['NEW_PACK'])
         await newpack(is_anim, sticker, emoji, packtitle, packname, message)
     else:
         async with bot.conversation("Stickers") as conv:
@@ -104,7 +111,7 @@ async def kang(event):
                             f"{number}{' animated' if is_anim else ''}")
 
                 await event.edit(
-                    f"`Yetersiz paket alanından dolayı {number} sayılı pakete geçiliyor...`"
+                    LANG['TOO_STICKERS'].format(number)
                 )
 
                 await conv.send_message(packname)

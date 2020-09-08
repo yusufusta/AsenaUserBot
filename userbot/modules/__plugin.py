@@ -1,10 +1,11 @@
-# Copyright (C) 2019 The Raphielscape Company LLC.
+# Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# Licensed under the  GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
-# @Qulec tarafından yazılmıştır.
+# Asena UserBot - Yusuf Usta
+
 import re
 import os
 from telethon.tl.types import DocumentAttributeFilename, InputMessagesFilterDocument
@@ -15,6 +16,12 @@ import traceback
 from userbot import CMD_HELP, bot, tgbot, PLUGIN_CHANNEL_ID
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("__plugin")
+
+# ████████████████████████████████ #
 
 # Plugin Porter - UniBorg
 @register(outgoing=True, pattern="^.pport")
@@ -23,10 +30,10 @@ async def pport(event):
         reply_message = await event.get_reply_message()
         data = await check_media(reply_message)
     else:
-        await event.edit("`Plugin-Port için lütfen bir dosyaya yanıt verin.`")
+        await event.edit(LANG["REPLY_FOR_PORT"])
         return
 
-    await event.edit("`Dosya indiriliyor...`")
+    await event.edit(LANG["DOWNLOADING"])
     dosya = await event.client.download_media(data)
     dosy = open(dosya, "r").read()
 
@@ -35,11 +42,11 @@ async def pport(event):
     borg3 = r"(@borg\.on\(admin_cmd\(\")(.*)(\")(\)\))"
 
     if re.search(borg1, dosy):
-        await event.edit("`1. Tip UniBorg tespit edildi...`")
+        await event.edit(LANG["UNIBORG"])
         komu = re.findall(borg1, dosy)
 
         if len(komu) > 1:
-            await event.edit("`Bu dosyanın içinde birden fazla plugin var, bunu portlayamam!`")
+            await event.edit(LANG["TOO_MANY_PLUGIN"])
 
         komut = komu[0][1]
         degistir = dosy.replace('@borg.on(admin_cmd(pattern="' + komut + '"))', '@register(outgoing=True, pattern="^.' + komut + '")')
@@ -49,18 +56,19 @@ async def pport(event):
         degistir = degistir.replace("borg.", "event.client.")
         ported = open(f'port_{dosya}', "w").write(degistir)
 
-        await event.edit("`Port başarılı dosya yükleniyor...`")
+        await event.edit(LANG["UPLOADING"])
 
         await event.client.send_file(event.chat_id, f"port_{dosya}")
         os.remove(f"port_{dosya}")
         os.remove(f"{dosya}")
     elif re.search(borg2, dosy):
-        await event.edit("`2. Tip UniBorg tespit edildi...`")
+        await event.edit(LANG["UNIBORG2"])
         komu = re.findall(borg2, dosy)
 
         if len(komu) > 1:
-            await event.edit("`Bu dosyanın içinde birden fazla plugin var, bunu portlayamam!`")
+            await event.edit(LANG["TOO_MANY_PLUGIN"])
             return
+
         komut = komu[0][1]
 
         degistir = dosy.replace('@borg.on(admin_cmd(pattern=r"' + komut + '"))', '@register(outgoing=True, pattern="^.' + komut + '")')
@@ -70,21 +78,20 @@ async def pport(event):
         degistir = degistir.replace("borg.", "event.client.")
         ported = open(f'port_{dosya}', "w").write(degistir)
 
-        await event.edit("`Port başarılı dosya yükleniyor...`")
+        await event.edit(LANG["UPLOADING"])
 
         await event.client.send_file(event.chat_id, f"port_{dosya}")
         os.remove(f"port_{dosya}")
         os.remove(f"{dosya}")
     elif re.search(borg3, dosy):
-        await event.edit("`3. Tip UniBorg tespit edildi...`")
+        await event.edit(LANG["UNIBORG3"])
         komu = re.findall(borg3, dosy)
 
         if len(komu) > 1:
-            await event.edit("`Bu dosyanın içinde birden fazla plugin var, bunu portlayamam!`")
+            await event.edit(LANG["TOO_MANY_PLUGIN"])
             return
 
         komut = komu[0][1]
-
 
         degistir = dosy.replace('@borg.on(admin_cmd("' + komut + '"))', '@register(outgoing=True, pattern="^.' + komut + '")')
         degistir = degistir.replace("from userbot.utils import admin_cmd", "from userbot.events import register")
@@ -92,23 +99,22 @@ async def pport(event):
         degistir = degistir.replace("def _(event):", "def port_" + komut.replace("?(.*)", "") + "(event):")
         degistir = degistir.replace("borg.", "event.client.")
 
-
         ported = open(f'port_{dosya}', "w").write(degistir)
 
-        await event.edit("`Port başarılı dosya yükleniyor...`")
+        await event.edit(LANG["UPLOADING"])
 
         await event.client.send_file(event.chat_id, f"port_{dosya}")
         os.remove(f"port_{dosya}")
         os.remove(f"{dosya}")
 
     else:
-        await event.edit("`UniBorg plugini tespit edilmedi.`")
+        await event.edit(LANG["UNIBORG_NOT_FOUND"])
 
 @register(outgoing=True, pattern="^.plist")
 async def plist(event):
     if PLUGIN_CHANNEL_ID != None:
-        await event.edit("`Pluginler getiriliyor...`")
-        yuklenen = "**İşte Yüklenen Pluginler:**\n\n"
+        await event.edit(LANG["PLIST_CHECKING"])
+        yuklenen = f"{LANG['PLIST']}\n\n"
         async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
             try:
                 dosyaismi = plugin.file.name.split(".")[1]
@@ -118,23 +124,24 @@ async def plist(event):
                 yuklenen += f"▶️ {plugin.file.name}\n"
         await event.edit(yuklenen)
     else:
-        await event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
+        await event.edit(LANG["TEMP_PLUGIN"])
+
 @register(outgoing=True, pattern="^.pinstall")
 async def pins(event):
     if event.is_reply:
         reply_message = await event.get_reply_message()
         data = await check_media(reply_message)
     else:
-        await event.edit("`Yüklenecek modül dosyasına yanıt verin.`")
+        await event.edit(LANG["REPLY_TO_FILE"])
         return
 
-    await event.edit("`Dosya indiriliyor...`")
+    await event.edit(LANG["DOWNLOADING"])
     dosya = await event.client.download_media(data, os.getcwd() + "/userbot/modules/")
     
     if PLUGIN_CHANNEL_ID != None:
         await reply_message.forward_to(PLUGIN_CHANNEL_ID)
     else:
-        event.reply("`Pluginlerin kalıcı olması için Id ayarlamamışsınız. Pluginleriniz yeniden başlatınca silinebilir!`")
+        event.reply(LANG["NOT_FOUND_PLUGIN_CHANNEL"])
 
     try:
         spec = importlib.util.spec_from_file_location(dosya, dosya)
@@ -142,7 +149,7 @@ async def pins(event):
 
         spec.loader.exec_module(mod)
     except Exception as e:
-        await event.edit(f"`Yükleme başarısız! Plugin hatalı.\n\nHata: {e}`")
+        await event.edit(f"{LANG['PLUGIN_BUGGED']} {e}`")
         try:
             os.remove("./userbot/modules/" + dosya)
         except:
@@ -157,30 +164,30 @@ async def pins(event):
         i = 0
         while i < len(komu):
             komut = komu[i][1]
-            CMD_HELP[komut] = f"Bu plugin dışarıdan botunuz için yüklenmiştir. Kullanım: {komut}"
+            CMD_HELP[komut] = f"{LANG['PLUGIN_DESC']} {komut}"
             komutlar += komut + " "
             i += 1
-        await event.edit(f"`Modül başarıyla yüklendi! {komutlar} ile kullanmaya başlayabilirsiniz.`")
+        await event.edit(LANG['PLUGIN_DOWNLOADED'] % komutlar)
     else:
         try:
             komu = str(re.findall(r"(pattern=\")(.*)(\")(\))", dosy)[0][1]).replace("^", "").replace(".", "")
         except IndexError:
             zaman = time.time()
-            CMD_HELP[zaman] = f"Bu plugin dışarıdan yüklenmiştir. Kullanım: #KOMUT BULUNAMADI#"
-            await event.edit(f"`Modül başarıyla yüklendi! Fakat komutu bulamadım, üzgünüm.`")
+            CMD_HELP[zaman] = LANG['PLUGIN_WITHOUT_DESC']
+            await event.edit(LANG['PLUGIN_DESCLESS'])
             return
 
-        CMD_HELP[komu] = f"Bu plugin dışarıdan yüklenmiştir. Kullanım: .{komu}"
-        await event.edit(f"`Modül başarıyla yüklendi! .{komu} ile kullanmaya başlayabilirsiniz.`")
+        CMD_HELP[komu] = f"{LANG['PLUG_DESC']}{komu}"
+        await event.edit(LANG['PLUG_MESSAGE'] % komu)
 
 @register(outgoing=True, pattern="^.premove ?(.*)")
 async def premove(event):
     modul = event.pattern_match.group(1).lower()
     if len(modul) < 1:
-        await event.edit("`Lütfen komutun yanına bir plugin belirtin.`")
+        await event.edit(LANG['PREMOVE_GIVE_NAME'])
         return
 
-    await event.edit("`Plugin Siliniyor...`")
+    await event.edit(LANG['PREMOVE_DELETING'])
     i = 0
     a = 0
     async for message in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument, search=modul):
@@ -188,30 +195,30 @@ async def premove(event):
         try:
             os.remove(f"./userbot/modules/{message.file.name}")
         except FileNotFoundError:
-            await event.reply("`Plugin dosyası zaten silinmiş.`")
+            await event.reply(LANG['ALREADY_DELETED'])
 
         i += 1
         if i > 1:
             break
 
     if i == 0:
-        await event.edit("`Böyle bir plugin belki vardı, belki de yoktu. Ama şu an olmadığı kesin.`")
+        await event.edit(LANG['NOT_FOUND_PLUGIN'])
     else:
-        await event.edit("`Plugin başarıyla silindi!` **İşlemlerin uygulanabilmesi için yeniden başlatmanız gerekmetedir.**")
+        await event.edit(LANG['PLUG_DELETED'])
 
 @register(outgoing=True, pattern="^.psend ?(.*)")
 async def psend(event):
     modul = event.pattern_match.group(1).lower()
     if len(modul) < 1:
-        await event.edit("`Lütfen komutun yanına bir plugin belirtin.`")
+        await event.edit(LANG['PREMOVE_GIVE_NAME'])
         return
 
     dosya = os.getcwd() + "/userbot/modules/" + modul + ".py"
     if os.path.isfile(dosya):
-        await event.client.send_file(event.chat_id, f"{dosya}", caption="Bu bir [Asena](https://t.me/AsenaUserBot) pluginidir.")
+        await event.client.send_file(event.chat_id, f"{dosya}", caption=LANG['ASENA_PLUGIN_CAPTION'])
         await event.delete()
     else:
-        await event.edit("`Böyle bir plugin belki vardı, belki de yoktu. Ama şu an olmadığı kesin.`")
+        await event.edit(LANG['NOT_FOUND_PLUGIN'])
 
 async def check_media(reply_message):
     if reply_message and reply_message.media:

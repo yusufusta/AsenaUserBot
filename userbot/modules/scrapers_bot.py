@@ -1,6 +1,6 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
+# Licensed under the GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
@@ -17,6 +17,13 @@ import os
 from telethon.tl.types import MessageMediaPhoto
 import asyncio
 from userbot.modules.admin import get_user_from_event
+
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("scrapers_bot")
+
+# ████████████████████████████████
 
 def is_message_image(message):
     if message.media:
@@ -40,33 +47,33 @@ async def sangmata(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
-       await event.edit("`Herhangi bir kullanıcı mesajına cevap verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     reply_message = await event.get_reply_message() 
     if not reply_message.text:
-       await event.edit("`Mesaja cevap verin.`")
+       await event.edit(LANG['REPLY_MSG'])
        return
     chat = "@SangMataInfo_bot"
     sender = reply_message.sender
     if reply_message.sender.bot:
-       await event.edit("`Botlara cevap veremezsiniz.`")
+       await event.edit(LANG['REPLY_BOT_ERROR'])
        return
-    await event.edit("`İşleniyor...`")
+    await event.edit(LANG['WORKING_ON'])
     async with bot.conversation(chat, exclusive=False) as conv:
           response = None
           try:
               msg = await reply_message.forward_to(chat)
               response = await conv.get_response(message=msg, timeout=5)
           except YouBlockedUserError: 
-              await event.edit(f"`Lütfen {chat} engelini kaldırın ve tekrar deneyin`")
+              await event.edit(LANG['BLOCKED_ERROR'])
               return
           except Exception as e:
               print(e.__class__)
 
           if not response:
-              await event.edit("`Botdan cevap alamadım!`")
+              await event.edit(LANG['NOT_RESPONSE'])
           elif response.text.startswith("Forward"):
-             await event.edit("`Gizlilik ayarları yüzenden alıntı yapamadım`")
+             await event.edit(LANG['USER_PRIVACY'])
           else: 
              await event.edit(response.text)
           sleep(1)
@@ -79,11 +86,11 @@ async def memeyap(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
-       await event.edit("`Kullanım: Lütfen bir mesaja yanıt vererek yazın. Örnek: .meme üst;alt`")
+       await event.edit(LANG['REPLY_TO_MEME'])
        return
     reply_message = await event.get_reply_message() 
     if not reply_message.media:
-       await event.edit("```Bir Fotoğraf/sticker/gif'e yanıt verin.```")
+       await event.edit(LANG['REPLY_TO_PHOTO'])
        return
     chat = "@MemeAutobot"
     sender = reply_message.sender
@@ -91,10 +98,10 @@ async def memeyap(event):
     file = await event.client.download_file(reply_message.media)
     uploaded_gif = None
     if reply_message.sender.bot:
-       await event.edit("```Gerçek bir kullanıcının mesajına yanıt verin.```")
+       await event.edit(LANG['REPLY_TO_BOT'])
        return
     else:
-     await event.edit("```Memeleniyor! (」ﾟﾛﾟ)｣ ```")
+     await event.edit(LANG['MEMING'])
     
     async with event.client.conversation(chat) as bot_conv:
           try:
@@ -106,12 +113,12 @@ async def memeyap(event):
             await event.client.send_file(chat, reply_message.media)
             response = await bot_conv.get_response()
           except YouBlockedUserError: 
-              await event.reply("```Lütfen @MemeAutobot engelini kaldırıp tekrar deneyin.```")
+              await event.reply(LANG['MEMEBOT_BLOCKED'])
               return
           if response.text.startswith("Forward"):
               await event.edit(f"```{response.text}```")
           if "Okay..." in response.text:
-            await event.edit("```Bu bir fotoğraf değil! Bekle biraz fotoğrafa çevireceğim.```")
+            await event.edit(LANG['NOT_A_PHOTO'])
             thumb = None
             if os.path.exists(thumb_image_path):
                 thumb = thumb_image_path
@@ -157,7 +164,7 @@ async def memeyap(event):
             )
             await event.delete()
           elif not is_message_image(reply_message):
-            await event.edit("Bilinmeyen mesaj tipi!")
+            await event.edit(LANG['NOT_VALID_FORMAT'])
             return
           else: 
                await event.client.send_file(event.chat_id, response.media)
@@ -167,55 +174,55 @@ async def _(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
-       await event.edit("`Lütfen bir mesaja yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MESSAGE'])
        return
     reply_message = await event.get_reply_message() 
     if not reply_message.media:
-       await event.edit("`Lütfen bir dosyaya yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_FILE'])
        return
     chat = "@DrWebBot"
     sender = reply_message.sender
     if reply_message.sender.bot:
-       await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
+       await event.edit(LANG['REPLY_USER_ERR'])
        return
-    await event.edit("`Musallet.exe var mı yok mu bakıyorum...`")
+    await event.edit(LANG['MIZAH_EXE'])
     async with event.client.conversation(chat) as conv:
       try:     
          response = conv.wait_event(events.NewMessage(incoming=True,from_users=161163358))
          await event.client.forward_messages(chat, reply_message)
          response = await response 
       except YouBlockedUserError:
-         await event.reply(f"`Mmmh sanırım` {chat} `engellemişsin. Lütfen engeli aç.`")
+         await event.reply(LANG['BLOCKED_CHAT'])
          return
 
       if response.text.startswith("Forward"):
-         await event.edit("`Gizlilik ayarları yüzenden alıntı yapamadım.`")
+         await event.edit(LANG['USER_PRIVACY'])
       elif response.text.startswith("Select"):
          await event.client.send_message(chat, "English")
-         await event.edit("`Lütfen bekleyiniz...`")
+         await event.edit(LANG['WAIT_EDIT'])
 
          response = conv.wait_event(events.NewMessage(incoming=True,from_users=161163358))
          await event.client.forward_messages(chat, reply_message)
          response = conv.wait_event(events.NewMessage(incoming=True,from_users=161163358))
          response = await response
          
-         await event.edit(f"**Virüs taraması bitti. İşte sonuçlar:**\n {response.message.message}")
+         await event.edit(f"**{LANG['SCAN_RESULT']}:**\n {response.message.message}")
 
 
       elif response.text.startswith("Still"):
-         await event.edit(f"`Dosya taranıyor...`")
+         await event.edit(LANG['SCANNING'])
 
          response = conv.wait_event(events.NewMessage(incoming=True,from_users=161163358))
          response = await response 
          if response.text.startswith("No threats"):
-            await event.edit(f"**Virüs taraması bitti. Bu dosya temiz. Geç!**")
+            await event.edit(LANG['CLEAN'])
          else:
-            await event.edit(f"**Virüs taraması bitti. Whopsie! Bu dosya tehlikeli. Sakın yükleme!**\n\nDetaylı bilgi: {response.message.message}")
+            await event.edit(f"**{LANG['VIRUS_DETECTED']}**\n\nDetaylı bilgi: {response.message.message}")
 
 @register(outgoing=True, pattern="^.creation")
 async def creation(event):
     if not event.reply_to_msg_id:
-        await event.edit("`Lütfen bir mesaja yanıt verin.`")
+        await event.edit(LANG['REPLY_TO_MSG'])
         return
     reply_message = await event.get_reply_message() 
     if event.fwd_from:
@@ -223,9 +230,9 @@ async def creation(event):
     chat = "@creationdatebot"
     sender = reply_message.sender
     if reply_message.sender.bot:
-       await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
-    await event.edit("`Tarih hesaplanıyor...`")
+    await event.edit(LANG['CALCULATING_TIME'])
     async with event.client.conversation(chat) as conv:
         try:     
             await event.client.forward_messages(chat, reply_message)
@@ -236,7 +243,7 @@ async def creation(event):
         response = conv.wait_event(events.NewMessage(incoming=True,from_users=747653812))
         response = await response
         if response.text.startswith("Looks"):
-            await event.edit("`Gizlilik ayarları yüzenden sonuç çıkartamadım.`")
+            await event.edit(LANG['PRIVACY_ERR'])
         else:
             await event.edit(f"**Rapor hazır: **`{response.text.replace('**','')}`")
 
@@ -246,18 +253,18 @@ async def ocriki(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
-       await event.edit("`Lütfen bir mesaja yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     reply_message = await event.get_reply_message() 
     if not reply_message.media:
-       await event.edit("`Lütfen bir dosyaya yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     chat = "@bacakubot"
     sender = reply_message.sender
     if reply_message.sender.bot:
-       await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
-    await event.edit("`Okuyorum... A B C...`")
+    await event.edit(LANG['READING'])
     async with event.client.conversation(chat) as conv:
         try:     
             await event.client.forward_messages(chat, reply_message)
@@ -272,25 +279,25 @@ async def ocriki(event):
             response = await response
 
         if response.text == "":
-            await event.edit("`Kesinlikle bir şeyler oldu. Okuyamadım.`")
+            await event.edit(LANG['OCR_ERROR'])
         else:
-            await event.edit(f"**Bir şeyler okudum: **`{response.text}`")
+            await event.edit(f"**{LANG['SEE_SOMETHING']}: **`{response.text}`")
 
 @register(outgoing=True, pattern="^.voicy")
 async def voicy(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
-       await event.edit("`Lütfen bir mesaja yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     reply_message = await event.get_reply_message() 
     if not reply_message.media:
-       await event.edit("`Lütfen bir dosyaya yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     chat = "@Voicybot"
     sender = reply_message.sender
     if reply_message.sender.bot:
-       await event.edit("`Lütfen gerçekten bir kullanıcının mesajına yanıt verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     await event.edit("`Ses dinleniyor... Erkan enegtarlar...`")
     async with event.client.conversation(chat) as conv:
@@ -303,29 +310,29 @@ async def voicy(event):
         response = conv.wait_event(events.MessageEdited(incoming=True,from_users=259276793))
         response = await response
         if response.text.startswith("__👋"):
-            await event.edit("`Botu başlatıp Türkçe yapmanız gerekmektedir.`")
+            await event.edit(LANG['VOICY_LANG_ERR'])
         elif response.text.startswith("__👮"):
-            await event.edit("`Ses bozuk, ses. Ne dediğini anlamadım.`")
+            await event.edit(LANG['VOICY_ERR'])
         else:
-            await event.edit(f"**Bir şeyler duydum: **`{response.text}`")
+            await event.edit(f"**{LANG['HEAR_SOMETHING']}: **`{response.text}`")
 
 @register(outgoing=True, pattern="^.q(?: |$)(.*)")
 async def quotly(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
-       await event.edit("`Herhangi bir kullanıcı mesajına cevap verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     reply_message = await event.get_reply_message() 
     if not reply_message.text:
-       await event.edit("`Mesaja cevap verin.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
     chat = "@QuotLyBot"
     sender = reply_message.sender
     if reply_message.sender.bot:
-       await event.edit("`Botlara cevap veremezsiniz.`")
+       await event.edit(LANG['REPLY_TO_MSG'])
        return
-    await event.edit("`Alıntı yapılıyor...`")
+    await event.edit(LANG['QUOTING'])
 
     async with bot.conversation(chat, exclusive=False, replies_are_responses=True) as conv:
         response = None
@@ -343,19 +350,19 @@ async def quotly(event):
                 msg = await reply_message.forward_to(chat)
             response = await conv.wait_event(events.NewMessage(incoming=True,from_users=1031952739), timeout=10)
         except YouBlockedUserError: 
-            await event.edit("`Lütfen @QuotLyBot engelini kaldırın ve tekrar deneyin`")
+            await event.edit(LANG['UNBLOCK_QUOTLY'])
             return
         except asyncio.TimeoutError:
             await event.edit("`Botdan cevap alamadım!`")
             return
         except ValueError:
-            await event.edit("`Sadece sayı girebilirsiniz! Örnek: ``.q 2`")
+            await event.edit(LANG['QUOTLY_VALUE_ERR'])
             return
             
         if not response:
             await event.edit("`Botdan cevap alamadım!`")
         elif response.text.startswith("Merhaba!"):
-            await event.edit("`Gizlilik ayarları yüzenden alıntı yapamadım`")
+            await event.edit(LANG['USER_PRIVACY'])
         else: 
             await event.delete()
             await response.forward_to(event.chat_id)

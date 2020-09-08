@@ -1,6 +1,6 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
+# Licensed under the GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
@@ -10,6 +10,13 @@ from userbot import CMD_HELP, ASYNC_POOL, tgbot, SPOTIFY_DC, G_DRIVE_CLIENT_ID, 
 from userbot.events import register
 from telethon import version
 from platform import python_version
+
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("durum")
+
+# ████████████████████████████████ #
 
 def durum(s):
     if s == None:
@@ -24,11 +31,11 @@ def durum(s):
 async def durums(event):
 
     await event.edit(f"""
-**Python Sürümü:** `{python_version()}`
-**TeleThon Sürümü:** `{version.__version__}` 
-**Asena Sürümü:** `1.9`
+**Python {LANG['VERSION']}:** `{python_version()}`
+**TeleThon {LANG['VERSION']}:** `{version.__version__}` 
+**Asena {LANG['VERSION']}:** `2.0`
 
-**Plugin Sayısı:** `{len(CMD_HELP)}`
+**{LANG['PLUGIN_COUNT']}:** `{len(CMD_HELP)}`
 
 **Inline Bot:** `{durum(tgbot)}`
 **Spotify:** `{durum(SPOTIFY_DC)}`
@@ -42,9 +49,9 @@ async def durums(event):
 **OcrSpace:** `{durum(OCR_SPACE_API_KEY)}`
 **Pm AutoBan:** `{durum(PM_AUTO_BAN)}`
 **BotLog:** `{durum(BOTLOG_CHATID)}`
-**Pluginler:** `Kalıcı`
+**Plugin:** `{LANG['PERMAMENT']}`
 
-**Her Şey Normal ✅**
+**{LANG['OK']} ✅**
     """)
 
 CMD_HELP["durum"] = ".durum\nKullanım: Eklenen Apiler ve sürümleri gösterir."

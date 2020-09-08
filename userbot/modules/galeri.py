@@ -1,6 +1,6 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
+# Licensed under the GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
@@ -13,6 +13,13 @@ from userbot import CMD_HELP, ASYNC_POOL, GALERI_SURE
 from userbot.events import register
 from userbot.main import FotoDegistir
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("galeri")
+
+# ████████████████████████████████ #
+
 URL_REGEX = re.compile(
     # https://github.com/django/django/blob/stable/1.3.x/django/core/validators.py#L45
     r'^(?:http|ftp)s?://' # http:// or https://
@@ -23,7 +30,7 @@ URL_REGEX = re.compile(
     r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 @register(outgoing=True, pattern="^.galeri ?(.*)")
-async def degistir(event):
+async def galeri(event):
     try:
         import userbot.modules.sql_helper.galeri_sql as sql
     except:
@@ -33,38 +40,37 @@ async def degistir(event):
     if secen[0] == "ekle":
         if len(secen) > 1:
             URL = re.search(URL_REGEX, secen[1])
-            print(URL)
             if URL != None:
                 sql.ekle_foto(secen[1])
                 sql.getir_foto()
-                await event.edit("`Fotoğraf sıraya alındı.`")
+                await event.edit(LANG['ADDED_LIST'])
             else:
-                await event.edit("`Geçersiz bir resim URL'si girdiniz. Kullanım hakkında bir fikriniz yoksa, ` `.asena galeri` `yazınız.`")
+                await event.edit(LANG['INVALID_URL'])
         else:
-            await event.edit("`Lütfen bir resim adresi giriniz. Örnek olarak: ` `.galeri ekle https://i.resimyukle.xyz/7Qbbc9.jpeg`")
+            await event.edit(LANG['EXAMPLE'])
     elif secen[0] == "liste":
         yfoto = ""
         sql.getir_foto()
         fotolar = sql.TUM_GALERI
         for foto in fotolar:
             yfoto += f"\n▶️ ({foto.g_id}) [Fotoğraf]({foto.foto})"
-        await event.edit("**Sıraya Aldığınız Fotoğraflar**\n" + yfoto)
+        await event.edit(f"**{LANG['LIST']}**\n" + yfoto)
     elif secen[0] == "sil":
         if secen[1].isdigit():
             silme = sql.sil_foto(secen[1])
             if silme == True:
-                await event.edit("**Sıradaki fotoğraf başarıyla kaldırıldı**")
+                await event.edit(LANG['REMOVED'])
             else:
-                await event.edit(f"**Sıradaki fotoğraf kaldırılamadı** Hata: {silme}")
+                await event.edit(f"{LANG['REMOVED_ERROR']}: {silme}")
         else:
-            await event.edit("**Lütfen resmin sırasını belirtiniz. Örnek:** `.galeri sil 2`")
+            await event.edit(f"**{LANG['NEED_NUMBER']}** `.galeri sil 2`")
     elif secen[0] == "başla":
         if "galeri" in ASYNC_POOL:
-            await event.edit("`Hali hazırda galeri çalışıyor.`")
+            await event.edit(LANG['WORKING'])
             return
         ASYNC_POOL.append("galeri")
         sql.getir_foto()
-        await event.edit("`Galeri çalışmaya başladı.`")
+        await event.edit(LANG['STARTED'])
         if len(sql.TUM_GALERI) >= 1:
             while "galeri" in ASYNC_POOL:
                 fotolar = sql.TUM_GALERI
@@ -78,16 +84,16 @@ async def degistir(event):
                     await asyncio.sleep(GALERI_SURE)
                     i += 1
         else:
-            await event.edit("`Galeri çalışması için fotoğraf eklemeniz gerekmektedir. Eklemeyi bilmiyorsanız .asena galeri ile kullanım hakkında bilgi sahibi olabilirsiniz.`")
+            await event.edit(LANG['NEED_PHOTO'])
             return
     elif secen[0] == "kapa":
         if "galeri" in ASYNC_POOL:
             ASYNC_POOL.remove("galeri")
-            await event.edit("`Galeri durduruldu!`")
+            await event.edit(LANG['STOPPED'])
         else:
-            event.edit("`Galeri zaten çalışmıyor.`")
+            event.edit(LANG['ALREADY_STOP'])
         return
     else:
-        await event.edit("**Bilinmeyen komut** Kullanım:\n\nGaleri'ye fotoğraf ekleme: `.galeri ekle https://i.resimyukle.xyz/7Qbbc9.jpeg`\nGaleri listesini görme: `.galeri liste`\nSıradan bir fotoğrafı silme: `.galeri sil <sıra sayısı>`")
+        await event.edit(LANG['INVALID'])
 
 CMD_HELP["galeri"] = "Kullanım: Galeri'ye fotoğraf ekleme: `.galeri ekle https://i.resimyukle.xyz/7Qbbc9.jpeg`\nGaleri listesini görme: `.galeri liste`\nSıradan bir fotoğrafı silme: `.galeri sil <sıra sayısı>`"

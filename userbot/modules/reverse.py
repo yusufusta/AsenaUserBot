@@ -22,6 +22,13 @@ from PIL import Image
 from userbot import bot, CMD_HELP
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("reverse")
+
+# ████████████████████████████████ #
+
 opener = urllib.request.build_opener()
 useragent = 'Mozilla/5.0 (Linux; Android 9; SM-G960F Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.70 Mobile Safari/537.36'
 opener.addheaders = [('User-agent', useragent)]
@@ -38,15 +45,15 @@ async def okgoogle(img):
         photo = io.BytesIO()
         await bot.download_media(message, photo)
     else:
-        await img.edit("`Lütfen bir fotoğrafa veya çıkartmaya yanıt verin.`")
+        await img.edit(LANG['NEED_REPLY'])
         return
 
     if photo:
-        await img.edit("`İşleniyor...`")
+        await img.edit(LANG['TRYING'])
         try:
             image = Image.open(photo)
         except OSError:
-            await img.edit('`Desteklenmeyen tür`')
+            await img.edit(LANG['INVALID_TYPE'])
             return
         name = "okgoogle.png"
         image.save(name, "PNG")
@@ -63,10 +70,9 @@ async def okgoogle(img):
         fetchUrl = response.headers['Location']
 
         if response != 400:
-            await img.edit("`Görüntü başarıyla Google'a yüklendi.`"
-                           "\n`Şimdi kaynak ayrıştırılıyor.`")
+            await img.edit(LANG['UPLOADED_TO_GOOGLE'])
         else:
-            await img.edit("`Google siktirip gitmemi söyledi.`")
+            await img.edit(LANG['FUCKOFF'])
             return
 
         os.remove(name)
@@ -76,9 +82,9 @@ async def okgoogle(img):
         imgspage = match['similar_images']
 
         if guess and imgspage:
-            await img.edit(f"[{guess}]({fetchUrl})\n\n`Resim arıyorum...`")
+            await img.edit(f"[{guess}]({fetchUrl})\n\n`{LANG['SEARCHING_PHOTO']}...`")
         else:
-            await img.edit("`Çirkin kıçın için bir şey bulamadım.`")
+            await img.edit(LANG['NOT_FOUND'])
             return
 
         if img.pattern_match.group(1):
@@ -99,7 +105,7 @@ async def okgoogle(img):
         except TypeError:
             pass
         await img.edit(
-            f"[{guess}]({fetchUrl})\n\n[Benzer görüntüler]({imgspage})")
+            f"[{guess}]({fetchUrl})\n\n[{LANG['NOT_FOUND']}]({imgspage})")
 
 
 async def ParseSauce(googleurl):

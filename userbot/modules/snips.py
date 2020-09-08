@@ -12,6 +12,12 @@
 from userbot.events import register
 from userbot import CMD_HELP, BOTLOG_CHATID
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("snips")
+
+# ████████████████████████████████
 
 @register(outgoing=True,
           pattern=r"\$\w*",
@@ -47,7 +53,7 @@ async def on_snip_save(event):
     try:
         from userbot.modules.sql_helper.snips_sql import add_snip
     except AtrributeError:
-        await event.edit("`SQL dışı modda çalışıyor!`")
+        await event.edit(LANG['NO_SQL'])
         return
     keyword = event.pattern_match.group(1)
     string = event.text.partition(keyword)[2]
@@ -68,17 +74,17 @@ async def on_snip_save(event):
             msg_id = msg_o.id
         else:
             await event.edit(
-                "`Snip'leri medya ile kaydetmek için BOTLOG_CHATID ayarlanması gerekir.`"
+                LANG['NEED_BOTLOG']
             )
             return
     elif event.reply_to_msg_id and not string:
         rep_msg = await event.get_reply_message()
         string = rep_msg.text
-    success = "`Snip {}. Kullanım:` **${}** `"
+    success = "`Snip {}. {}:` **${}** `"
     if add_snip(keyword, string, msg_id) is False:
-        await event.edit(success.format('güncellendi', keyword))
+        await event.edit(success.format(LANG['UPDATED'], LANG['USAGE'], keyword))
     else:
-        await event.edit(success.format('kaydedildi', keyword))
+        await event.edit(success.format(LANG['SAVED'], LANG['USAGE'], keyword))
 
 
 @register(outgoing=True, pattern="^.snips$")
@@ -90,11 +96,11 @@ async def on_snip_list(event):
         await event.edit("`SQL dışı modda çalışıyor!`")
         return
 
-    message = "`Şu anda hiçbir snip mevcut değil.`"
+    message = LANG['NO_SNIP']
     all_snips = get_snips()
     for a_snip in all_snips:
-        if message == "`Şu anda hiçbir snip mevcut değil.`":
-            message = "Mevcut snipler:\n"
+        if message == LANG['NO_SNIP']:
+            message = f"{LANG['SNIPS']}:\n"
             message += f"`${a_snip.snip}`\n"
         else:
             message += f"`${a_snip.snip}`\n"
@@ -112,9 +118,9 @@ async def on_snip_delete(event):
         return
     name = event.pattern_match.group(1)
     if remove_snip(name) is True:
-        await event.edit(f"`snip:` **{name}** `Başarıyla silindi`")
+        await event.edit(f"`Snip:` **{name}** `{LANG['DELETED']}`")
     else:
-        await event.edit(f"`snip:` **{name}** `Bulunamadı` ")
+        await event.edit(f"`Snip:` **{name}** `{LANG['NOT_FOUND']}` ")
 
 
 CMD_HELP.update({

@@ -13,6 +13,13 @@ from telethon.tl.types import ChatBannedRights
 from userbot import CMD_HELP
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("liste")
+
+# ████████████████████████████████ #
+
 
 @register(outgoing=True, pattern=r"^.lock ?(.*)")
 async def locks(event):
@@ -72,10 +79,10 @@ async def locks(event):
         what = "everything"
     else:
         if not input_str:
-            await event.edit("`Hiçliği kilitleyemem dostum!`")
+            await event.edit(LANG['EVERYTHING_LOCK'])
             return
         else:
-            await event.edit(f"`Geçersiz medya tipi:` {input_str}")
+            await event.edit(LANG['INVALID_MEDIA_TYPE'] % input_str)
             return
 
     lock_rights = ChatBannedRights(
@@ -95,10 +102,10 @@ async def locks(event):
         await event.client(
             EditChatDefaultBannedRightsRequest(peer=peer_id,
                                                banned_rights=lock_rights))
-        await event.edit(f"`{what} bu sohbet için kilitlendi!`")
+        await event.edit(LANG['LOCK'] % what)
     except BaseException as e:
         await event.edit(
-            f"`Bunun için gerekli haklara sahip olduğuna emin misin?`\n**Hata:** {str(e)}")
+            f"{LANG['INVALID_AUTHORITY']} {str(e)}")
         return
 
 
@@ -160,10 +167,10 @@ async def rem_locks(event):
         what = "everything"
     else:
         if not input_str:
-            await event.edit("`Hiçliğin kilidini açamam!`")
+            await event.edit(LANG['EVERYTHING_UNLOCK'])
             return
         else:
-            await event.edit(f"`Geçersiz medya tipi:` {input_str}")
+            await event.edit(LANG['INVALID_MEDIA_TYPE'] % input_str)
             return
 
     unlock_rights = ChatBannedRights(
@@ -183,10 +190,10 @@ async def rem_locks(event):
         await event.client(
             EditChatDefaultBannedRightsRequest(peer=peer_id,
                                                banned_rights=unlock_rights))
-        await event.edit(f"`Bu sohbet için {what} kilidi açıldı!`")
+        await event.edit(LANG['UNLOCK'] % what)
     except BaseException as e:
         await event.edit(
-            f"`Bunun için gerekli haklara sahip misin?`\n**Hata:** {str(e)}")
+            f"{LANG['INVALID_AUTHORITY']} {str(e)}")
         return
 
 

@@ -1,11 +1,10 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# Licensed under the GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
 # Asena UserBot - Yusuf Usta
-#
 
 # @Qulec tarafından yazılmıştır.
 # Thanks @Spechide.
@@ -13,7 +12,14 @@
 from userbot import BOT_USERNAME
 from userbot.events import register
 
-@register(outgoing=True, pattern="^.yardım")
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("__helpme")
+
+# ████████████████████████████████ #
+
+@register(outgoing=True, pattern="^.yard[iı]m|^.help")
 async def yardim(event):
     tgbotusername = BOT_USERNAME
     if tgbotusername is not None:
@@ -28,4 +34,4 @@ async def yardim(event):
         )
         await event.delete()
     else:
-        await event.edit("`Bot çalışmıyor! Lütfen Bot Tokeni ve Kullanıcı adını doğru ayarlayın. Modül durduruldu.`")
+        await event.edit(LANG["NO_BOT"])

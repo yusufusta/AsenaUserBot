@@ -91,7 +91,7 @@
       "value": "False"
     },
     "BOT_USERNAME": {
-      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @NaytSeydBot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
+      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @QuiecBot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
       "required": false  
     },
     "BOT_TOKEN": {
@@ -219,6 +219,16 @@
       "description": "Dızla komutu paket ismini belirleyin. Paket ismi şöyle olacaktır: @KullanıcıAdın verdiğin değer 1",
       "value": "@AsenaUserBot Paketi",
       "required": false
+    },
+    "OTOMATIK_KATILMA": {
+      "description": "Support grubuna ve Kanal'a otomatik katılmak istemiyorsanız False yazın.",
+      "value": "True",
+      "required": true
+    },
+    "LANGUAGE": {
+      "description": "Botun dili. EN/TR/AZ yazabilirsiniz.",
+      "value": "TR",
+      "required": true
     }
   },
   "addons": [{

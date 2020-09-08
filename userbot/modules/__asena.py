@@ -12,6 +12,13 @@
 from userbot import CMD_HELP
 from userbot.events import register
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("__asena")
+
+# ████████████████████████████████ #
+
 @register(outgoing=True, pattern="^.asena(?: |$)(.*)")
 async def asena(event):
     """ .asena komutu için """
@@ -20,10 +27,9 @@ async def asena(event):
         if args in CMD_HELP:
             await event.edit(str(CMD_HELP[args]))
         else:
-            await event.edit("Lütfen bir Asena modülü adı belirtin.")
+            await event.edit(LANG["NEED_PLUGIN"])
     else:
-        await event.edit("Lütfen hangi Asena modülü için yardım istediğinizi belirtin !!\
-            \nKullanım: .asena <modül adı>")
+        await event.edit(LANG["NEED_MODULE"])
         string = ""
         for i in CMD_HELP:
             string += "`" + str(i)

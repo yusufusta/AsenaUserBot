@@ -19,10 +19,12 @@ from userbot import (COUNT_PM, CMD_HELP, BOTLOG, BOTLOG_CHATID,
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 
-# ========================= CONSTANTS ============================
- 
-# =================================================================
+# ██████ LANGUAGE CONSTANTS ██████ #
 
+from userbot.language import get_value
+LANG = get_value("pmpermit")
+
+# ████████████████████████████████ #
 
 @register(incoming=True, disable_edited=True, disable_errors=True)
 async def permitpm(event):
@@ -76,8 +78,7 @@ async def permitpm(event):
 
                 if COUNT_PM[event.chat_id] > PM_AUTO_BAN_LIMIT:
                     await event.respond(
-                        "`Sen benim sahibimin PM'ini spamlıyorsun, bu benim hoşuma gitmiyor.`\n"
-                        "`Şu an ENGELLENDIN ve SPAM olarak bildirildin, ileride değişiklik olmadığı sürece..`"
+                        LANG['BLOCKED']
                     )
 
                     try:
@@ -87,10 +88,10 @@ async def permitpm(event):
                         if BOTLOG:
                             await event.client.send_message(
                                 BOTLOG_CHATID,
-                                "PM sayacı kafayı yemiş gibi, botu lütfen yeniden başlatın.",
+                                LANG['ERROR'],
                             )
                         LOGS.info(
-                            "PM sayacı kafayı yemiş gibi, botu lütfen yeniden başlatın.")
+                            LANG['ERROR'])
                         return
 
                     await event.client(BlockRequest(event.chat_id))
@@ -103,7 +104,7 @@ async def permitpm(event):
                             BOTLOG_CHATID,
                             "[" + name0 + "](tg://user?id=" +
                             str(event.chat_id) + ")" +
-                            " kişisi sadece bir hayal kırıklığı idi. PM'ni meşgul ettiği için engellendi.",
+                            LANG['BOTLOG_BLOCKED'],
                         )
 
 @register(disable_edited=True, outgoing=True, disable_errors=True)
@@ -158,7 +159,7 @@ async def notifoff(noff_event):
         await noff_event.edit("`Bot Non-SQL modunda çalışıyor!!`")
         return
     addgvar("NOTIF_OFF", True)
-    await noff_event.edit("`PM izni olmayan kullanıcıların bildirimleri sessize alındı!`")
+    await noff_event.edit(LANG['NOTIFOFF'])
 
 
 @register(outgoing=True, pattern="^.notifon$")
@@ -170,7 +171,7 @@ async def notifon(non_event):
         await non_event.edit("`Bot Non-SQL modunda çalışıyor!!`")
         return
     delgvar("NOTIF_OFF")
-    await non_event.edit("`PM izni olmayan kullanıcıarın bildirim göndermesine izin verildi!`")
+    await non_event.edit(LANG['NOTIFON'])
 
 
 @register(outgoing=True, pattern="^.approve$")
@@ -197,7 +198,7 @@ async def approvepm(apprvpm):
     try:
         approve(uid)
     except IntegrityError:
-        await apprvpm.edit("`Kullanıcı halihazırda PM gönderebiliyor olmalıdır.`")
+        await apprvpm.edit(LANG['ALREADY'])
         return
 
     await apprvpm.edit(PLUGIN_MESAJLAR['approve'])
@@ -282,7 +283,7 @@ async def unblockpm(unblock):
         replied_user = await unblock.client.get_entity(reply.from_id)
         name0 = str(replied_user.first_name)
         await unblock.client(UnblockRequest(replied_user.id))
-        await unblock.edit("`Engelin kaldırıldı.`")
+        await unblock.edit(LANG['UNBLOCKED'])
 
     if BOTLOG:
         await unblock.client.send_message(

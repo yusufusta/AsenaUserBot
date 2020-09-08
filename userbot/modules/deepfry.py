@@ -18,6 +18,13 @@ from userbot.events import register
 from PIL import Image, ImageEnhance, ImageOps
 from telethon.tl.types import DocumentAttributeFilename
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("deepfry")
+
+# ████████████████████████████████ #
+
 @register(pattern="^.deepfry(?: |$)(.*)", outgoing=True) 
 async def deepfryer(event):
     try:
@@ -32,20 +39,20 @@ async def deepfryer(event):
         data = await check_media(reply_message)
 
         if isinstance(data, bool):
-            await event.edit("`Bunu deepfry yapamam!`")
+            await event.edit(LANG['CANT_DEEPFRY'])
             return
     else:
-        await event.edit("`Deepfry yapmam için bir resme veya çıkartmaya cevap verin!`")
+        await event.edit(LANG['REPLY_PHOTO'])
         return
 
     # Fotoğrafı (yüksek çözünürlük) bayt dizisi olarak indir
-    await event.edit("`Medya indiriliyor...`")
+    await event.edit(LANG['MEDIA_DOWNLOADING'])
     image = io.BytesIO()
     await event.client.download_media(data, image)
     image = Image.open(image)
 
     # Resime uygula
-    await event.edit("`Medyaya deepfry uygulanıyor...`")
+    await event.edit(LANG['APPLYING_DEEPFRY'])
     for _ in range(frycount):
         image = await deepfry(image)
 

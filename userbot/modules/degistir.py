@@ -1,6 +1,6 @@
 # Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Yusuf Usta Public License, Version 1.c (the "License");
+# Licensed under the  GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
@@ -12,7 +12,14 @@ from userbot import CMD_HELP
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR, ORJ_PLUGIN_MESAJLAR, PLUGIN_CHANNEL_ID
 
-@register(outgoing=True, pattern="^.değiştir ?(.*)")
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("degistir")
+
+# ████████████████████████████████ #
+
+@register(outgoing=True, pattern="^.de[gğ]i[sş]tir ?(.*)")
 async def degistir(event):
     plugin = event.text.replace(".değiştir ", "")
     mesaj = re.search(r"\"(.*)\"", plugin)
@@ -34,32 +41,32 @@ async def degistir(event):
                     mesaj = await reply.forward_to(PLUGIN_CHANNEL_ID)
                     PLUGIN_MESAJLAR[plugin] = reply
                     sql.ekle_mesaj(plugin, f"MEDYA_{mesaj.id}")
-                    return await event.edit(f"Plugin(`{plugin}`) için medyanız ayarlandı.")
+                    return await event.edit(f"Plugin(`{plugin}`) {LANG['SETTED_MEDIA']}")
                 PLUGIN_MESAJLAR[plugin] = reply.text
                 sql.ekle_mesaj(plugin, reply.text)
-                return await event.edit(f"Plugin(`{plugin}`) için mesajınız ayarlandı.")   
+                return await event.edit(f"Plugin(`{plugin}`) {LANG['SETTED_REPLY']}")   
 
             silme = sql.sil_mesaj(plugin)
             if silme == True:
                 PLUGIN_MESAJLAR[plugin] = ORJ_PLUGIN_MESAJLAR[plugin]
-                await event.edit("`Plugin mesajı başarıyla silindi.`")
+                await event.edit(LANG['SUCCESS_DELETED'])
             else:
-                await event.edit(f"**Plugin mesajı silinemedi.** Hata: `{silme}`")
+                await event.edit(f"{LANG['ERROR_DELETED']}: `{silme}`")
         else:
-            await event.edit("**Bilinmeyen plugin.** Mesajını silebileceğiniz pluginler: `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
+            await event.edit(LANG['NOT_FOUND'] + ":`afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
     elif len(plugin) < 1:
-        await event.edit("**Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
+        await event.edit(LANG['USAGE'])
     elif type(mesaj) == str:
         if plugin in TURLER:
             if mesaj.isspace():
-                await event.edit(f"**Plugin mesajı boş olamaz.**")
+                await event.edit(LANG['CANNOT_EMPTY'])
                 return
             else:
                 PLUGIN_MESAJLAR[plugin] = mesaj
                 sql.ekle_mesaj(plugin, mesaj)
-                await event.edit(f"Plugin(`{plugin}`) için mesajınız(`{mesaj}`) ayarlandı.")
+                await event.edit(LANG['CANNOT_EMPTY'].format(plugin, mesaj))
         else:
-            await event.edit("**Bilinmeyen plugin.** Değiştirebileceğiniz pluginler: `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
+            await event.edit(LANG['NOT_FOUND'] + ":`afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
 
 CMD_HELP.update({'degistir': '.değiştir <modül> <mesaj>\
         \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`'})

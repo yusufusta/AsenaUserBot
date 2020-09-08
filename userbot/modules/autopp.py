@@ -1,11 +1,11 @@
-# Copyright (C) 2019 The Raphielscape Company LLC.
+# Copyright (C) 2020 Yusuf Usta.
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
+# Licensed under the  GPL-3.0 License;
 # you may not use this file except in compliance with the License.
 #
 
 # Asena UserBot - Yusuf Usta
-#
+
 # @NaytSeyd tarafından portlanmıştır.
 # @frknkrc44 tarafından düzenlenmiştir.
 # @Fusuf tarafından AutoVideo yazılmıştır.
@@ -24,17 +24,24 @@ import requests
 import time
 from telethon.errors import VideoFileInvalidError
 
+# ██████ LANGUAGE CONSTANTS ██████ #
+
+from userbot.language import get_value
+LANG = get_value("autopp")
+
+# ████████████████████████████████ #
+
 # Before kang; please ask to @fusuf :) #
 @register(outgoing=True, pattern="^.autovideo ?(.*)$")
 async def autovideo(event):
     if 'autovideo' in ASYNC_POOL:
-        await event.edit("`Görünüşe göre profil videonuz zaten otomatik olarak değişiyor.`")
+        await event.edit(LANG['VIDEO_ALREADY_CHANGING'])
         return
 
     if not event.reply_to_msg_id:
-        return await event.edit("`Lütfen bir videoya yanıt verin!`")
+        return await event.edit(LANG['NEED_VIDEO'])
     else:
-        await event.edit("`Profil videonuz ayarlanıyor...`")
+        await event.edit(LANG['SETTING_VIDEO'])
         
         # Telethon doesn't support download profile-video so ... #
         reply = await event.get_reply_message()
@@ -51,11 +58,11 @@ async def autovideo(event):
             video=await event.client.upload_file(video)
         ))
     except VideoFileInvalidError:
-        return await event.edit("`Verdiğiniz videoyu profil videosu olarak yükleyemem!`\n\n**İpucu: **`Telegram uygulamanızdan bir videoyu profil videosu yapın ardından onu indirip bana verirseniz autovideo plugini sorunsuz çalışacaktır!`")
+        return await event.edit(LANG['INVALID_VIDEO'])
     
     ASYNC_POOL.append('autovideo')
 
-    await event.edit("`Profil videosu değişmeye başladı :)!`")
+    await event.edit(LANG['STARTED_VIDEO'])
     while "autovideo" in ASYNC_POOL:
         saat = time.strftime("%H\.%M")
         tarih = time.strftime("%d\/%m\/%Y")
@@ -80,10 +87,10 @@ async def autovideo(event):
 @register(outgoing=True, pattern="^.autopp (.*)")
 async def autopic(event):
     if 'autopic' in ASYNC_POOL:
-        await event.edit("`Görünüşe göre profil fotoğrafınız zaten otomatik olarak değişiyor.`")
+        await event.edit(LANG['PHOTO_ALREADY_CHANGING'])
         return
 
-    await event.edit("`Profil fotoğrafınız ayarlanıyor ...`")
+    await event.edit(LANG['SETTING'])
 
     FONT_FILE_TO_USE = await get_font_file(event.client, "@FontDunyasi")
 
@@ -93,7 +100,7 @@ async def autopic(event):
     with open(downloaded_file_name, 'wb') as f:
         f.write(r.content)    
     photo = "yenipp.png"
-    await event.edit("`Profil fotoğrafınız ayarlandı :)`")
+    await event.edit(LANG['SETTED'])
 
     ASYNC_POOL.append('autopic')
 

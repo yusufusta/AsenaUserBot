@@ -6,14 +6,17 @@
 
 # Asena UserBot - Yusuf Usta
 
+# ██████ LANGUAGE CONSTANTS ██████ #
 
-# @NaytSeyd tarafından portlanmıştır.
+from userbot.language import get_value
+LANG = get_value("covid19")
+
+# ████████████████████████████████ #
 
 from userbot import CMD_HELP
 from userbot.events import register
 from urllib3 import PoolManager
 from json import loads as jsloads
-
 
 @register(outgoing=True, pattern="^.covid$")
 async def covid(event):
@@ -24,21 +27,21 @@ async def covid(event):
         result = jsloads(request.data.decode('utf-8'))
         http.clear()
     except:
-        await event.edit("`Bir hata oluştu.`")
+        await event.edit(LANG['SOME_ERRORS'])
         return
 
-    sonuclar = ("** Koronavirüs Verileri **\n" +
-                "\n**Dünya geneli**\n" +
-                f"**🌎 Vaka:** `{result['tum']}`\n" +
-                f"**🌎 Ölüm:** `{result['tumolum']}`\n" +
-                f"**🌎 İyileşen:** `{result['tumk']}`\n" +
-                "\n**Türkiye**\n" +
-                f"**🇹🇷 Vaka (toplam):** `{result['trtum']}`\n" +
-                f"**🇹🇷 Vaka (bugün):** `{result['trbtum']}`\n" +
-                f"**🇹🇷 Vaka (aktif):** `{result['tra']}`\n" +
-                f"**🇹🇷 Ölüm (toplam):** `{result['trolum']}`\n" +
-                f"**🇹🇷 Ölüm (bugün):** `{result['trbolum']}`\n" +
-                f"**🇹🇷 İyileşen:** `{result['trk']}`")
+    sonuclar = (f"** {LANG['SOME_ERRORS']} **\n" +
+                f"\n**LANG['EARTH']**\n" +
+                f"**🌎 {LANG['CASE']}** `{result['tum']}`\n" +
+                f"**🌎 {LANG['DEATH']}** `{result['tumolum']}`\n" +
+                f"**🌎 LANG['HEAL']** `{result['tumk']}`\n" +
+                f"\n**{LANG['TR']}**\n" +
+                f"**{LANG['TR_ALL_CASES']}** `{result['trtum']}`\n" +
+                f"**{LANG['TR_CASES']}** `{result['trbtum']}`\n" +
+                f"**{LANG['TR_CASE']}** `{result['tra']}`\n" +
+                f"**{LANG['TR_ALL_DEATHES']}** `{result['trolum']}`\n" +
+                f"**{LANG['TR_DEATHS']}** `{result['trbolum']}`\n" +
+                f"**{LANG['TR_HEAL']}** `{result['trk']}`")
 
     await event.edit(sonuclar)
 
