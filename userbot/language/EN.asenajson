@@ -166,7 +166,7 @@
             "NOT_FOUND": "** Unknown plugin. * * Plugins where you can delete your message",
             "USAGE": "** Modify, change the plugin-messages in the boot. **\nExample Usage: ` .değiştir afk \" I'm not here right now... Maybe never come.\" `\nPlugin-message delete: ` .değiştir afk `\nplugin-messages you can modify (in-time): ` afk/alive/pm/kickme/dızcı/ban/mute/approve/disaprove/block `",
             "CANNOT_EMPTY": "Plugin message cannot be empty.",
-            "SETTED": "Your message (`{}`) has been set for Plugin (`{}`)"
+            "SETTED": "Your message (`{msj}`) has been set for Plugin (`{plu}`)"
         },
         "covid19": {
             "SOME_ERRORS": "`An error has occurred. `",

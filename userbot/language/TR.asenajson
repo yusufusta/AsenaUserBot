@@ -177,7 +177,7 @@
             "NOT_FOUND": "**Bilinmeyen plugin.** Mesajını silebileceğiniz pluginler",
             "USAGE": "**Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`",
             "CANNOT_EMPTY": "Plugin mesajı boş olamaz.",
-            "SETTED": "Plugin(`{}`) için mesajınız(`{}`) ayarlandı."
+            "SETTED": "Plugin(`{plu}`) için mesajınız(`{msj}`) ayarlandı."
         },
 
         "covid19": {

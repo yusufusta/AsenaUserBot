@@ -64,7 +64,7 @@ async def degistir(event):
             else:
                 PLUGIN_MESAJLAR[plugin] = mesaj
                 sql.ekle_mesaj(plugin, mesaj)
-                await event.edit(LANG['CANNOT_EMPTY'].format(plugin, mesaj))
+                await event.edit(LANG['SETTED'].format(plu=plugin, msj=mesaj))
         else:
             await event.edit(LANG['NOT_FOUND'] + ":`afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
 
