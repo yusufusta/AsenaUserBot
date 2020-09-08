@@ -16,7 +16,7 @@ LOGS.info("Dil dosyası yükleniyor...")
 LANGUAGE_JSON = None
 
 for dil in bot.iter_messages(pchannel, filter=InputMessagesFilterDocument):
-    if ((len(dil.file.name.split(".")) >= 1) and (dil.file.name.split(".")[1] == "asenajson")):
+    if ((len(dil.file.name.split(".")) >= 2) and (dil.file.name.split(".")[1] == "asenajson")):
         if path.isfile(f"./userbot/language/{dil.file.name}"):
             try:
                 LANGUAGE_JSON = loads(open(f"./userbot/language/{dil.file.name}", "r").read())

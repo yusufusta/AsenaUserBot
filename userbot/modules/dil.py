@@ -24,7 +24,7 @@ async def dil(event):
             reply = await event.get_reply_message()
             dosya = await reply.download_media()
 
-            if ((len(reply.file.name.split(".")) >= 1) and (not reply.file.name.split(".")[1] == "asenajson")):
+            if ((len(reply.file.name.split(".")) >= 2) and (not reply.file.name.split(".")[1] == "asenajson")):
                 return await event.edit("`Lütfen geçerli bir` **AsenaJSON** `dosyası verin!`")
 
             try:
@@ -33,8 +33,7 @@ async def dil(event):
                 return await event.edit("`Lütfen geçerli bir` **AsenaJSON** `dosyası verin!`")
 
             await event.edit(f"`{dosya['LANGUAGE']}` `dili yükleniyor...`")
-            remove(dosya)
-            pchannel = event.client.get_entity(PLUGIN_CHANNEL_ID)
+            pchannel = await event.client.get_entity(PLUGIN_CHANNEL_ID)
 
             dosya = await reply.download_media(file="./userbot/language/")
             dosya = loads(open(dosya, "r").read())
