@@ -31,15 +31,15 @@ async def covid(event):
         return
 
     sonuclar = (f"** {LANG['SOME_ERRORS']} **\n" +
-                f"\n**LANG['EARTH']**\n" +
-                f"**🌎 {LANG['CASE']}** `{result['tum']}`\n" +
-                f"**🌎 {LANG['DEATH']}** `{result['tumolum']}`\n" +
-                f"**🌎 LANG['HEAL']** `{result['tumk']}`\n" +
+                f"\n**{LANG['EARTH']}**\n" +
+                f"**{LANG['CASE']}** `{result['tum']}`\n" +
+                f"**{LANG['DEATH']}** `{result['tumolum']}`\n" +
+                f"**{LANG['HEAL']}** `{result['tumk']}`\n" +
                 f"\n**{LANG['TR']}**\n" +
                 f"**{LANG['TR_ALL_CASES']}** `{result['trtum']}`\n" +
                 f"**{LANG['TR_CASES']}** `{result['trbtum']}`\n" +
                 f"**{LANG['TR_CASE']}** `{result['tra']}`\n" +
-                f"**{LANG['TR_ALL_DEATHES']}** `{result['trolum']}`\n" +
+                f"**{LANG['TR_ALL_DEATHS']}** `{result['trolum']}`\n" +
                 f"**{LANG['TR_DEATHS']}** `{result['trbolum']}`\n" +
                 f"**{LANG['TR_HEAL']}** `{result['trk']}`")
 
