@@ -9,7 +9,7 @@
 # ██████ LANGUAGE CONSTANTS ██████ #
 
 from userbot.language import get_value
-LANG = get_value("cevir")
+LANG = get_value("chat")
 
 # ████████████████████████████████ #
 
