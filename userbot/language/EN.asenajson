@@ -139,10 +139,10 @@
             "INVALID_COMMAND": "** Unknown command! ** ` Usage: .çevir foto/ses/gif `",
             "NEED_REPLY": "Please reply to a sticker.",
             "CONVERTING_TO_PHOTO": "Turning to photo ...",
-            "NEED_EFECT": "`Please specify an effect. Effects that can be used: ``child/robot/earrape/fast/interference/echo`",
+            "NEED_EFECT": "`Please specify an effect. Effects that can be used: ``çocuk/robot/earrape/fast/interference/echo`",
             "NEED_SOUND": "`Please reply to an Audio.`",
             "EFECTING": "`Applying effect...`",
-            "NOT_FOUND_EFECT": "**The effect you specified was not found! ** `Effects you can use:\" child/robot/earrape/fast/interference/echo`",
+            "NOT_FOUND_EFECT": "**The effect you specified was not found! ** `Effects you can use:\" çocuk/robot/earrape/fast/interference/echo`",
             "NEED_VIDEO": "`Please reply to a Video!`",
             "WITH_ASENA": "`Effect applied with` @AsenaUserBot",
             "WITH_ASENA_GIF": "`Turned to Gif with` @AsenaUserBot",
@@ -386,8 +386,8 @@
         },
         "purge": {
             "NEED_MSG": "`I need a message to start a clean-up.`",
-            "PURGED": "`Quick clean-up completed!\n%s messages were deleted.`",
-            "PURGED_ME": "`Cleaning completed %s deleted messages.`"
+            "PURGED": "`Quick clean-up completed!\n{} messages were deleted.`",
+            "PURGED_ME": "`Cleaning completed! {} messages deleted.`"
         },
         "qrcode": {
             "ERROR": "`Decode failed.`",

@@ -417,8 +417,8 @@
 
         "purge": {
             "NEED_MSG": "`Təmizləməyə başlamaq üçün bir mesaja ehtiyacım var.`",
-            "PURGED": "`Sürətli təmizləmə başa çatdı!\n%s ədəd mesaj silindi.`",
-            "PURGED_ME": "`Təmizlik başa çatdı %s ədəd mesaj silindi.`"
+            "PURGED": "`Sürətli təmizləmə başa çatdı!\n{} ədəd mesaj silindi.`",
+            "PURGED_ME": "`Təmizlik başa çatdı {} ədəd mesaj silindi.`"
         },
 
         "qrcode": {

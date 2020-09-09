@@ -46,7 +46,7 @@ async def fastpurger(purg):
     if msgs:
         await purg.client.delete_messages(chat, msgs)
     done = await purg.client.send_message(
-        purg.chat_id, LANG['NEED_MSG'] % str(count))
+        purg.chat_id, LANG['PURGED'].format(str(count)))
 
     if BOTLOG:
         await purg.client.send_message(
@@ -72,7 +72,7 @@ async def purgeme(delme):
 
     smsg = await delme.client.send_message(
         delme.chat_id,
-        LANG['PURGED_ME'] % str(count)
+        LANG['PURGED_ME'].format(str(count))
     )
     if BOTLOG:
         await delme.client.send_message(
