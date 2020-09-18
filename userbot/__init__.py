@@ -59,10 +59,13 @@ if CONFIG_CHECK:
 # Bot'un dili
 LANGUAGE = os.environ.get("LANGUAGE", "DEFAULT").upper()
 
-if not LANGUAGE in ["EN", "TR", "AZ"]:
+if not LANGUAGE in ["EN", "TR", "AZ", "UZ", "DEFAULT"]:
     LOGS.info("Bilinmeyen bir dil yazdınız. Bundan dolayı DEFAULT kullanılıyor.")
     LANGUAGE = "DEFAULT"
     
+# Asena Sürümü
+ASENA_VERSION = "v2.1"
+
 # Telegram API KEY ve HASH
 API_KEY = os.environ.get("API_KEY", None)
 API_HASH = os.environ.get("API_HASH", None)

@@ -11,12 +11,14 @@ from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
 from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from userbot.events import register
-from userbot import bot, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
+from userbot import bot, CMD_HELP
 from time import sleep
 import os
 from telethon.tl.types import MessageMediaPhoto
 import asyncio
 from userbot.modules.admin import get_user_from_event
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -41,6 +43,49 @@ async def silently_send_message(conv, text):
     await conv.mark_read(message=response)
     return response
 
+def MemeYap (Resim, Text, FontS = 40, Bottom = False, BottomText = None):
+    Foto = Image.open(Resim)
+    Yazi = ImageDraw.Draw(Foto)
+    FontSize = 20
+    ImgFraction = float(f"0.{FontS}")
+
+    Font = ImageFont.truetype("./userbot/fonts/impact.ttf", FontSize)
+    while Font.getsize(Text)[0] < ImgFraction*Foto.size[0]:
+        FontSize += 1
+        Font = ImageFont.truetype("./userbot/fonts/impact.ttf", FontSize)
+    FontSize -= 1
+    Font = ImageFont.truetype("./userbot/fonts/impact.ttf", FontSize)
+
+    def drawTextWithOutline(text, x, y):
+        Yazi.text((x-2, y-2), text,(0,0,0),font=Font)
+        Yazi.text((x+2, y-2), text,(0,0,0),font=Font)
+        Yazi.text((x+2, y+2), text,(0,0,0),font=Font)
+        Yazi.text((x-2, y+2), text,(0,0,0),font=Font)
+        Yazi.text((x, y), text, (255,255,255), font=Font)
+        return
+
+    w, h = Yazi.textsize(Text, Font)
+    Satirlar = textwrap.wrap(Text, width=22)
+    lastY = -h
+
+    for i in range(0, len(Satirlar)):
+        w, h = Yazi.textsize(Satirlar[i], Font)
+        x = Foto.width/2 - w/2
+        y = i * h
+        drawTextWithOutline(Satirlar[i], x, y)
+
+        if Bottom:
+            Bottom_Satirlar = textwrap.wrap(BottomText, width=22)
+            lastY = Foto.height - h * (len(Bottom_Satirlar) +1) - 10
+
+            for i in range(0, len(Bottom_Satirlar)):
+                w, h = Yazi.textsize(Bottom_Satirlar[i], Font)
+                x = Foto.width/2 - w/2
+                y = lastY + h
+                drawTextWithOutline(Bottom_Satirlar[i], x, y)
+                lastY = y
+
+    Foto.save("asenameme.png")
 
 @register(outgoing=True, pattern="^.sangmata(?: |$)(.*)")
 async def sangmata(event):
@@ -80,97 +125,64 @@ async def sangmata(event):
           await bot.send_read_acknowledge(chat, max_id=(response.id+3))
           await conv.cancel_all()
 
-thumb_image_path = TEMP_DOWNLOAD_DIRECTORY + "/THUMB.png"
-@register(outgoing=True, pattern="^.meme (.*)")
+@register(outgoing=True, pattern="^.meme ?((\d*)(.*))")
 async def memeyap(event):
-    if event.fwd_from:
-        return 
-    if not event.reply_to_msg_id:
-       await event.edit(LANG['REPLY_TO_MEME'])
-       return
-    reply_message = await event.get_reply_message() 
-    if not reply_message.media:
-       await event.edit(LANG['REPLY_TO_PHOTO'])
-       return
-    chat = "@MemeAutobot"
-    sender = reply_message.sender
-    file_ext_ns_ion = "@memetime.png"
-    file = await event.client.download_file(reply_message.media)
-    uploaded_gif = None
-    if reply_message.sender.bot:
-       await event.edit(LANG['REPLY_TO_BOT'])
-       return
+    """ Daha iyi bir Meme modülü, @Fusuf tarafından yazıldı """
+    font = event.pattern_match.group(2)
+    if font == "":
+        font = 35
     else:
-     await event.edit(LANG['MEMING'])
-    
-    async with event.client.conversation(chat) as bot_conv:
-          try:
-            memeVar = str(event.pattern_match.group(1))
-            memeVar = memeVar.strip()
-            await silently_send_message(bot_conv, "/start")
-            await asyncio.sleep(1)
-            await silently_send_message(bot_conv, memeVar)
-            await event.client.send_file(chat, reply_message.media)
-            response = await bot_conv.get_response()
-          except YouBlockedUserError: 
-              await event.reply(LANG['MEMEBOT_BLOCKED'])
-              return
-          if response.text.startswith("Forward"):
-              await event.edit(f"```{response.text}```")
-          if "Okay..." in response.text:
-            await event.edit(LANG['NOT_A_PHOTO'])
-            thumb = None
-            if os.path.exists(thumb_image_path):
-                thumb = thumb_image_path
-            input_str = event.pattern_match.group(1)
-            if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
-                os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
-            if event.reply_to_msg_id:
-                file_name = "meme.png"
-                reply_message = await event.get_reply_message()
-                to_download_directory = TEMP_DOWNLOAD_DIRECTORY
-                downloaded_file_name = os.path.join(to_download_directory, file_name)
-                downloaded_file_name = await event.client.download_media(
-                    reply_message,
-                    downloaded_file_name,
-                    )
-                if os.path.exists(downloaded_file_name):
-                    await event.client.send_file(
-                        chat,
-                        downloaded_file_name,
-                        force_document=False,
-                        supports_streaming=False,
-                        allow_cache=False,
-                        thumb=thumb,
-                        )
-                    os.remove(downloaded_file_name)
-                else:
-                    await event.edit("Dosya bulunamadı {}.".format(input_str))
-            response = await bot_conv.get_response()
-            the_download_directory = TEMP_DOWNLOAD_DIRECTORY
-            files_name = "memes.webp"
-            download_file_name = os.path.join(the_download_directory, files_name)
-            await event.client.download_media(
-                response.media,
-                download_file_name,
-                )
-            requires_file_name = TEMP_DOWNLOAD_DIRECTORY + "memes.webp"
-            await event.client.send_file(  # pylint:disable=E0602
-                event.chat_id,
-                requires_file_name,
-                supports_streaming=False,
-                caption="Memified using @MemeAutoBot",
-                # Courtesy: @A_Dark_Princ3
-            )
-            await event.delete()
-          elif not is_message_image(reply_message):
-            await event.edit(LANG['NOT_VALID_FORMAT'])
-            return
-          else: 
-               await event.client.send_file(event.chat_id, response.media)
+        font = int(font)
+    text = event.pattern_match.group(3)
+    await event.edit(LANG['MEMING'])
+    if event.is_reply:
+        reply = await event.get_reply_message()
+        if ";" in text:
+            Split = text.split(";")
+            Bottom = True
+            Text = Split[0]
+            BottomText = Split[1]
+        else:
+            Bottom = False
+            Text = text
+            BottomText = None
+        
+        if reply.photo:
+            Resim = await reply.download_media()
+        elif reply.sticker and reply.file.ext == ".webp":
+            if os.path.exists("./AsenaSticker.png"):
+                os.remove("./AsenaSticker.png")
+
+            foto = await reply.download_media()
+            im = Image.open(foto).convert("RGB")
+            im.save("AsenaSticker.png", "png")
+            Resim = "AsenaSticker.png"
+        elif reply.sticker and reply.file.ext == ".tgs":
+            sticker = await reply.download_media()
+            os.system(f"lottie_convert.py --frame 0 -if lottie -of png '{sticker}' AsenaSticker.png")
+            os.remove(sticker)
+            Resim = "AsenaSticker.png"
+        elif reply.media:
+            Resim = await reply.download_media()
+            Sure = os.system("ffmpeg -i '"+Resim+"' 2>&1 | grep Duration | awk '{print $2}' | tr -d , | awk -F ':' '{print ($3+$2*60+$1*3600)/2}'``")
+            os.system(f"ffmpeg -i '{Resim}' -vcodec mjpeg -vframes 1 -an -f rawvideo -ss {Sure} AsenaThumb.jpg")
+            os.remove(Resim)
+            Resim = 'AsenaThumb.jpg'
+        else:
+            return await event.edit(LANG['REPLY_TO_MEME'])
+            
+        if os.path.exists("./asenameme.png"):
+            os.remove("./asenameme.png")
+
+        MemeYap(Resim, Text, font, Bottom, BottomText)
+        await event.client.send_file(event.chat_id, "./asenameme.png", reply_to=reply)
+        await event.delete()
+        os.remove(Resim)
+    else:
+        await event.edit(LANG['REPLY_TO_MEME'])
 
 @register(outgoing=True, pattern="^.scan")
-async def _(event):
+async def scan(event):
     if event.fwd_from:
         return 
     if not event.reply_to_msg_id:
@@ -376,8 +388,8 @@ CMD_HELP.update({
     ".drweb \
     \nKullanım: Belirtilen dosyada virüs var mı yok mu bakın.\n",
     "meme": 
-    ".meme üst;alt \
-    \nKullanım: Fotoğrafa yazı ekleyin.\n",
+    ".meme font üst;alt \
+    \nKullanım: Fotoğrafa yazı ekleyin. İsterseniz font büyüklüğünü de yazabilirsiniz.\n",
     "voicy": 
     ".voicy \
     \nKullanım: Sesi yazıya çevirin.\n",

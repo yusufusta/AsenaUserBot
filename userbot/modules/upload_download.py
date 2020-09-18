@@ -267,7 +267,7 @@ async def upload(u_event):
             progress_callback=lambda d, t: asyncio.get_event_loop(
             ).create_task(
                 progress(d, t, u_event, c_time, LANG['UPLOADING'], input_str)))
-        await u_event.edit(LANG['SUCCESSFULLY_UPLOADED'])
+        await u_event.edit(LANG['SUCESSFULLY_UPLOADED'])
     else:
         await u_event.edit(f"404: {LANG['NOT_FOUND']}")
 

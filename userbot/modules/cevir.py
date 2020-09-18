@@ -87,7 +87,7 @@ async def cevir(event):
         video = await event.client.download_media(rep_msg.video)
         gif = await asyncio.create_subprocess_shell(f"ffmpeg -i '{video}' -filter_complex 'fps=20,scale=320:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse' out.gif")
         await gif.communicate()
-        await event.edit(LANG['UPLOADING_TO_GIF'])
+        await event.edit(LANG['UPLOADING_GIF'])
 
         try:
             await event.client.send_file(event.chat_id, "out.gif",reply_to=rep_msg, caption=LANG['WITH_ASENA_GIF'])

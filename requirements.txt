@@ -46,3 +46,5 @@ twitter_scraper
 chromedriver-autoinstaller
 numpy
 Pillow
+telegraph
+lottie
