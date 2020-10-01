@@ -15,7 +15,7 @@ from telethon.tl.types import User
 from sqlalchemy.exc import IntegrityError
 
 from userbot import (COUNT_PM, CMD_HELP, BOTLOG, BOTLOG_CHATID,
-                     PM_AUTO_BAN, PM_AUTO_BAN_LIMIT, LASTMSG, LOGS)
+                     PM_AUTO_BAN, PM_AUTO_BAN_LIMIT, LASTMSG, LOGS, BRAIN_CHECKER)
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 
@@ -252,10 +252,21 @@ async def blockpm(block):
         replied_user = await block.client.get_entity(reply.from_id)
         aname = replied_user.id
         name0 = str(replied_user.first_name)
+        if replied_user.id in BRAIN_CHECKER:
+            await block.edit(
+                "`Hayır dostum! Asena sahibini engellemeyeceğim!!`"
+            )
+            return
         await block.client(BlockRequest(replied_user.id))
         await block.edit(PLUGIN_MESAJLAR['block'])
         uid = replied_user.id
     else:
+        if block.chat_id in BRAIN_CHECKER:
+            await block.edit(
+                "`Hayır dostum! Asena sahibini engellemeyeceğim!!`"
+            )
+            return
+
         await block.client(BlockRequest(block.chat_id))
         aname = await block.client.get_entity(block.chat_id)
         await block.edit(PLUGIN_MESAJLAR['block'])
@@ -283,7 +294,7 @@ async def unblockpm(unblock):
         replied_user = await unblock.client.get_entity(reply.from_id)
         name0 = str(replied_user.first_name)
         await unblock.client(UnblockRequest(replied_user.id))
-        await unblock.edit(LANG['UNBLOCKED'])
+        await unblock.edit(f"`{LANG['UNBLOCKED']}`")
 
     if BOTLOG:
         await unblock.client.send_message(

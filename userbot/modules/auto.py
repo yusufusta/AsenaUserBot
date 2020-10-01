@@ -22,7 +22,7 @@ LANG = get_value("auto")
 
 # ████████████████████████████████ #
 
-@register(outgoing=True, pattern="^.auto (.*)")
+@register(outgoing=True, pattern="^.auto ?(.*)")
 async def auto(event):
     metod = event.pattern_match.group(1).lower()
     

@@ -132,7 +132,7 @@ async def fetch_info(replied_user, event):
     last_name = last_name.replace(
         "\u2060", "") if last_name else (LANG['NO_LAST_NAME'])
     username = "@{}".format(username) if username else (
-        LANG['NO_USER_NAME'])
+        LANG['NO_USERNAME'])
     user_bio = LANG['NO_BIO'] if not user_bio else user_bio
 
     caption = f"<b>{LANG['USER_INFO']}:</b>\n\n"

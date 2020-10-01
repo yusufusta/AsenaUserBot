@@ -21,7 +21,7 @@ LANG = get_value("degistir")
 
 @register(outgoing=True, pattern="^.de[gğ]i[sş]tir ?(.*)")
 async def degistir(event):
-    plugin = event.text.replace(".değiştir ", "")
+    plugin = event.pattern_match.group(1)
     mesaj = re.search(r"\"(.*)\"", plugin)
 
     if mesaj:

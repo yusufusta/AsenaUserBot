@@ -27,7 +27,7 @@ def durum(s):
         else:
             return "✅"
 
-@register(outgoing=True, pattern="^.durum")
+@register(outgoing=True, pattern="^.durum|^.status")
 async def durums(event):
 
     await event.edit(f"""
