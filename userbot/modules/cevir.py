@@ -20,7 +20,7 @@ LANG = get_value("cevir")
 
 # ████████████████████████████████ #
 
-@register(outgoing=True, pattern="^.çevir|^.convt ?(foto|ses|gif|voice|photo)? ?(.*)")
+@register(outgoing=True, pattern="^.[cç][oe][nv][vi][tr] ?(foto|ses|gif|voice|photo)? ?(.*)")
 async def cevir(event):
     islem = event.pattern_match.group(1)
     try:
@@ -105,4 +105,4 @@ async def cevir(event):
         await event.edit(LANG['INVALID_COMMAND'])
         return
 
-CMD_HELP["cevir"] = ".çevir foto/gif/ses <çocuk/robot/earrape/hızlı/parazit/yankı>\n**Foto:** Yanıt verdiğiniz Sticker'ı fotoğrafa çevirir.\n**Gif:** Yanıt verdiğiniz videoyu Gif'e çevirir.\n**Ses:** Yanıt verdiğiniz Ses'e efektler uygular. Efektler: çocuk/robot/earrape/hızlı/parazit/yankı."
+CMD_HELP["cevir"] = ".çevir/convt foto/gif/ses/photo/voice <çocuk/robot/earrape/hızlı/parazit/yankı>\n**Foto:** Yanıt verdiğiniz Sticker'ı fotoğrafa çevirir.\n**Gif:** Yanıt verdiğiniz videoyu Gif'e çevirir.\n**Ses:** Yanıt verdiğiniz Ses'e efektler uygular. Efektler: çocuk/robot/earrape/hızlı/parazit/yankı."
