@@ -20,7 +20,8 @@ LANG = get_value("cevir")
 
 # ████████████████████████████████ #
 
-@register(outgoing=True, pattern="^.[cç][oe][nv][vi][tr] ?(foto|ses|gif|voice|photo)? ?(.*)")
+@register(outgoing=True, pattern="^.çevir ?(foto|ses|gif)? ?(.*)")
+@register(outgoing=True, pattern="^.convt ?(gif|voice|photo)? ?(.*)")
 async def cevir(event):
     islem = event.pattern_match.group(1)
     try:

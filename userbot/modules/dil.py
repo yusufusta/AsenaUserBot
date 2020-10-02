@@ -13,7 +13,8 @@ from json import loads, JSONDecodeError
 from userbot.language import LANGUAGE_JSON
 from os import remove
 
-@register(outgoing=True, pattern="^.dil|^.language ?(.*)")
+@register(outgoing=True, pattern="^.dil ?(.*)")
+@register(outgoing=True, pattern="^.lang ?(.*)")
 async def dil(event):
     global LANGUAGE_JSON
 
