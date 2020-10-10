@@ -23,7 +23,7 @@ lyricsgenius
 oauth2client
 psycopg2
 pybase64>=0.4.0
-pylast
+pylast==3.0.0
 pySmartDL
 python-barcode
 python-dotenv
