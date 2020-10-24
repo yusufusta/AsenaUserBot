@@ -16,6 +16,7 @@ from userbot.events import register
 import os
 import subprocess
 import glob
+from random import randint
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -24,11 +25,17 @@ LANG = get_value("song")
 
 # ████████████████████████████████ #
 
-@register(outgoing=True, pattern="^.deez(?: |$)(.*)")
+@register(outgoing=True, pattern="^.deez(\d*|)(?: |$)(.*)")
 async def deezl(event):
     if event.fwd_from:
         return
-    sarki = event.pattern_match.group(1)
+    sira = event.pattern_match.group(1)
+    if sira == '':
+        sira = 0
+    else:
+        sira = int(sira)
+
+    sarki = event.pattern_match.group(2)
     if len(sarki) < 1:
         if event.is_reply:
             sarki = await event.get_reply_message().text
@@ -39,11 +46,13 @@ async def deezl(event):
     chat = "@DeezerMusicBot"
     async with bot.conversation(chat) as conv:
         try:     
-            await conv.send_message(sarki)
+            mesaj = await conv.send_message(str(randint(31,62)))
+            sarkilar = await conv.get_response()
+            await mesaj.edit(sarki)
+            sarkilar = await conv.get_response()
         except YouBlockedUserError:
             await event.reply(LANG['BLOCKED_DEEZER'])
             return
-        sarkilar = await conv.wait_event(events.NewMessage(incoming=True,from_users=595898211))
         await event.client.send_read_acknowledge(conv.chat_id)
         if sarkilar.audio:
             await event.client.send_read_acknowledge(conv.chat_id)
@@ -52,10 +61,10 @@ async def deezl(event):
         elif sarkilar.buttons[0][0].text == "No results":
             await event.edit(LANG['NOT_FOUND'])
         else:
-            await sarkilar.click(0)
+            await sarkilar.click(sira)
             sarki = await conv.wait_event(events.NewMessage(incoming=True,from_users=595898211))
             await event.client.send_read_acknowledge(conv.chat_id)
-            await event.client.send_message(event.chat_id, f"`{sarkilar.buttons[0][0].text}` | " + LANG['UPLOADED_WITH'], file=sarki.message)
+            await event.client.send_message(event.chat_id, f"`{sarkilar.buttons[sira][0].text}` | " + LANG['UPLOADED_WITH'], file=sarki.message)
             await event.delete()
 
 @register(outgoing=True, pattern="^.song(?: |$)(.*)")
