@@ -211,7 +211,7 @@
       "required": false
     },
     "GALERI_SURE": {
-      "description": "Galeri plugini içindir. Profil fotoğraflarıı kaç saniye de bir değişsin?",
+      "description": "Galeri plugini içindir. Profil fotoğrafları kaç saniye de bir değişsin?",
       "value": "60",
       "required": false
     },

@@ -14,6 +14,7 @@ from asyncio import sleep
 from selenium.webdriver.chrome.options import Options
 from userbot.events import register
 from userbot import GOOGLE_CHROME_BIN, CHROME_DRIVER, CMD_HELP
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -70,10 +71,6 @@ async def capture(url):
                                    force_document=True,
                                    reply_to=message_id)
 
-
-CMD_HELP.update({
-    "ss":
-    ".ss <url>\
-    \nKullanım: Belirtilen web sitesinden bir ekran görüntüsü alır ve gönderir.\
-    \nGeçerli bir site bağlantısı örneği: `https://quiec.tech`"
-})
+CmdHelp('ss').add_command(
+    'ss', '<url>', 'Belirtilen web sitesinden bir ekran görüntüsü alır ve gönderir.', 'ss https://fusuf.codes'
+).add()

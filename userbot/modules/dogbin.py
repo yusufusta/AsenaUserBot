@@ -13,6 +13,7 @@ from requests import get, post, exceptions
 import os
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 DOGBIN_URL = "https://del.dog/"
 
@@ -130,11 +131,8 @@ async def get_dogbin_content(dog_url):
             LANG['DOGBIN_ENDED'],
         )
 
-
-CMD_HELP.update({
-    "dogbin":
-    ".paste <metin/yanıtlama>\
-\nKullanım: Dogbin kullanarak yapıştırılmış veya kısaltılmış url oluşturma (https://del.dog/)\
-\n\n.getpaste\
-\nKullanım: Dogbin url içeriğini metne aktarır (https://del.dog/)"
-})
+CmdHelp('dogbin').add_command(
+    'paste', '<metin/yanıtlama>', 'Dogbin kullanarak yapıştırılmış veya kısaltılmış url oluşturma (https://del.dog/)'
+).add_command(
+    'getpaste', None, 'Dogbin url içeriğini metne aktarır (https://del.dog/)'
+).add()

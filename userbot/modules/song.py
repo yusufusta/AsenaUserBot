@@ -17,6 +17,7 @@ import os
 import subprocess
 import glob
 from random import randint
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -143,13 +144,10 @@ async def songpl(event):
     os.system(f"rm -rf {klasor}/*.pl")
     subprocess.check_output(f"rm -rf {klasor}/*.pl",shell=True)
 
-CMD_HELP.update({'song': 
-    "\n\n`.deez şarkı ismi/youtube/spotify/soundcloud`"
-    "\nKullanım: Birçok siteden şarkıyı arayıp, şarkıyı indirir"
-    "\n\n`.song Youtube/Spotify/Şarkı`"
-    "\nKullanım: Şarkı indirir"
-    "\n\n`.songpl Spotify Playlist`"
-    "\nKullanım: Spotify Playlist'inden şarkı indirir"
-
-
-})
+CmdHelp('song').add_command(
+    'deez', '<şarkı ismi/youtube/spotify/soundcloud>', 'Birçok siteden şarkıyı arayıp, şarkıyı indirir.'
+).add_command(
+    'song', '<şarkı ismi/youtube/spotify>', 'Şarkı indirir.'
+).add_command(
+    'songpl', '<spotify playlist>', 'Spotify Playlist\'inden şarkı indirir'
+).add()

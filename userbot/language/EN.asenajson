@@ -176,12 +176,12 @@
             "DEATH": "🌎 Death:",
             "HEAL": "🌎 Heal:",
             "TR": "Turkey",
-            "TR_ALL_CASES": "🇹🇷 Case (total):",
-            "TR_CASES": "🇹🇷 Case (today):",
-            "TR_CASE": "🇹🇷 Case (active):",
-            "TR_ALL_DEATHS": "🇹🇷 Death (total):",
-            "TR_DEATHS": "🇹🇷 Death (today):",
-            "TR_HEAL": "🇹🇷 Heal:"
+            "TR_ALL_CASES": "Case (total):",
+            "TR_CASES": "Case (today):",
+            "TR_CASE": "Case (active):",
+            "TR_ALL_DEATHS": "Death (total):",
+            "TR_DEATHS": "Death (today):",
+            "TR_HEAL": "Heal:"
         },
         "deepfry": {
             "CANT_DEEPFRY": "`I can't do this with a deepfry!`",

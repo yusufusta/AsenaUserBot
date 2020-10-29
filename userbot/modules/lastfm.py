@@ -21,6 +21,7 @@ from telethon.errors.rpcerrorlist import FloodWaitError
 
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, DEFAULT_BIO, BIO_PREFIX, lastfm, LASTFM_USERNAME, bot
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # =================== CONSTANT ===================
 # ██████ LANGUAGE CONSTANTS ██████ #
@@ -224,13 +225,10 @@ async def lastlog(lstlog):
     else:
         await lstlog.edit(LFM_LOG_ERR)
 
-
-CMD_HELP.update({
-    'lastfm':
-    ".lastfm\
-    \nKullanım: Şu anlık oynatılan parça ya da en son oynatılan parça gösterilir.\
-    \n\nlastbio: .lastbio <on/off>\
-    \nKullanım: last.fm'deki şu an oynatılan parça gösterimi etkinleştirilir/devre dışı bırakılır.\
-    \n\nlastlog: .lastlog <on/off>\
-    \nKullanım: last.fm biyografi loglamasını etkinleştirir/devre dışı bırakır."
-})
+CmdHelp('lastfm').add_command(
+    'lastfm', None, 'Şu anlık oynatılan parça ya da en son oynatılan parça gösterilir.'
+).add_command(
+    'lastbio', '<on/off>', 'last.fm\'deki şu an oynatılan parça gösterimi etkinleştirilir/devre dışı bırakılır.'
+).add_command(
+    'lastlog', '<on/off>', 'last.fm biyografi loglamasını etkinleştirir/devre dışı bırakır.'
+).add()

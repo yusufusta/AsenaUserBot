@@ -6,6 +6,7 @@
 
 # Asena UserBot - Yusuf Usta
 
+from userbot.cmdhelp import CmdHelp
 from userbot import PLUGIN_CHANNEL_ID, CMD_HELP
 from userbot.events import register
 from re import search
@@ -76,12 +77,10 @@ async def dil(event):
             f"\n\nDiğer diller için @AsenaDil kanalına bakabilirsiniz."
         )
 
-CMD_HELP.update({
-    "dil":
-    "`.dil`\
-    \n**Kullanım:** `Yüklediğiniz dil hakkında bilgi verir.`\
-    `.dil bilgi`\
-    \n**Kullanım:** `Yanıt verdiğiniz dil dosyası hakkında bilgi verir`\
-    `.dil yükle`\
-    \n**Kullanım:** `Yanıt verdiğiniz dil dosyasını yükler`"
-})
+CmdHelp('dil').add_command(
+    'dil', None, 'Yüklediğiniz dil hakkında bilgi verir.'
+).add_command(
+    'dil bilgi', None, 'Yanıt verdiğiniz dil dosyası hakkında bilgi verir.'
+).add_command(
+    'dil yükle', None, 'Yanıt verdiğiniz dil dosyasını yükler.'
+).add()

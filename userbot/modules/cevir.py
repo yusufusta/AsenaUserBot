@@ -12,6 +12,7 @@ from PIL import Image
 import io
 import os
 import asyncio
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -20,8 +21,8 @@ LANG = get_value("cevir")
 
 # ████████████████████████████████ #
 
-@register(outgoing=True, pattern="^.çevir ?(foto|ses|gif)? ?(.*)")
-@register(outgoing=True, pattern="^.convt ?(gif|voice|photo)? ?(.*)")
+@register(outgoing=True, pattern="^.çevir ?(foto|ses|gif|ses)? ?(.*)")
+@register(outgoing=True, pattern="^.convt ?(gif|voice|photo|sound)? ?(.*)")
 async def cevir(event):
     islem = event.pattern_match.group(1)
     try:
@@ -79,16 +80,20 @@ async def cevir(event):
     elif islem == "gif":
         rep_msg = await event.get_reply_message()
 
-        if not event.is_reply or not rep_msg.video:
+        if not event.is_reply or (not rep_msg.video) and (not rep_msg.document.mime_type == 'application/x-tgsticker'):
             await event.edit(LANG['NEED_VIDEO'])
             return
 
         await event.edit(LANG['CONVERTING_TO_GIF'])
         video = io.BytesIO()
-        video = await event.client.download_media(rep_msg.video)
-        gif = await asyncio.create_subprocess_shell(f"ffmpeg -i '{video}' -filter_complex 'fps=20,scale=320:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse' out.gif")
+        video = await event.client.download_media(rep_msg)
+        if rep_msg.document.mime_type == 'application/x-tgsticker':
+            print(f"lottie_convert.py '{video}' out.gif")
+            gif = await asyncio.create_subprocess_shell(f"lottie_convert.py '{video}' out.gif")
+        else:
+            gif = await asyncio.create_subprocess_shell(f"ffmpeg -i '{video}' -filter_complex 'fps=20,scale=320:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse' out.gif")
         await gif.communicate()
-        await event.edit(LANG['UPLOADING_GIF'])
+        await event.edit(f"`{LANG['UPLOADING_GIF']}`")
 
         try:
             await event.client.send_file(event.chat_id, "out.gif",reply_to=rep_msg, caption=LANG['WITH_ASENA_GIF'])
@@ -101,9 +106,37 @@ async def cevir(event):
             await event.delete()
             os.remove("out.gif")
             os.remove(video)
+    elif islem == "sound" or islem == "ses":
+        rep_msg = await event.get_reply_message()
+        if not event.is_reply or not rep_msg.video:
+            await event.edit(LANG['NEED_VIDEO'])
+            return
+        await event.edit(LANG['CONVERTING_TO_SOUND'])
+        video = io.BytesIO()
+        video = await event.client.download_media(rep_msg.video)
+        gif = await asyncio.create_subprocess_shell(f"ffmpeg -vn -sn -dn -i {video} -codec:a libmp3lame -qscale:a 4 out.mp3")
+        await gif.communicate()
+        await event.edit(LANG['UPLOADING_SOUND'])
+        try:
+            await event.client.send_file(event.chat_id, "out.mp3",reply_to=rep_msg, caption=LANG['WITH_ASENA_SOUND'])
+        except:
+            await event.edit(LANG['ERROR'])
+            await event.delete()
+            os.remove("out.mp3")
+            os.remove(video)
+        finally:
+            await event.delete()
+            os.remove("out.mp3")
+            os.remove(video)
 
     else:
         await event.edit(LANG['INVALID_COMMAND'])
         return
 
-CMD_HELP["cevir"] = ".çevir/convt foto/gif/ses/photo/voice <çocuk/robot/earrape/hızlı/parazit/yankı>\n**Foto:** Yanıt verdiğiniz Sticker'ı fotoğrafa çevirir.\n**Gif:** Yanıt verdiğiniz videoyu Gif'e çevirir.\n**Ses:** Yanıt verdiğiniz Ses'e efektler uygular. Efektler: çocuk/robot/earrape/hızlı/parazit/yankı."
+CmdHelp('cevir').add_command(
+    'çevir foto', None, 'Stickeri fotoğrafa çevirir.'
+).add_command(
+    'çevir gif', None, 'Videoyu veya animasyonlu stickeri gife çevirir.'
+).add_command(
+    'çevir ses', '<çocuk/robot/earrape/hızlı/parazit/yankı>', 'Sese efekt uygular.'
+).add()

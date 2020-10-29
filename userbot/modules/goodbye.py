@@ -10,7 +10,7 @@
 from userbot.events import register
 from userbot import CMD_HELP, bot, LOGS, CLEAN_WELCOME, BOTLOG_CHATID
 from telethon.events import ChatAction
-
+from userbot.cmdhelp import CmdHelp
 
 @bot.on(ChatAction)
 async def goodbye_to_chat(event):
@@ -158,17 +158,10 @@ async def del_goodbye(event):
     else:
         await event.edit("`Burada karşılama notu var mı ?`")
 
-
-CMD_HELP.update({
-    "goodbye":
-    "\
-.setgoodbye <yanıt mesajı> veya .setgoodbye ile bir mesaja cevap verin\
-\nKullanım: Mesajı sohbete görüşürüz notu olarak kaydeder.\
-\n\nGörüşürüz mesajlarını biçimlendirmek için kullanılabilir değişkenler :\
-\n`{mention}, {title}, {count}, {first}, {last}, {fullname}, {userid}, {username}, {my_first}, {my_fullname}, {my_last}, {my_mention}, {my_username}`\
-\n\n.checkgoodbye\
-\nKullanım: Sohbette görüşürz notu olup olmadığını kontrol edin.\
-\n\n.rmgoodbye\
-\nKullanım: Geçerli sohbet için görüşürüz notunu siler.\
-"
-})
+CmdHelp('goodbye').add_command(
+    'setgoodbye', '<yanıt mesajı> veya .setgoodbye ile bir mesaja cevap verin', 'Mesajı sohbete görüşürüz notu olarak kaydeder.'
+).add_command(
+    'checkgoodbye', None, 'Sohbette görüşürz notu olup olmadığını kontrol edin.'
+).add_command(
+    'rmgoodbye', None, 'Geçerli sohbet için görüşürüz notunu siler.'
+).add()

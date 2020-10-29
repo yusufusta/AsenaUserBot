@@ -18,6 +18,7 @@ from userbot import CMD_HELP, bot, PAKET_ISMI
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 from telethon import events
+from userbot.cmdhelp import CmdHelp
 
 PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break. \
 A pack can't have more than 120 stickers at the moment."
@@ -255,13 +256,12 @@ async def resize_photo(photo):
     image = image.resize(new_size, Image.ANTIALIAS)
     return image
 
-CMD_HELP.update({
-    "stickers":
-    ".dızla\
-\nKullanım: .dızla ile bir çıkartmaya ya da resme yanıtlayarak kendi çıkartma paketinize çıkartma olarak ekleyebilirsiniz.\
-\n\n.dızla [emoji(ler)]\
-\nKullanım: .dızla gibi çalışır fakat istediğiniz emojiyi çıkartmanın emojisi olarak belirtir.\
-\n\n.dızla [numara]\
-\nKullanım: Çıkartmayı ya da resmi belirtilen pakete ekler fakat emoji olarak şu kullanılır: 🤔 \
-\n\n.dızla [emoji(ler)] [numara]\
-\nKullanım: Çıkartmayı ya da resmi belirtilen pakete ekler ve belirttiğiniz emoji çıkartmanın emojisi olarak kullanılır."})
+CmdHelp('stickers').add_command(
+    'dızla', None, 'Dızla ile bir çıkartmaya ya da resme yanıtlayarak kendi çıkartma paketinize çıkartma olarak ekleyebilirsiniz.'
+).add_command(
+    'dızla', '<emoji(ler)>', 'Dızla gibi çalışır fakat istediğiniz emojiyi çıkartmanın emojisi olarak belirtir.'
+).add_command(
+    'dızla', '<numara>', 'Çıkartmayı ya da resmi belirtilen pakete ekler fakat emoji olarak şu kullanılır: 🤔 '
+).add_command(
+    'dızla', '<emoji(ler)> <numara>', 'Çıkartmayı ya da resmi belirtilen pakete ekler ve belirttiğiniz emoji çıkartmanın emojisi olarak kullanılır.'
+).add()

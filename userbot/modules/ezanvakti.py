@@ -9,12 +9,11 @@
 # @NaytSeyd tarafından portlanmıştır.
 # @frknkrc44 tarafından düzenlenmiştir.
 
-import json
-import logging
-
 import requests
 from userbot import CMD_HELP
 from userbot.events import register
+from bs4 import BeautifulSoup
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -24,31 +23,41 @@ LANG = get_value("ezanvakti")
 # ████████████████████████████████ #
 
 
-@register(outgoing=True, pattern="^.ezanvakti ?(.*)")
+@register(outgoing=True, pattern="^.ezanvakti ?(\w*)")
 async def ezanvakti(event):
     konum = event.pattern_match.group(1).lower()
+    if not event.text.partition(konum)[2] == '':
+        ilce = event.text.partition(konum)[2]
+    else:
+        ilce = None
 
     if len(konum) < 1:
         await event.edit(LANG['NEED_CITY'])
         return
 
-    url = f'https://api.quiec.tech/namaz.php?il={konum}'
-    request = requests.get(url)
-    result = json.loads(request.text)
+    url = f'https://www.mynet.com/{konum}/namaz-vakitleri'
+    if not ilce == None:
+        url += '/' + ilce.strip()
 
-    if result[0] == '404':
+    request = requests.get(url)
+    if not request.status_code == 200:
         await event.edit(f"`{konum} {LANG['NOT_FOUND']}`")
         return
-        
-    imsak = result[0]
-    gunes = result[1]
-    ogle = result[2]
-    ikindi = result[3]
-    aksam = result[4]
-    yatsi = result[5]
+
+    bs4 = BeautifulSoup(
+        request.text, 'lxml'
+    )
+
+    result = bs4.find('div', {'class': 'prayer-timeline'}).find_all('div')
+    imsak = result[0].find('span', {'class': 'time'}).get_text().strip()
+    gunes = result[1].find('span', {'class': 'time'}).get_text().strip()
+    ogle = result[2].find('span', {'class': 'time'}).get_text().strip()
+    ikindi = result[3].find('span', {'class': 'time'}).get_text().strip()
+    aksam = result[4].find('span', {'class': 'time'}).get_text().strip()
+    yatsi = result[5].find('span', {'class': 'time'}).get_text().strip()
 
     vakitler =(f"**{LANG['DIYANET']}**\n\n" + 
-                 f"📍 **{LANG['LOCATION']}: **`{konum}`\n\n" +
+                 f"📍 **{LANG['LOCATION']}: **`{konum.capitalize()}/{ilce.strip().capitalize() if not ilce == None else konum.capitalize()}`\n\n" +
                  f"🏙 **{LANG['IMSAK']}: ** `{imsak}`\n" +
                  f"🌅 **{LANG['GUNES']}: ** `{gunes}`\n" +
                  f"🌇 **{LANG['OGLE']}: ** `{ogle}`\n" +
@@ -58,9 +67,6 @@ async def ezanvakti(event):
 
     await event.edit(vakitler)
 
-CMD_HELP.update({
-    "ezanvakti":
-    ".ezanvakti <şehir> \
-    \nKullanım: Belirtilen şehir için namaz vakitlerini gösterir. \
-    \nÖrnek: .ezanvakti istanbul"
-})
+CmdHelp('ezanvakti').add_command(
+    'ezanvakti', '<şehir> <ilçe>', 'Belirtilen şehir için namaz vakitlerini gösterir.', 'ezanvakti ankara etimesgut'
+).add()

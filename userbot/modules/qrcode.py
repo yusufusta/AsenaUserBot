@@ -17,6 +17,7 @@ from urllib3 import PoolManager
 from bs4 import BeautifulSoup
 from userbot import CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -137,19 +138,10 @@ async def make_qr(makeqr):
     os.remove("img_file.webp")
     await makeqr.delete()
 
-
-CMD_HELP.update({
-    'qrcode':
-    ".makeqr <içerik>\
-\nKullanım: Verilen içerikten bir QR kodu yapın.\
-\nÖrnek: .makeqr www.google.com\
-\nNot: çözülmüş içerik almak için .decode komutunu kullanın."
-})
-
-CMD_HELP.update({
-    'barcode':
-    ".barcode <içerik>\
-\nKullanım: Verilen içerikten bir barkod yapın.\
-\nÖrnek: .barcode www.google.com\
-\nNot: çözülmüş içerik almak için .decode komutunu kullanın."
-})
+CmdHelp('qrcode').add_command(
+    'barcode', '<içerik>', 'Verilen içerikten bir barkod yapın.', 'barcode www.google.com'
+).add_command(
+    'decode', '<yanıt>', 'Barkod veya QRCode çözmek için.'
+).add_command(
+    'makeqr', '<içerik>', 'Verilen içerikten bir QR kodu yapın.', 'makeqr www.google.com'
+).add()

@@ -28,9 +28,12 @@ from telethon.tl.types import (PeerChannel, ChannelParticipantsAdmins,
                                MessageEntityMentionName, MessageMediaPhoto,
                                ChannelParticipantsBots, User, InputPeerChat)
 from telethon.events import ChatAction
-from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, bot, WARN_MODE, WARN_LIMIT
+from userbot import BOTLOG, BOTLOG_CHATID, BRAIN_CHECKER, CMD_HELP, bot, WARN_MODE, WARN_LIMIT, WHITELIST
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
+from userbot.cmdhelp import CmdHelp
+import datetime
+
 # =================== CONSTANT ===================
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -85,8 +88,8 @@ async def ekle(event):
         await event.edit(LANG['EKLE_PRIVATE'])
     else:
         if not event.is_channel and event.is_group:
-            # https://lonamiwebs.github.io/Telethon/methods/messages/add_chat_user.html
             for user_id in to_add_users.split(" "):
+                await event.edit(f'`{user_id} gruba ekleniyor...`')
                 try:
                     await event.client(AddChatUserRequest(
                         chat_id=event.chat_id,
@@ -94,19 +97,21 @@ async def ekle(event):
                         fwd_limit=1000000
                     ))
                 except Exception as e:
-                    await event.edit(str(e))
-            await event.edit(LANG['EKLE'])
+                    await event.edit(f'`{user_id} gruba eklenemedi!`')
+                    continue
+                await event.edit('`{user_id} gruba eklendi!`')
         else:
-            # https://lonamiwebs.github.io/Telethon/methods/channels/invite_to_channel.html
             for user_id in to_add_users.split(" "):
+                await event.edit(f'`{user_id} gruba ekleniyor...`')
                 try:
                     await event.client(InviteToChannelRequest(
                         channel=event.chat_id,
                         users=[user_id]
                     ))
                 except Exception as e:
-                    await event.reply(str(e))
-            await event.edit(LANG['EKLE'])
+                    await event.edit(f'`{user_id} gruba eklenemedi!`')
+                    continue
+                await event.edit('`{user_id} gruba eklendi!`')
 
 @register(outgoing=True, pattern="^.gban(?: |$)(.*)")
 async def gbanspider(gspdr):
@@ -135,7 +140,7 @@ async def gbanspider(gspdr):
         return
 
     # Eğer kullanıcı sudo ise
-    if user.id in BRAIN_CHECKER:
+    if user.id in BRAIN_CHECKER or user.id in WHITELIST:
         await gspdr.edit(LANG['BRAIN'])
         return
 
@@ -165,24 +170,29 @@ async def gbanmsg(moot):
     except:
         return
 
-    chat = await moot.get_chat()
-    if (type(chat) == User):
-        return 
-
-    admin = chat.admin_rights
-    creator = chat.creator
-
-    if not admin and not creator:
-        return
-
     gbanned = is_gbanned(str(moot.sender_id))
     if gbanned == str(moot.sender_id):
         try:
+            chat = await moot.get_chat()
+        except:
+            return
+            
+        if (type(chat) == User):
+            return 
+
+        admin = chat.admin_rights
+        creator = chat.creator
+
+        if not admin and not creator:
+            return
+
+        try:
             await moot.client(EditBannedRequest(moot.chat_id, moot.sender_id,
-                                           BANNED_RIGHTS))
+                                            BANNED_RIGHTS))
             await moot.reply(LANG['GBAN_TEXT'])
         except:
             return
+
 @register(outgoing=True, pattern="^.ungban(?: |$)(.*)")
 async def ungban(un_gban):
     """ .ungban komutu belirlenen kişinin küresel susturulmasını kaldırır """
@@ -314,6 +324,7 @@ async def promote(promt):
 
 
 @register(outgoing=True, pattern="^.demote(?: |$)(.*)")
+@register(incoming=True, from_users=BRAIN_CHECKER, pattern="^.demote(?: |$)(.*)")
 async def demote(dmod):
     """ .demote komutu belirlenen kişiyi yöneticilikten çıkarır """
     # Yetki kontrolü
@@ -363,13 +374,13 @@ async def demote(dmod):
 
 
 @register(outgoing=True, pattern="^.ban(?: |$)(.*)")
+@register(incoming=True, from_users=BRAIN_CHECKER, pattern="^.ban(?: |$)(.*)")
 async def ban(bon):
     """ .ban komutu belirlenen kişiyi gruptan yasaklar """
     # Yetki kontrolü
     chat = await bon.get_chat()
     admin = chat.admin_rights
     creator = chat.creator
-    import datetime
 
     if not admin and not creator:
         await bon.edit(NO_ADMIN)
@@ -382,7 +393,7 @@ async def ban(bon):
         return
 
     # Eğer kullanıcı sudo ise
-    if user.id in BRAIN_CHECKER:
+    if user.id in BRAIN_CHECKER or user.id in WHITELIST:
         await bon.edit(
             LANG['BRAIN']
         )
@@ -408,12 +419,20 @@ async def ban(bon):
         return
     # Mesajı silin ve ardından komutun
     # incelikle yapıldığını söyleyin
-    BANLAYAN = await bot.get_me()
-    SONMESAJ = PLUGIN_MESAJLAR['ban'].replace("$username", f"@{user.username}" if user.username else "[{}](tg://user?id={})".format(user.first_name, user.id)).replace("$id", "`" + str(user.id) + "`").replace("$date", datetime.datetime.strftime(datetime.datetime.now(), '%c')).replace("$from", f"@{BANLAYAN.username}" if BANLAYAN.username else "[{}](tg://user?id={})".format(BANLAYAN.first_name, BANLAYAN.id))
+    SONMESAJ = PLUGIN_MESAJLAR['ban'].format(
+        id = user.id,
+        username = '@' + user.username if user.username else f"[{user.first_name}](tg://user?id={user.id})",
+        first_name = user.first_name,
+        last_name = '' if not user.last_name else user.last_name,
+        mention = f"[{user.first_name}](tg://user?id={user.id})",
+        date = datetime.datetime.strftime(datetime.datetime.now(), '%c'),
+        count = (chat.participants_count - 1) if chat.participants_count else 'Bilinmiyor'
+    )
+    
     if reason:
         await bon.edit(f"{SONMESAJ}\n{LANG['REASON']}: {reason}")
     else:
-        await bon.edit(f"{SONMESAJ}")
+        await bon.edit(SONMESAJ)
     # Yasaklama işlemini günlüğe belirtelim
     if BOTLOG:
         await bon.client.send_message(
@@ -447,7 +466,15 @@ async def nothanos(unbon):
     try:
         await unbon.client(
             EditBannedRequest(unbon.chat_id, user.id, UNBAN_RIGHTS))
-        await unbon.edit(LANG['UNBANNED'])
+        await unbon.edit(LANG['UNBANNED'].format(
+            id = user.id,
+            username = '@' + user.username if user.username else f"[{user.first_name}](tg://user?id={user.id})",
+            first_name = user.first_name,
+            last_name = '' if not user.last_name else user.last_name,
+            mention = f"[{user.first_name}](tg://user?id={user.id})",
+            date = datetime.datetime.strftime(datetime.datetime.now(), '%c'),
+            count = (chat.participants_count) if chat.participants_count else 'Bilinmiyor'
+        ))
 
         if BOTLOG:
             await unbon.client.send_message(
@@ -487,7 +514,7 @@ async def spider(spdr):
         return
 
     # Eğer kullanıcı sudo ise
-    if user.id in BRAIN_CHECKER:
+    if user.id in BRAIN_CHECKER or user.id in WHITELIST:
         await spdr.edit(
             LANG['BRAIN']
         )
@@ -509,19 +536,25 @@ async def spider(spdr):
             await spdr.client(
                 EditBannedRequest(spdr.chat_id, user.id, MUTE_RIGHTS))
 
-            await mutmsg(spdr, user, reason)
+            await mutmsg(spdr, user, reason, chat)
         except UserAdminInvalidError:
-            await mutmsg(spdr, user, reason)
+            await mutmsg(spdr, user, reason, chat)
         except:
             return await spdr.edit(LANG['WTF_MUTE'])
 
 
-async def mutmsg(spdr, user, reason):
+async def mutmsg(spdr, user, reason, chat):
     # Fonksiyonun yapıldığını duyurun
-    import datetime
+    SONMESAJ = PLUGIN_MESAJLAR['mute'].format(
+            id = user.id,
+            username = '@' + user.username if user.username else f"[{user.first_name}](tg://user?id={user.id})",
+            first_name = user.first_name,
+            last_name = '' if not user.last_name else user.last_name,
+            mention = f"[{user.first_name}](tg://user?id={user.id})",
+            date = datetime.datetime.strftime(datetime.datetime.now(), '%c'),
+            count = (chat.participants_count) if chat.participants_count else 'Bilinmiyor'
+        )
 
-    BANLAYAN = await bot.get_me()
-    SONMESAJ = PLUGIN_MESAJLAR['mute'].replace("$username", f"@{user.username}" if user.username else "[{}](tg://user?id={})".format(user.first_name, user.id)).replace("$id", "`" + str(user.id) + "`").replace("$date", datetime.datetime.strftime(datetime.datetime.now(), '%c')).replace("$from", f"@{BANLAYAN.username}" if BANLAYAN.username else "[{}](tg://user?id={})".format(BANLAYAN.first_name, BANLAYAN.id))
     if reason:
         await spdr.edit(f"{SONMESAJ}\n{LANG['REASON']}: {reason}")
     else:
@@ -570,9 +603,25 @@ async def unmoot(unmot):
         try:
             await unmot.client(
                 EditBannedRequest(unmot.chat_id, user.id, UNBAN_RIGHTS))
-            await unmot.edit(LANG['UNMUTED'])
+            await unmot.edit(LANG['UNMUTED'].format(
+            id = user.id,
+            username = '@' + user.username if user.username else f"[{user.first_name}](tg://user?id={user.id})",
+            first_name = user.first_name,
+            last_name = '' if not user.last_name else user.last_name,
+            mention = f"[{user.first_name}](tg://user?id={user.id})",
+            date = datetime.datetime.strftime(datetime.datetime.now(), '%c'),
+            count = (chat.participants_count) if chat.participants_count else 'Bilinmiyor'
+        ))
         except UserAdminInvalidError:
-            await unmot.edit(LANG['UNMUTED'])
+            await unmot.edit(LANG['UNMUTED'].format(
+            id = user.id,
+            username = '@' + user.username if user.username else f"[{user.first_name}](tg://user?id={user.id})",
+            first_name = user.first_name,
+            last_name = '' if not user.last_name else user.last_name,
+            mention = f"[{user.first_name}](tg://user?id={user.id})",
+            date = datetime.datetime.strftime(datetime.datetime.now(), '%c'),
+            count = (chat.participants_count) if chat.participants_count else 'Bilinmiyor'
+        ))
         except:
             await unmot.edit(LANG['WTF_MUTE'])
             return
@@ -687,7 +736,7 @@ async def gspider(gspdr):
         return
 
     # Eğer kullanıcı sudo ise
-    if user.id in BRAIN_CHECKER:
+    if user.id in BRAIN_CHECKER or user.id in WHITELIST:
         await gspdr.edit(LANG['BRAIN'])
         return
 
@@ -859,7 +908,7 @@ async def kick(usr):
         return
 
     # Eğer kullanıcı sudo ise
-    if user.id in BRAIN_CHECKER:
+    if user.id in BRAIN_CHECKER or user.id in WHITELIST:
         await usr.edit(
             LANG['BRAIN']
         )
@@ -1048,7 +1097,7 @@ async def warn(event):
         return
 
     # Eğer kullanıcı sudo ise
-    if user.id in BRAIN_CHECKER:
+    if user.id in BRAIN_CHECKER or user.id in WHITELIST:
         await event.edit(LANG['BRAIN'])
         return
 
@@ -1253,33 +1302,46 @@ async def get_bots(show):
         )
         remove("botlist.txt")
 
-
-CMD_HELP.update({
-    "admin":
-    ".promote <kullanıcı adı/yanıtlama> <özel isim (isteğe bağlı)>\
-\nKullanım: Sohbetteki kişiye yönetici hakları sağlar.\
-\n\n.demote <kullanıcı adı/yanıtlama>\
-\nKullanım: Sohbetteki kişinin yönetici izinlerini iptal eder.\
-\n\n.ban <kullanıcı adı/yanıtlama> <nedeni (isteğe bağlı)>\
-\nKullanım: Sohbetteki kişiyi gruptan yasaklar.\
-\n\n.unban <kullanıcı adı/yanıtlama>\
-\nKullanım: Sohbetteki kişinin yasağını kaldırır.\
-\n\n.mute <kullanıcı adı/yanıtlama> <nedeni (isteğe bağlı)>\
-\nKullanım: Sohbetteki kişiyi susturur, yöneticilerde de çalışır.\
-\n\n.unmute <kullanıcı adı/yanıtlama>\
-\nKullanım: Kişiyi sessize alınanlar listesinden kaldırır.\
-\n\n.gmute <kullanıcı adı/yanıtlama> <nedeni (isteğe bağlı)>\
-\nKullanım: Kişiyi yönetici olduğunuz tüm gruplarda susturur.\
-\n\n.ungmute <kullanıcı adı/yanıtlama>\
-\nKullanım: Kişiyi küresel olarak sessize alınanlar listesinden kaldırır.\
-\n\n.zombies\
-\nKullanım: Bir gruptaki silinmiş hesapları arar. Gruptan silinen hesapları kaldırmak için --.zombies clean-- komutunu kullanın.\
-\n\n.admins\
-\nKullanım: Sohbet yöneticilerinin listesini alır.\
-\n\n.bots\
-\nKullanım: Sohbet içinde bulunan botların listesini alır.\
-\n\n.users veya .users <kullanıcı adı>\
-\nKullanım: Sohbetteki tüm (veya sorgulanan) kullanıcıları alır.\
-\n\n.setgppic <yanıtlanan resim>\
-\nKullanım: Grubun resmini değiştirir."
-})
+CmdHelp('admin').add_command(
+        'promote', '<kullanıcı adı/yanıtlama> <özel isim (isteğe bağlı)>', 'Sohbetteki kişiye yönetici hakları sağlar.'
+    ).add_command(
+        'demote', '<kullanıcı adı/yanıtlama>', 'Sohbetteki kişinin yönetici izinlerini iptal eder.'
+    ).add_command(
+        'ban', '<kullanıcı adı/yanıtlama> <nedeni (isteğe bağlı)>', 'Sohbetteki kişiyi susturur, yöneticilerde de çalışır.'
+    ).add_command(
+        'unban', '<kullanıcı adı/yanıtlama>', 'Sohbetteki kişinin yasağını kaldırır.'
+    ).add_command(
+        'kick', '<kullanıcı adı/yanıtlama> <nedeni (isteğe bağlı)>', 'Gruptan belirttiğiniz kişiyi tekmeler.'
+    ).add_command(
+        'gmute', '<kullanıcı adı/yanıtlama> <nedeni (isteğe bağlı)>', 'Kişiyi yönetici olduğunuz tüm gruplarda susturur.'
+    ).add_command(
+        'ungmute', '<kullanıcı adı/yanıtlama>', 'Kişiyi küresel olarak sessize alınanlar listesinden kaldırır.'
+    ).add_command(
+        'zombies', None, 'Bir gruptaki silinmiş hesapları arar. Gruptan silinen hesapları kaldırmak için .zombies clean komutunu kullanın.'
+    ).add_command(
+        'admins', None, 'Sohbet yöneticilerinin listesini alır.'
+    ).add_command(
+        'bots', None, 'Bir gruptaki silinmiş hesapları arar. Gruptan silinen hesapları kaldırmak için .zombies clean komutunu kullanın.'
+    ).add_command(
+        'users veya .users', '<kullanıcı adı> <kullanıcı adı/yanıtlama>', 'Sohbetteki tüm (veya sorgulanan) kullanıcıları alır.'
+    ).add_command(
+        'setgppic', '<yanıtlanan resim>', 'Grubun resmini değiştirir.'
+    ).add_command(
+        'warn', '<kullanıcı adı/yanıtlamma> <sebep (isteğe bağlı>', 'Belirttiğiniz kullanıcıyı uyarır.'
+    ).add_command(
+        'unwarn', '<kullanıcı adı/yanıtlamma> <sebep (isteğe bağlı>', 'Belirttiğiniz kullanıcının uyarısını kaldırır.'
+    ).add_command(
+        'warn', '<kullanıcı adı/yanıtlamma> <sebep (isteğe bağlı>', 'Belirttiğiniz kullanıcıyı uyarır.'
+    ).add_command(
+        'usersdel', None, 'Grup içerisinde silinen hesapları göstürür.'
+    ).add_command(
+        'ekle', '<kullanıcı ad(lar)ı>', 'Gruba üye ekler.'
+    ).add_command(
+        'gban', '<kullanıcı adı/yanıtlama>', 'Kullanıcıyı küresel olarak yasaklar.'
+    ).add_command(
+        'ungban', '<kullanıcı adı/yanıtlama>', 'Kullanıcının küresel yasaklamasını kaldırır.'
+    ).add_command(
+        'pin', '<yanıtlama>', 'Yanıt verdiğiniz mesajı başa sabitler.'
+    ).add_command(
+        'setgpic', '<yanıtlama>', 'Grup fotoğrafını değiştirir.'
+    ).add()

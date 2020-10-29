@@ -64,7 +64,7 @@ AFKSTR = [
     "Şu an burada değilim....\nama öyleysem ...\n\nbu harika olmaz mıydı?",
 ]
 
-UNAPPROVED_MSG = ("`Hey! Bu bir bot. Endişelenme.\n\n`"
+UNAPPROVED_MSG = ("`Hey,` {mention}`! Bu bir bot. Endişelenme.\n\n`"
                   "`Sahibim sana PM atma izni vermedi. `"
                   "`Lütfen sahibimin aktif olmasını bekleyin, o genellikle PM'leri onaylar.\n\n`"
                   "`Bildiğim kadarıyla o kafayı yemiş insanlara PM izni vermiyor.`")
@@ -83,7 +83,6 @@ connect("learning-data-root.check").close()
 
 try:
     bot.start()
-
     idim = bot.get_me().id
     asenabl = requests.get('https://gitlab.com/Quiec/asen/-/raw/master/asen.json').json()
     if idim in asenabl:
@@ -100,7 +99,7 @@ try:
 
     # PLUGIN MESAJLARI AYARLIYORUZ
     PLUGIN_MESAJLAR = {}
-    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": f"`{str(choice(AFKSTR))}`", "kickme": "`Güle Güle ben gidiyorum `🤠", "pm": UNAPPROVED_MSG, "dızcı": str(choice(DIZCILIK_STR)), "ban": "`Yasaklandı!`", "mute": "`Sessize alındı!`", "approve": "`Bana mesaj gönderebilirsin!`", "disapprove": "`Artık bana mesaj gönderemezsin!`", "block": "`Engellendin!`"}
+    ORJ_PLUGIN_MESAJLAR = {"alive": "`Tanrı Türk'ü Korusun. 🐺 Asena çalışıyor.`", "afk": f"`{str(choice(AFKSTR))}`", "kickme": "`Güle Güle ben gidiyorum `🤠", "pm": UNAPPROVED_MSG, "dızcı": str(choice(DIZCILIK_STR)), "ban": "{mention}`, yasaklandı!`", "mute": "{mention}`, sessize alındı!`", "approve": "{mention}`, bana mesaj gönderebilirsin!`", "disapprove": "{mention}`, artık bana mesaj gönderemezsin!`", "block": "{mention}`, engellendin!`"}
 
     PLUGIN_MESAJLAR_TURLER = ["alive", "afk", "kickme", "pm", "dızcı", "ban", "mute", "approve", "disapprove", "block"]
     for mesaj in PLUGIN_MESAJLAR_TURLER:
@@ -111,7 +110,7 @@ try:
             if dmsj.startswith("MEDYA_"):
                 medya = int(dmsj.split("MEDYA_")[1])
                 medya = bot.get_messages(PLUGIN_CHANNEL_ID, ids=medya)
-                print(medya)
+
                 PLUGIN_MESAJLAR[mesaj] = medya
             else:
                 PLUGIN_MESAJLAR[mesaj] = dmsj
@@ -185,7 +184,7 @@ for module_name in ALL_MODULES:
 
 LOGS.info("Botunuz çalışıyor! Herhangi bir sohbete .alive yazarak Test edin."
           " Yardıma ihtiyacınız varsa, Destek grubumuza gelin t.me/AsenaSupport")
-LOGS.info(f"Bot sürümünüz Asena {ASENA_VERSION}")
+LOGS.info(f"Bot sürümünüz: Asena {ASENA_VERSION}")
 
 """
 if len(argv) not in (1, 3, 4):

@@ -19,6 +19,7 @@ from pytz import country_names as c_n
 from userbot import CMD_HELP, WEATHER_DEFCITY
 from userbot import OPEN_WEATHER_MAP_APPID as OWM_API
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ===== CONSTANT =====
 # ██████ LANGUAGE CONSTANTS ██████ #
@@ -144,9 +145,6 @@ async def get_weather(weather):
         f"**{LANG['SUNSET']}:** `{sun(sunset)}`\n\n" + f"**{desc}**\n" +
         f"`{cityname}, {fullc_n}`\n" + f"`{time}`")
 
-
-CMD_HELP.update({
-    "weather":
-    "Kullanım: .weather şehir adı veya .weather şehir adı, ülke adı/ülke kodu\
-    \nBir bölgenin hava durumunu verir."
-})
+CmdHelp('weather').add_command(
+    'weather', '<şehir>', 'Bir bölgenin hava durumunu verir.'
+).add()

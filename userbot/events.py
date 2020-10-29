@@ -18,7 +18,7 @@ from traceback import format_exc
 
 from telethon import events
 
-from userbot import bot, BOTLOG_CHATID, LOGSPAMMER
+from userbot import bot, BOTLOG_CHATID, LOGSPAMMER, PATTERNS
 
 
 def register(**args):
@@ -31,7 +31,7 @@ def register(**args):
     disable_errors = args.get('disable_errors', False)
 
     if pattern:
-        args["pattern"] = pattern.replace("^.", "^[.,;!]")
+        args["pattern"] = pattern.replace("^.", "^["+ PATTERNS + "]")
     if "disable_edited" in args:
         del args['disable_edited']
 

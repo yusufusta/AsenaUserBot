@@ -7,6 +7,7 @@ from datetime import datetime
 from math import sqrt
 from telethon.tl.functions.channels import GetFullChannelRequest, GetParticipantsRequest
 from telethon.utils import get_input_location
+from userbot.cmdhelp import CmdHelp
 
 # FORKED FROM https://github.com/alcyper/alcyper #
 @register(outgoing=True, pattern="^.grupbilgisi(?: |$)(.*)")
@@ -188,3 +189,5 @@ async def fetch_info(chat, event):
     if description:
         caption += f"Açıklama: \n<code>{description}</code>\n"
     return caption    
+
+CmdHelp('grupbilgisi').add_command('grupbilgisi', None, 'Grup hakkında bilgi getirir.').add()

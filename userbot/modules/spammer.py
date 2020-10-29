@@ -12,6 +12,7 @@ import threading
 
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 @register(outgoing=True, pattern="^.tspam")
 async def tmeme(e):
@@ -102,18 +103,17 @@ async def delayspammer(e):
                 "#DelaySPAM \n\n"
                 "DelaySpam başarıyla gerçekleştirildi"
                 )
-                               
-CMD_HELP.update({
-    "spammer": ".tspam <metin>\
-\nKullanım: Verilen mesajı tek tek göndererek spam yapar\
-\n\n.spam <miktar> <metin>\
-\nKullanım: Verilen miktarda spam gönderir\
-\n\n.bigspam <miktar> <metin>\
-\nKullanım: .spam komutunun büyük hali\
-\n\n.picspam <miktar> <link>\
-\nKullanım: Verilen miktarda resimli spam gönderir\
-\n\n.delayspam <gecikme> <miktar> <metin>\
-\nKullanım: Verilen miktar ve verilen gecikme ile gecikmeli spam yapar\
-\n\n\nNOT : Sorumluluk size aittir!!"
-})
 
+CmdHelp('spammer').add_command(
+    'tspam', '<metin>', 'Verilen mesajı tek tek göndererek spam yapar.'
+).add_command(
+    'spam', '<miktar> <metin>', 'Verilen miktarda spam gönderir.'
+).add_command(
+    'bigspam', '<miktar> <metin>', 'Verilen miktarda spam gönderir.'
+).add_command(
+    'picspam', '<miktar> <link>', 'Verilen miktarda resimli spam gönderir.'
+).add_command(
+    'delayspam', '<gecikme> <miktar> <metin>', 'Verilen miktar ve verilen gecikme ile gecikmeli spam yapar.'
+).add_warning(
+    'Sorumluluk size aittir!!'
+).add()

@@ -18,6 +18,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont
 from telethon.tl.types import InputMessagesFilterDocument
 from userbot.events import register 
 from userbot import CMD_HELP, bot
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -102,8 +103,6 @@ async def get_font_file(client, channel_id):
     # Dosya yolunu indir ve geri dön
     return await client.download_media(font_file_message)
 
-CMD_HELP.update({
-    "rgb": 
-    ".rgb \
-    \nKullanım: Metninizi RGB çıkartmaya dönüştürün.\n"
-})
+CmdHelp('rgb').add_command(
+    'rbg', '<yanıt>', 'Metninizi RGB çıkartmaya dönüştürün.'
+).add()

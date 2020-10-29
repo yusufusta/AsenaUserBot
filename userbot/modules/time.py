@@ -17,6 +17,7 @@ from pytz import timezone as tz
 
 from userbot import CMD_HELP, COUNTRY, TZ_NUMBER
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -173,18 +174,8 @@ async def date_func(dat):
                        f"({time_zone} {LANG['IS_TZ']}).")
         return
 
-
-CMD_HELP.update({
-    "time":
-    ".time <ülke ismi/kodu> <saat dilimi numarası>"
-    "\nKullanım: Bir ülkenin saatini gösterir. Eğer bir ülke "
-    "birden fazla saat dilimine sahipse, tümü birden gösterilir "
-    "ve seçim sana bırakılır."
-})
-CMD_HELP.update({
-    "date":
-    ".date <ülke ismi/kodu> <saat dilimi numarası>"
-    "\nKullanım: Bir ülkenin tarihini gösterir. Eğer bir ülke"
-    "birden fazla saat dilimine sahipse, tümü birden gösterilir."
-    "ve seçim sana bırakılır."
-})
+CmdHelp('time').add_command(
+    'time', '<ülke ismi/kodu> <saat dilimi numarası>', 'Bir ülkenin saatini gösterir. Eğer bir ülke birden fazla saat dilimine sahipse, tümü birden gösterilir ve seçim sana bırakılır.'
+).add_command(
+    'date', '<ülke ismi/kodu> <saat dilimi numarası>', 'Bir ülkenin tarihini gösterir. Eğer bir ülke birden fazla saat dilimine sahipse, tümü birden gösterilir. ve seçim sana bırakılır.'
+).add()

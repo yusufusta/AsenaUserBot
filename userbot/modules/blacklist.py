@@ -12,6 +12,7 @@ import re
 import userbot.modules.sql_helper.blacklist_sql as sql
 from userbot import CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -109,14 +110,10 @@ async def on_delete_blacklist(rmbl):
             successful += 1
     await rmbl.edit(LANG['REMOVED'])
     
-CMD_HELP.update({
-    "blacklist":
-    ".listblaclist\
-    \nKullanım: Bir sohbetteki etkin kara listeyi listeler.\
-    \n\n.addblacklist <kelime>\
-    \nKullanım: İletiyi 'kara liste anahtar kelimesine' kaydeder.\
-    \n'Kara liste anahtar kelimesinden' bahsedildiğinde bot iletiyi siler.\
-    \n\n.rmblacklist <kelime>\
-    \nKullanım: Belirtilen kara listeyi durdurur.\
-    \nBu arada bu işlemleri gerçekleştirmek için yönetici olmalı ve **Mesaj Silme** yetkiniz olmalı."
-})
+CmdHelp('blacklist').add_command(
+    'listblacklist', None, 'Bir sohbetteki etkin kara listeyi listeler.'
+).add_command(
+    'addblacklist', '<kelime>', 'İletiyi \'kara liste anahtar kelimesine\' kaydeder. \'Kara liste anahtar kelimesinden\' bahsedildiğinde bot iletiyi siler.', '.addblacklist amk'
+).add_command(
+    'rmblacklist', '<kelime>', 'Belirtilen kara listeyi durdurur.', '.rmblacklist amk'
+).add_warning('Bu işlemleri gerçekleştirmek için yönetici olmalı ve **Mesaj Silme** yetkiniz olmalı.').add()

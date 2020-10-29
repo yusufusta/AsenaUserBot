@@ -21,7 +21,7 @@ from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.sync import TelegramClient, custom
 from telethon.sessions import StringSession
 from telethon.events import callbackquery, InlineQuery, NewMessage
-from numpy import asarray, array_split
+from math import ceil
 
 load_dotenv("config.env")
 
@@ -64,7 +64,7 @@ if not LANGUAGE in ["EN", "TR", "AZ", "UZ", "DEFAULT"]:
     LANGUAGE = "DEFAULT"
     
 # Asena Sürümü
-ASENA_VERSION = "v2.1"
+ASENA_VERSION = "v3.0"
 
 # Telegram API KEY ve HASH
 API_KEY = os.environ.get("API_KEY", None)
@@ -183,6 +183,7 @@ BOT_USERNAME = os.environ.get("BOT_USERNAME", None)
 # Genius modülünün çalışması için buradan değeri alın https://genius.com/developers her ikisi de aynı değerlere sahiptir
 GENIUS = os.environ.get("GENIUS", None)
 CMD_HELP = {}
+CMD_HELP_BOT = {}
 PM_AUTO_BAN_LIMIT = int(os.environ.get("PM_AUTO_BAN_LIMIT", 4))
 
 SPOTIFY_DC = os.environ.get("SPOTIFY_DC", None)
@@ -192,6 +193,10 @@ PAKET_ISMI = os.environ.get("PAKET_ISMI", "@AsenaUserBot Paketi")
 
 # Otomatik Katılma
 OTOMATIK_KATILMA = sb(os.environ.get("OTOMATIK_KATILMA", "True"))
+
+# Özel Pattern'ler
+PATTERNS = os.environ.get("PATTERNS", ".;!,")
+WHITELIST = get('https://gitlab.com/Quiec/asen/-/raw/master/whitelist.json').json()
 
 # CloudMail.ru ve MEGA.nz ayarlama
 if not os.path.exists('bin'):
@@ -224,10 +229,8 @@ else:
     LOGS.info("Braincheck dosyası yok, getiriliyor...")
 
 URL = 'https://raw.githubusercontent.com/quiec/databasescape/master/learning-data-root.check'
-
 with open('learning-data-root.check', 'wb') as load:
     load.write(get(URL).content)
-
 
 async def check_botlog_chatid():
     if not BOTLOG_CHATID and LOGSPAMMER:
@@ -263,32 +266,20 @@ def butonlastir(sayfa, moduller):
     Satir = 5
     Kolon = 2
     
-    moduller = [modul for modul in moduller if not modul.startswith("_")]
-    Moduller = asarray(moduller)
-    Parcas = array_split(Moduller, (len(moduller) / (Satir * Kolon)))
-    Parcalar = Parcas[sayfa]
-    Butonlar = []
-    Buton = []
+    moduller = sorted([modul for modul in moduller if not modul.startswith("_")])
+    pairs = list(map(list, zip(moduller[::2], moduller[1::2])))
+    if len(moduller) % 2 == 1:
+        pairs.append([moduller[-1]])
+    max_pages = ceil(len(pairs) / Satir)
+    pairs = [pairs[i:i + Satir] for i in range(0, len(pairs), Satir)]
+    butonlar = []
+    for pairs in pairs[sayfa]:
+        butonlar.append([
+            custom.Button.inline("🔸 " + pair, data=f"bilgi[{sayfa}]({pair})") for pair in pairs
+        ])
 
-    for Parca in Parcalar:
-        Buton.append(custom.Button.inline(Parca, data=f"bilgi[{sayfa}]({Parca})"))
-
-        if len(Buton) == Kolon:
-            Butonlar.append(Buton)
-            Buton = []
-
-    if not len(Butonlar) == len(Parcalar):
-        Text = Parcalar[-1]
-        Butonlar.append([custom.Button.inline(Text, data=f"bilgi[{sayfa}]({Text})")])
-
-    Yon = []
-    if not sayfa == 0:
-        Yon.append(custom.Button.inline("◀️ Geri", data=f"sayfa({sayfa - 1})"))
-    if not sayfa + 1 == len(Parcas):
-        Yon.append(custom.Button.inline("İleri ▶️", data=f"sayfa({sayfa + 1})"))
-
-    Butonlar.append(Yon)
-    return [len(Parcas), Butonlar]
+    butonlar.append([custom.Button.inline("◀️ Geri", data=f"sayfa({(max_pages - 1) if sayfa == 0 else (sayfa - 1)})"), custom.Button.inline("İleri ▶️", data=f"sayfa({0 if sayfa == (max_pages - 1) else sayfa + 1})")])
+    return [max_pages, butonlar]
 
 with bot:
     if OTOMATIK_KATILMA:
@@ -317,7 +308,7 @@ with bot:
             query = event.text
             if event.query.user_id == uid and query == "@AsenaUserBot":
                 rev_text = query[::-1]
-                veriler = (butonlastir(0, CMD_HELP))
+                veriler = (butonlastir(0, sorted(CMD_HELP)))
                 result = await builder.article(
                     f"Lütfen Sadece .yardım Komutu İle Kullanın",
                     text=f"**🐺 Tanrı Türk'ü Korusun!** [Asena](https://t.me/AsenaUserBot) __Çalışıyor...__\n\n**Yüklenen Modül Sayısı:** `{len(CMD_HELP)}`\n**Sayfa:** 1/{veriler[0]}",
@@ -336,7 +327,7 @@ with bot:
                 )
             else:
                 result = builder.article(
-                    "© @AsenaUserBot",
+                    "@AsenaUserBot",
                     text="""@AsenaUserBot'u kullanmayı deneyin!
 Hesabınızı bot'a çevirebilirsiniz ve bunları kullanabilirsiniz. Unutmayın, siz başkasının botunu yönetemezsiniz! Alttaki GitHub adresinden tüm kurulum detayları anlatılmıştır.""",
                     buttons=[
@@ -352,7 +343,7 @@ Hesabınızı bot'a çevirebilirsiniz ve bunları kullanabilirsiniz. Unutmayın,
         @tgbot.on(callbackquery.CallbackQuery(data=compile(b"sayfa\((.+?)\)")))
         async def sayfa(event):
             if not event.query.user_id == uid: 
-                return await event.answer("Hey! Benim mesajlarımı düzenlemeye kalkma! Kendine bir @AsenaUserBot kur.", cache_time=0, alert=True)
+                return await event.answer("❌ Hey! Benim mesajlarımı düzenlemeye kalkma! Kendine bir @AsenaUserBot kur.", cache_time=0, alert=True)
             sayfa = int(event.data_match.group(1).decode("UTF-8"))
             veriler = butonlastir(sayfa, CMD_HELP)
             await event.edit(
@@ -361,21 +352,65 @@ Hesabınızı bot'a çevirebilirsiniz ve bunları kullanabilirsiniz. Unutmayın,
                 link_preview=False
             )
         
-        @tgbot.on(callbackquery.CallbackQuery(data=compile(b"bilgi\[(.)\]\((.*)\)")))
+        @tgbot.on(callbackquery.CallbackQuery(data=compile(b"bilgi\[(\d*)\]\((.*)\)")))
         async def bilgi(event):
             if not event.query.user_id == uid: 
-                return await event.answer("Hey! Benim mesajlarımı düzenlemeye kalkma! Kendine bir @AsenaUserBot kur.", cache_time=0, alert=True)
+                return await event.answer("❌  Hey! Benim mesajlarımı düzenlemeye kalkma! Kendine bir @AsenaUserBot kur.", cache_time=0, alert=True)
 
             sayfa = int(event.data_match.group(1).decode("UTF-8"))
             komut = event.data_match.group(2).decode("UTF-8")
+            try:
+                butonlar = [custom.Button.inline("🔹 " + cmd[0], data=f"komut[{komut}[{sayfa}]]({cmd[0]})") for cmd in CMD_HELP_BOT[komut]['commands'].items()]
+            except KeyError:
+                return await event.answer("❌ Bu modüle açıklama yazılmamış.", cache_time=0, alert=True)
 
+            butonlar = [butonlar[i:i + 2] for i in range(0, len(butonlar), 2)]
+            butonlar.append([custom.Button.inline("◀️ Geri", data=f"sayfa({sayfa})")])
             await event.edit(
-                CMD_HELP[komut],
-                buttons=[custom.Button.inline("◀️ Geri", data=f"sayfa({sayfa})")],
+                f"**📗 Dosya:** `{komut}`\n**🔢 Komut Sayısı:** `{len(CMD_HELP_BOT[komut]['commands'])}`",
+                buttons=butonlar,
                 link_preview=False
             )
+        
+        @tgbot.on(callbackquery.CallbackQuery(data=compile(b"komut\[(.*)\[(\d*)\]\]\((.*)\)")))
+        async def komut(event):
+            if not event.query.user_id == uid: 
+                return await event.answer("❌ Hey! Benim mesajlarımı düzenlemeye kalkma! Kendine bir @AsenaUserBot kur.", cache_time=0, alert=True)
 
+            cmd = event.data_match.group(1).decode("UTF-8")
+            sayfa = int(event.data_match.group(2).decode("UTF-8"))
+            komut = event.data_match.group(3).decode("UTF-8")
 
+            result = f"**📗 Dosya:** `{cmd}`\n"
+            if CMD_HELP_BOT[cmd]['info']['info'] == '':
+                if not CMD_HELP_BOT[cmd]['info']['warning'] == '':
+                    result += f"**⬇️ Official:** {'✅' if CMD_HELP_BOT[cmd]['info']['official'] else '❌'}\n"
+                    result += f"**⚠️ Uyarı:** {CMD_HELP_BOT[cmd]['info']['warning']}\n\n"
+                else:
+                    result += f"**⬇️ Official:** {'✅' if CMD_HELP_BOT[cmd]['info']['official'] else '❌'}\n\n"
+            else:
+                result += f"**⬇️ Official:** {'✅' if CMD_HELP_BOT[cmd]['info']['official'] else '❌'}\n"
+                if not CMD_HELP_BOT[cmd]['info']['warning'] == '':
+                    result += f"**⚠️ Uyarı:** {CMD_HELP_BOT[cmd]['info']['warning']}\n"
+                result += f"**ℹ️ Info:** {CMD_HELP_BOT[cmd]['info']['info']}\n\n"
+
+            command = CMD_HELP_BOT[cmd]['commands'][komut]
+            if command['params'] is None:
+                result += f"**🛠 Komut:** `{PATTERNS[:1]}{command['command']}`\n"
+            else:
+                result += f"**🛠 Komut:** `{PATTERNS[:1]}{command['command']} {command['params']}`\n"
+                
+            if command['example'] is None:
+                result += f"**💬 Açıklama:** `{command['usage']}`\n\n"
+            else:
+                result += f"**💬 Açıklama:** `{command['usage']}`\n"
+                result += f"**⌨️ Örnek:** `{PATTERNS[:1]}{command['example']}`\n\n"
+
+            await event.edit(
+                result,
+                buttons=[custom.Button.inline("◀️ Geri", data=f"bilgi[{sayfa}]({cmd})")],
+                link_preview=False
+            )
     except Exception as e:
         print(e)
         LOGS.info(

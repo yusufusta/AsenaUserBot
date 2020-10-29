@@ -17,6 +17,7 @@ from telethon.tl.types import MessageEntityMentionName
 from telethon.utils import get_input_location
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -152,9 +153,6 @@ async def fetch_info(replied_user, event):
 
     return photo, caption
 
-
-CMD_HELP.update({
-    "whois":
-    ".whois <kullanıcı adı> veya .whois komutu ile birinin metnine cevap verin.\
-    \nKullanım: Kullanıcının bilgilerini alır."
-})
+CmdHelp('whois').add_command(
+    'whois', ' <kullanıcı adı/yanıt/id>', 'Kullanıcının bilgilerini alır.'
+).add()

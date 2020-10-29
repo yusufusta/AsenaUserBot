@@ -14,6 +14,7 @@ from telethon.tl import functions
 
 from userbot import CMD_HELP, ASYNC_POOL
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -76,5 +77,6 @@ async def auto(event):
         except:
             return
 
-
-CMD_HELP.update({"auto": ".auto isim (ya da) bio Kullanım: Otomatik saate göre değiştirir",})
+CmdHelp('auto').add_command(
+    'auto', 'isim ya da bio', 'Otomatik saate göre değiştirir', '.auto isim'
+).add()

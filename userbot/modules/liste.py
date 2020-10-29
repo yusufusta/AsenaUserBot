@@ -12,6 +12,7 @@ from PIL import Image
 import io
 import os
 import asyncio
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -66,6 +67,8 @@ async def liste(event):
             await event.client.send_message(event.chat_id, LANG['GMUTE_TXT'], file="gmute_liste.txt")
             os.remove("gmute_liste.txt")
         else:
-            await event.edit(LANG['GMUTE_TXT'] % mesaj)
+            await event.edit(LANG['GMUTE_LIST'] % mesaj)
 
-CMD_HELP["liste"] = ".liste gban/gmute\nGbanladığınız ya da Gmutelediğiniz kişileri getirir."
+CmdHelp('liste').add_command(
+    'liste', '<gmute/gban>', 'Gbanladığınız ya da Gmutelediğiniz kişileri getirir.'
+).add()

@@ -21,6 +21,7 @@ from PIL import Image
 
 from userbot import bot, CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -150,9 +151,6 @@ async def scam(results, lim):
 
     return imglinks
 
-
-CMD_HELP.update({
-    'reverse':
-    '.reverse\
-        \nKullanım: Fotoğraf veya çıkartmaya yanıt vererek görüntüyü Google üzerniden arayabilirsiniz'
-})
+CmdHelp('reverse').add_command(
+    'reverse', '<yanıt>', 'Fotoğraf veya çıkartmaya yanıt vererek görüntüyü Google üzerniden arayabilirsiniz.'
+).add()

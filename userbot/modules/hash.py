@@ -14,7 +14,7 @@ from subprocess import run as runapp
 import pybase64
 from userbot import CMD_HELP
 from userbot.events import register
-
+from userbot.cmdhelp import CmdHelp
 
 @register(outgoing=True, pattern="^.hash (.*)")
 async def gethash(hash_q):
@@ -62,10 +62,8 @@ async def endecrypt(query):
                                validate=True))[2:]
         await query.reply("Decoded: `" + lething[:-1] + "`")
 
-
-CMD_HELP.update({"base64": "Verilen dizenin base64 kodlamasını bulun"})
-
-CMD_HELP.update({
-    "hash":
-    "Bir txt dosyası yazıldığında md5, sha1, sha256, sha512 dizelerini bulun."
-})
+CmdHelp('hash').add_command(
+    'base64', None, 'Verilen dizenin base64 kodlamasını bulun'
+).add_command(
+    'hash', None, 'Bir txt dosyası yazıldığında md5, sha1, sha256, sha512 dizelerini bulun.'
+).add()

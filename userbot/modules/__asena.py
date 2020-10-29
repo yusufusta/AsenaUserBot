@@ -9,6 +9,8 @@
 
 """ UserBot yardım komutu """
 
+from userbot.cmdhelp import CmdHelp
+from userbot import cmdhelp
 from userbot import CMD_HELP
 from userbot.events import register
 
@@ -29,9 +31,16 @@ async def asena(event):
         else:
             await event.edit(LANG["NEED_PLUGIN"])
     else:
-        await event.edit(LANG["NEED_MODULE"])
         string = ""
-        for i in CMD_HELP:
-            string += "`" + str(i)
-            string += "`\n"
-        await event.reply(string)
+        sayfa = [list(CMD_HELP)[i:i + 5] for i in range(0, len(list(CMD_HELP)), 5)]
+        
+        for i in sayfa:
+            string += f'`▶️ `'
+            for sira, a in enumerate(i):
+                string += "`" + str(a)
+                if sira == i.index(i[-1]):
+                    string += "`"
+                else:
+                    string += "`, "
+            string += "\n"
+        await event.edit(LANG["NEED_MODULE"] + '\n\n' + string)

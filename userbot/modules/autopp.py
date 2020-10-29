@@ -23,6 +23,7 @@ import shutil
 import requests
 import time
 from telethon.errors import VideoFileInvalidError
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -139,21 +140,12 @@ async def get_font_file(client, channel_id):
     # Dosya yolunu indir ve geri dön
     return await client.download_media(font_file_message)
 
-CMD_HELP.update({
-    "autopp": 
-    ".autopp \
-    \nKullanım: Bu komut belirlediğiniz fotoğrafı profil resmi yapar \
-    \nve bir saat ekler. Bu saat her dakika değişir. \
-    \nNOT: Küçük bir ihtimal bile olsa ban yeme riskiniz var. Bu yüzden dikkatli kullanın."
-})
+CmdHelp('autopp').add_command(
+    'autopp', None, 'Bu komut belirlediğiniz fotoğrafı profil resmi yapar ve bir saat ekler. Bu saat her dakika değişir.', '.autopp'
+).add()
 
-CMD_HELP.update({
-    "autovideo": 
-    "`.autovideo` \
-    \n**Kullanım:** Bu komut yanıt verdiğiniz videoyu profil video yapar \
-    \nve bir saat veya tarih veya istediğiniz bir yazı ekler. Bu saat her dakika değişir. \
-    \nEğer botun kendi yazısını kullanmak istiyorsanız ekstradan bir şey yazmayın.\
-    \nKendi yazınızı eklemek istiyorsanız .autovideo yazı şeklinde kullanın. \
-    \nAyrıca kendi yazınıza `$saat` ve `$tarih` ile saat ve tarih ekleyebilirsiniz. \
-    \n\n**Örnek: ** `.autovideo ahan saat $saat bu da tarih $tarih`"
-})
+CmdHelp('autovideo').add_command(
+    'autopp', None, 
+    'Bu komut yanıt verdiğiniz videoyu profil video yapar ve bir saat veya tarih veya istediğiniz bir yazı ekler. Bu saat her dakika değişir. nEğer botun kendi yazısını kullanmak istiyorsanız ekstradan bir şey yazmayın. Kendi yazınızı eklemek istiyorsanız .autovideo yazı şeklinde kullanın. ',
+    '.autovideo ahan saat $saat bu da tarih $tarih'
+).add()

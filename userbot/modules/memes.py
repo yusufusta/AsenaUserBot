@@ -24,6 +24,8 @@ from cowpy import cow
 from userbot import CMD_HELP, ZALG_LIST
 from userbot.events import register
 from userbot.modules.admin import get_user_from_event
+from userbot.cmdhelp import CmdHelp
+
 # ================= CONSTANT =================
 EMOJIS = [
     "😂",
@@ -851,6 +853,30 @@ async def payf(event):
         paytext * 2, paytext * 2)
     await event.edit(pay)
 
+@register(outgoing=True, pattern=r"^.ğ (.*)")
+async def payg(event):
+    g = """
+     ㅤ 
+          ❤️❤️❤️❤️❤️❤️
+
+          ❤️❤️❤️❤️❤️❤️
+     ❤️❤️❤️❤️❤️❤️❤️❤️
+   ❤️❤️                     ❤️❤️
+ ❤️❤️
+❤️❤️                ❤️❤️❤️❤️
+❤️❤️                ❤️❤️❤️❤️
+ ❤️❤️                        ❤️❤️
+   ❤️❤️                      ❤️❤️
+     ❤️❤️❤️❤️❤️❤️❤️❤️
+          ❤️❤️❤️❤️❤️❤️
+"""
+    paytext = event.pattern_match.group(1)
+    await event.edit(g.replace('❤️', paytext))
+
+@register(outgoing=True, pattern=r"^.bo[sş]luk")
+async def bosluk(event):
+    await event.delete()
+    await event.reply('ㅤ')
 
 @register(outgoing=True, pattern="^.lfy (.*)")
 async def let_me_google_that_for_you(lmgtfy_q):
@@ -928,73 +954,74 @@ async def typewriter(typew):
         await typew.edit(old_text)
         await sleep(sleep_time)
 
-
-CMD_HELP.update({
-    "memes":
-    ".hayvan kedi/köpek/panda/kuş/kurt\
-\nKullanım: Rastgele bir hayvan fotoğrafı atar.\
-.cowsay\
-\nKullanım: bir şeyler söyleyen inek.\
-\n\n:/\
-\nKullanım: Kendinizi kontrol edin ;)\
-\n\n.karar\
-\nKullanım: Karar verin.\
-\n\n-_-\
-\nKullanım: Tamam...\
-\n\n;_;\
-\nKullanım: `-_-` gibi ama ağlıyor.\
-\n\n.cp\
-\nKullanım: Meşhur copypasta modülü\
-\n\n.vapor\
-\nKullanım: Her şeyi vaporlaştırın!\
-\n\n.str\
-\nKullanım: Mesajı iyice uzatın.\
-\n\n.10iq\
-\nKullanım: Aptallık seviyenizi ölçün !!\
-\n\n.mizah\
-\nKullanım: Aptallık seviyenizi ölçün !!\
-\n\n.zal\
-\nKullanım: Kaos duygusunu çağırın.\
-\n\noof\
-\nKullanım: ooooof\
-\n\nskrrt\
-\nKullanım: skrrrrt\
-\n\n.fuk\
-\nKullanım: ¯\_(ツ)_/¯\
-\n\n.kalp\
-\nKullanım: Sevginizi gösterin.\
-\n\n.fp\
-\nKullanım: Utanmak  🤦‍♂\
-\n\n.moon\
-\nKullanım: Ay animasyonu.\
-\n\n.clock\
-\nKullanım: Saat animasyonu.\
-\n\n.hi\
-\nKullanım: Herkesi selamlayın!\
-\n\n.owo\
-\nKullanım: UwU\
-\n\n.react\
-\nKullanım: UserBot'un her şeye tepki vermesini sağlayın.\
-\n\n.slap\
-\nKullanım: rastgele nesnelerle tokatlamak için mesaja cevap verin !!\
-\n\n.cry\
-\nKullanım: bunu yaparsan, her zaman ağlarım.\
-\n\n.shg\
-\nKullanım: ¯\_(ツ)_/¯\
-\n\n.run\
-\nKullanım: UserBot'un koşmasını sağlar!\
-\n\n.mock\
-\nKullanım: Yap ve gerçek eğlenceyi bul.\
-\n\n.clap\
-\nKullanım: İnsanları övün!\
-\n\n.f <emoji/karakter>\
-\nKullanım: Saygılar..\
-\n\n.type\
-\nKullanım: Klavyenizi daktilo haline getirmek için küçük bir komut!\
-\n\n.lfy <sorgu>\
-\nKullanım: Bırakın Google bunu sizin için araştırsın.\
-\n\n.scam <eylem> <süre>\
-\n[Mevcut eylemler: (typing, contact, game, location, voice, round, video, photo, document, cancel)]\
-\nKullanım: Create fake chat actions, for fun. (Varsayılan eylem: typing)\
-\n\n\nBunlardan bazıları için teşekkürler 🅱️ottom🅱️ext🅱️ot (@NotAMemeBot)."
-})
+CmdHelp('memes').add_command(
+    'hayvan', 'kedi/köpek/panda/kuş/kurt', 'Rastgele bir hayvan fotoğrafı atar.'
+).add_command(
+    'cowsay', None, 'Bir şeyler söyleyen inek'
+).add_command(
+    ':/', None, 'Tiox\'un 3 aydır kızın adını öğrenemediği aklına geliyor.'
+).add_command(
+    'karar', None, 'Karar verin.'
+).add_command(
+    '-_-', None, 'Tamamdır.\n-Birtanem Usta'
+).add_command(
+    ';_;', None, 'Berkant\' 5 dakikadır kaynanasını görmediğini düşünün.'
+).add_command(
+    'cp', '<yanıt>', 'Emoji falan ekliyor.'
+).add_command(
+    'vapor', '<mesaj/yanıt>', 'Vaporlaştırın!'
+).add_command(
+    'str', '<yazı>', 'Yazıyı uzatın.'
+).add_command(
+    '10iq', None, 'Selax mesaj yazıyor.'
+).add_command(
+    'mizah', None, 'Tekerlek Selax Usta espri yaparsa hemen kullanın.'
+).add_command(
+    'zal', '<yanıtlama/mesaj>', 'Çok karmaşık! Her şey çok karmaşık.'
+).add_command(
+    'oof', None, 'of ya'
+).add_command(
+    'skrrt', None, 'sıkırt'
+).add_command(
+    'fuk', None, '+18'
+).add_command(
+    'kalp', '<isim>', 'Sevginizi gösterin.'
+).add_command(
+    'fp', None, 'Utanmak.'
+).add_command(
+    'moon', None, 'Ay animasyonu.'
+).add_command(
+    'clock', None, 'Berkant kaynanasını bekliyor. (Saat animasyonu)'
+).add_command(
+    'hi', None, 'Selam verin.'
+).add_command(
+    'owo', None, 'LOLcü Selin olur gibi'
+).add_command(
+    'react', None, 'Ayzırbotun her şeye tepki vermesini sağlayın.'
+).add_command(
+    'slap', '<yanıt>', 'Rastgele nesnelerle tokatlamak için mesaja cevap verin.'
+).add_command(
+    'cry', None, 'Ağlamak mı istiyorsun?'
+).add_command(
+    'shg', None, '¯\_(ツ)_/¯'
+).add_command(
+    'run', None, 'Koş!'
+).add_command(
+    'mock', '<yanıt/mesaj>', 'Yap ve gerçek eğlenceyi bul.'
+).add_command(
+    'clap', None, 'Beni, yapraklar değil Ayzırbotlar alkışlıyor!'
+).add_command(
+    'f', '<mesaj>', 'F'
+).add_command(
+    'type', '<yazı>', 'Daktilo gibi yazı yazın.'
+).add_command(
+    'lfy', '<sorgu>', 'Bırakın Google bunu sizin için araştırsın.'
+).add_command(
+    'scam', '<eylem> <süre>', 'Sahte eylemler oluşturun.\nMevcut eylemler: (typing, contact, game, location, voice, round, video, photo, document, cancel)'
+).add_command(
+    'lfy', '<sorgu>', 'Bırakın Google bunu sizin için araştırsın.'
+).add_command(
+    'boşluk', None, 'Boş mesaj. (Elon Musk\'tan öğrendim.)'
+).add_command(
+    'ğ', '<metin>', 'Ğ'
+).add()

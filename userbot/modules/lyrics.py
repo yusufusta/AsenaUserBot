@@ -13,6 +13,7 @@ import asyncio
 
 from userbot.events import register
 from userbot import CMD_HELP, GENIUS
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -135,3 +136,9 @@ CMD_HELP.update({
     "NOT: ""-"" ayracı önemli!"
 
 })
+
+CmdHelp('lyrics').add_command(
+    'lyrics', ' <sanatçı adı> - <şarkı ismi>', 'Şarkı sözlerini getirir.', 'lyrics System Of a Down - Scince'
+).add_command(
+    'singer', ' <sanatçı adı> - <şarkı ismi>', 'Şarkı söyler.', 'singer System Of a Down - Scince'
+).add()

@@ -15,6 +15,7 @@ from speedtest import Speedtest
 from telethon import functions
 from userbot import CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -79,13 +80,10 @@ async def pingme(pong):
     duration = (end - start).microseconds / 1000
     await pong.edit("`Pong!\n%sms`" % (duration))
 
-
-CMD_HELP.update(
-    {"speed": ".speed\
-    \nKullanım: Bir speedtest uygular ve sonucu gösterir."})
-CMD_HELP.update(
-    {"dc": ".dc\
-    \nKullanım: Sunucunuza en yakın datacenter'ı gösterir."})
-CMD_HELP.update(
-    {"ping": ".ping\
-    \nKullanım: Botun ping değerini gösterir."})
+CmdHelp('www').add_command(
+    'speed', None, 'Bir speedtest uygular ve sonucu gösterir.'
+).add_command(
+    'dc', None, 'Sunucunuza en yakın datacenter\'ı gösterir.'
+).add_command(
+    'ping', None, 'Botun ping değerini gösterir.'
+).add()

@@ -11,6 +11,7 @@
 
 from userbot.events import register
 from userbot import CMD_HELP, BOTLOG_CHATID
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -35,6 +36,7 @@ async def on_snip(event):
     if not message_id_to_reply:
         message_id_to_reply = None
     if snip and snip.f_mesg_id:
+        await event.delete()
         msg_o = await event.client.get_messages(entity=BOTLOG_CHATID,
                                                 ids=int(snip.f_mesg_id))
         await event.client.send_message(event.chat_id,
@@ -122,17 +124,12 @@ async def on_snip_delete(event):
     else:
         await event.edit(f"`Snip:` **{name}** `{LANG['NOT_FOUND']}` ")
 
-
-CMD_HELP.update({
-    "snips":
-    "\
-$<snip_adı>\
-\nKullanım: Belirtilen snipi kullanır.\
-\n\n.snip <isim> <veri> veya .snip <isim> ile bir iletiyi yanıtlayın.\
-\nKullanım: Bir snip (küresel not) olarak kaydeder. (Resimler, dokümanlar ve çıkartmalar ile çalışır !)\
-\n\n.snips\
-\nKullanım: Kaydedilen tüm snip'leri listeler.\
-\n\n.remsnip <snip_adı>\
-\nKullanım: Belirtilen snip'i siler.\
-"
-})
+CmdHelp('snips').add_command(
+    '$<snip_adı>', None, 'Snipi çağırır.'
+).add_command(
+    'snip', '<isim> <veri/yanıt>', 'Bir snip (küresel not) olarak kaydeder. (Resimler, dokümanlar ve çıkartmalar ile çalışır !)'
+).add_command(
+    'snips', None, 'Kaydedilen tüm snip\'leri listeler.'
+).add_command(
+    'remsnip', '<snip adı>', 'Belirtilen snip\'i siler.'
+).add()

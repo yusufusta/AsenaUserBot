@@ -12,6 +12,7 @@
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
 from asyncio import sleep
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -127,14 +128,12 @@ async def incom_note(getnt):
     except AttributeError:
         pass
 
-CMD_HELP.update({
-    "notes":
-    "\
-#<notismi>\
-\nKullanım: Belirtilen notu çağırır.\
-\n\n.save <not adı> <not olarak kaydedilecek şey> ya da bir mesajı .save <not adı> şeklinde yanıtlayarak kullanılır. \
-\nKullanım: Yanıtlanan mesajı ismiyle birlikte bir not olarak kaydeder. (Resimler, belgeler ve çıkartmalarda da çalışır.)\
-\n\n.notes\
-\nKullanım: Bir sohbetteki tüm notları çağırır.\
-\n\n.clear <not adı>\
-\nKullanım: Belirtilen notu siler."})
+CmdHelp('notes').add_command(
+    '#<notismi>', None, 'Belirtilen notu çağırır.'
+).add_command(
+    'save', '<not adı> <not olarak kaydedilecek şey> ya da bir mesajı .save <not adı> şeklinde yanıtlayarak kullanılır', 'Yanıtlanan mesajı ismiyle birlikte bir not olarak kaydeder. (Resimler, belgeler ve çıkartmalarda da çalışır.)'
+).add_command(
+    'notes', None, 'Bir sohbetteki tüm notları çağırır.'
+).add_command(
+    'clear', '<not adı>', 'Belirtilen notu siler.'
+).add()

@@ -22,6 +22,7 @@ from telethon.tl.functions.photos import (DeletePhotosRequest,
 from telethon.tl.types import InputPhoto, MessageMediaPhoto, User, Chat, Channel
 from userbot import bot, CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ====================== CONSTANT ===============================
 # ██████ LANGUAGE CONSTANTS ██████ #
@@ -181,21 +182,18 @@ async def remove_profilepic(delpfp):
     await delpfp.edit(
         LANG['DELPFP'] % len(input_photos))
 
-
-CMD_HELP.update({
-    "profile":
-    ".username <yeni kullanıcı adı>\
-\nKullanımı: Telegram'daki kullanıcı adınızı değişir.\
-\n\n.name <isim> or .name <isim> <soyisim>\
-\nKullanımı: Telegram'daki isminizi değişir. (Ad ve soyad ilk boşluğa dayanarak birleştirilir.)\
-\n\n.setpfp\
-\nKullanımı: Bir resmi Telegram'da profil resmi yapmak için .setpfp komutuyla cevap verin.\
-\n\n.setbio <yeni biyografi>\
-\nKullanımı: Telegram'daki biyografinizi bu komutu kullanarak değiştirin..\
-\n\n.delpfp or .delpfp <numara>/<all>\
-\nKullanımı: Telegram profil fotoğrafınızı kaldırır.\
-\n\n.reserved\
-\nKullanımı: Rezerve ettiğiniz kullanıcı adlarını gösterir.\
-\n\n.count\
-\nKullanımı: Gruplarınızı, sohbetlerinizi, aktif botları vs. sayar."
-})
+CmdHelp('profile').add_command(
+    'username', '<yeni kullanıcı adı>', 'Telegram\'daki kullanıcı adınızı değişir.'
+).add_command(
+    'name', '<isim> or .name <isim> <soyisim>', 'Telegram\'daki isminizi değişir. (Ad ve soyad ilk boşluğa dayanarak birleştirilir.)'
+).add_command(
+    'setpfp', None, 'Bir resmi Telegram\'da profil resmi yapmak için .setpfp komutuyla cevap verin.'
+).add_command(
+    'setbio', '<yeni biyografi>', 'Telegram\'daki biyografinizi bu komutu kullanarak değiştirin.'
+).add_command(
+    'delpfp', '<numara/all>', 'Telegram profil fotoğrafınızı kaldırır.'
+).add_command(
+    'reserved', None, 'Rezerve ettiğiniz kullanıcı adlarını gösterir.'
+).add_command(
+    'count', None, 'Gruplarınızı, sohbetlerinizi, aktif botları vs. sayar.'
+).add()

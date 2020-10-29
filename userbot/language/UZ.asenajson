@@ -177,12 +177,12 @@
             "DEATH": "🌎 O'lim:",
             "HEAL": "🌎 Davolangan:",
             "TR": "Turkiya",
-            "TR_ALL_CASES": "🇹🇷 Kasallanish (to'plam):",
-            "TR_CASES": "🇹🇷 Kasaolanish (bugun):",
-            "TR_CASE": "🇹🇷 Kasallanish (aktiv)",
-            "TR_ALL_DEATHS": "🇹🇷 O'lim (to'plam):",
-            "TR_DEATHS": "🇹🇷 O'lim (bugun):",
-            "TR_HEAL": "🇹🇷 Davolangan:"
+            "TR_ALL_CASES": "Kasallanish (to'plam):",
+            "TR_CASES": "Kasaolanish (bugun):",
+            "TR_CASE": "Kasallanish (aktiv)",
+            "TR_ALL_DEATHS": "O'lim (to'plam):",
+            "TR_DEATHS": "O'lim (bugun):",
+            "TR_HEAL": "Davolangan:"
         },
         "deepfry": {
             "CANT_DEEPFRY": "`Bunni deepfry qilaolmaydi`",

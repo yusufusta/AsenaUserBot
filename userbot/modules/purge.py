@@ -15,6 +15,7 @@ from telethon.errors import rpcbaseerrors
 
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -133,31 +134,14 @@ async def selfdestruct(destroy):
         await destroy.client.send_message(BOTLOG_CHATID,
                                           "sd sorgusu başarıyla tamamlandı")
 
-
-CMD_HELP.update({
-    'purge':
-    '.purge\
-        \nKullanım: Hedeflenen yanıttan başlayarak tüm mesajları temizler.'
-})
-
-CMD_HELP.update({
-    'purgeme':
-    '.purgeme <x>\
-        \nKullanım: Hedeflenen yanıttan başlayarak tüm mesajları temizler.'
-})
-
-CMD_HELP.update({"del": ".del\
-\nKullanım: Yanıtladığınız mesajı siler."})
-
-CMD_HELP.update({
-    'edit':
-    ".edit <yenimesaj>\
-\nKullanım: Son mesajanızı <yenimesaj> ile değiştirin."
-})
-
-CMD_HELP.update({
-    'sd':
-    '.sd <x> <mesaj>\
-\nKullanım: x saniye içinde kendini yok eden bir mesaj oluşturur.\
-\nBotunuzu uyku moduna geçirdiğinden, saniyeleri 100 ün altında tutun.'
-})
+CmdHelp('purge').add_command(
+    'purge', None, 'Hedeflenen yanıttan başlayarak tüm mesajları temizler.'
+).add_command(
+    'purgeme', '<sayı>', 'Hedeflenen yanıttan başlayarak kendi mesajlarınızı temizler.'
+).add_command(
+    'del', '<yanıt>', 'Yanıt verilen mesajı siler.'
+).add_command(
+    'edit', '<yeni mesaj>', 'Yanıt verdiğiniz mesajı yeni mesaj ile değiştirir.'
+).add_command(
+    'sd', '<x> <mesaj>', 'x saniye içinde kendini yok eden bir mesaj oluşturur.'
+).add()

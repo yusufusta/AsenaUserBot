@@ -51,6 +51,8 @@ from userbot.modules.upload_download import progress, humanbytes, time_formatter
 from google_images_download import google_images_download
 import base64, binascii
 import random
+from userbot.cmdhelp import CmdHelp
+
 CARBONLANG = "auto"
 TTS_LANG = "tr"
 TRT_LANG = "tr"
@@ -188,28 +190,6 @@ async def twit(event):
         await event.edit(f"**{hesap}**\n{twit['time']}\n\n`{twit['text']}`\n\n💬{twit['replies']} 🔁{twit['retweets']} ❤️{twit['likes']}")
         return
         
-@register(outgoing=True, pattern="^.ekşi(?: |$)(.*)")
-async def eksi(event):
-    cmd = event.pattern_match.group(1)
-
-    if len(cmd) < 1:
-        await event.edit("`Bir başlık belirtmesiniz. Kullanım: .ekşi pena`")
-    else:
-        await event.edit(f"`Entryler getiriliyor...`")
-
-        eksi = get("https://api.quiec.tech/eksi.php?a=a&b=" + cmd).json()
-        entry = ""
-        giri = ""
-
-        for i in eksi:
-            entry += i["entry"]
-            if len(entry) > 3064:
-                break
-            
-            giri += f"**Entry**: `{i['entry'][6:]}`\n**Yazar:** `{i['sahibi']}`\n\n"
-        await event.edit(f"**Ekşi Sözlük** Başlık: `{cmd}`\n\n{giri}")
-        return
-
 @register(outgoing=True, pattern="^.haber(?: |$)(.*)")
 async def haber(event):
     TURLER = ["guncel", "magazin", "spor", "ekonomi", "politika", "dunya"]
@@ -351,34 +331,29 @@ async def ceviri(e):
     await e.edit(f"**Çeviri: Türkçe -> KökTürkçe**\n\n**Verilen Metin:** `{pcode}`\n**Çıktı:** `{Turk}`")
 
 
-@register(outgoing=True, pattern="^.img (.*)")
+@register(outgoing=True, pattern="^.img((\d*)| ) ?(.*)")
 async def img_sampler(event):
     """ .img komutu Google'da resim araması yapar. """
-    await event.edit("İşleniyor...")
-    query = event.pattern_match.group(1)
-    lim = findall(r"lim=\d+", query)
-    try:
-        lim = lim[0]
-        lim = lim.replace("lim=", "")
-        query = query.replace("lim=" + lim[0], "")
-    except IndexError:
-        lim = 5
-
-    URL = "https://www.google.com.tr/search?q=%s&source=lnms&tbm=isch" % query
-    page = get(URL)
-
-    soup = BeautifulSoup(page.content, 'html.parser')
-    imgclass = soup.find_all("img", {"class": "t0fcAb"})
-    i = 0
-    resimler = []
-    while i < lim:
-        resimler.append(imgclass[i]['src'])
-        i += 1
-    await event.client.send_file(await event.client.get_input_entity(event.chat_id), file=resimler, force_document=True)
+    await event.edit("`İşleniyor...`")
+    query = event.pattern_match.group(3)
+    if event.pattern_match.group(2):
+        try:
+            limit = int(event.pattern_match.group(2))
+        except:
+            return await event.edit('**Lütfen düzgün bir biçimde kelimenizi yazınız!**\nÖrnek: `.img system of a down`')
+    else:
+        limit = 5
+    await event.edit(f"`{limit} adet {query} resimi indiriliyor...`")
+    response = google_images_download.googleimagesdownload()
+    paths = response.download({"keywords": query, "limit": limit, "print_urls":True})[0][query]
+    await event.edit('`Telegram\'a Yükleniyor...`')
+    await event.client.send_file(event.chat_id, paths, caption=f'**İşte** `{limit}` **adet** `{query}` **resimi**')
     await event.delete()
 
+    for path in paths:
+        os.remove(path)
 
-@register(outgoing=True, pattern="^.currency (.*)")
+@register(outgoing=True, pattern="^.currency ?(.*)")
 async def moni(event):
     input_str = event.pattern_match.group(1)
     input_sgra = input_str.split(" ")
@@ -406,7 +381,7 @@ async def moni(event):
         return
 
 
-@register(outgoing=True, pattern=r"^.google (.*)")
+@register(outgoing=True, pattern=r"^.google ?(.*)")
 async def gsearch(q_event):
     """ .google komutu ile basit Google aramaları gerçekleştirilebilir """
     match = q_event.pattern_match.group(1)
@@ -910,55 +885,40 @@ def deEmojify(inputString):
     """ Emojileri ve diğer güvenli olmayan karakterleri metinden kaldırır. """
     return get_emoji_regexp().sub(u'', inputString)
 
-
-CMD_HELP.update({
-    'img':
-    '.img <kelime>\
-        \nKullanım: Google üzerinde hızlı bir resim araması yapar ve ilk 5 resmi gösterir.'
-})
-CMD_HELP.update({
-    'currency':
-    '.currency <miktar> <dönüştürülecek birim> <dönüşecek birim>\
-        \nKullanım: Yusufun Türk Lirası Botu gibi, ama boş kaldığında kızlara yazmıyor.'
-})
-
-CMD_HELP.update({
-    'carbon':
-    '.carbon <metin>\
-        \nKullanım: carbon.now.sh sitesini kullanarak yazdıklarının aşşşşşşırı şekil görünmesini sağlar.\n.crblang <dil> komutuyla varsayılan dilini ayarlayabilirsin.'
-})
-CMD_HELP.update(
-    {'google': '.google <kelime>\
-        \nKullanım: Hızlı bir Google araması yapar.'})
-CMD_HELP.update(
-    {'wiki': '.wiki <terim>\
-        \nKullanım: Bir Vikipedi araması gerçekleştirir.'})
-CMD_HELP.update(
-    {'ud': '.ud <terim>\
-        \nKullanım: Urban Dictionary araması yapmanın kolay yolu?'})
-CMD_HELP.update({
-    'tts':
-    '.tts <metin>\
-        \nKullanım: Metni sese dönüştürür.\n.lang tts komutuyla varsayılan dili ayarlayabilirsin. (Türkçe ayarlı geliyor merak etme.)\
-    .tts2 <cinsiyet> <metin>\
-        \nKullanım: Metni sese dönüştürür.\n.lang tts komutuyla varsayılan dili ayarlayabilirsin.'
-})
-CMD_HELP.update({
-    'trt':
-    '.trt <metin>\
-        \nKullanım: Basit bir çeviri modülü.\n.lang trt komutuyla varsayılan dili ayarlayabilirsin. (Türkçe ayarlı geliyor merak etme.)'
-})
-CMD_HELP.update({'yt': '.yt <metin>\
-        \nKullanım: YouTube üzerinde bir arama yapar.'})
-CMD_HELP.update(
-    {"ekşi": ".ekşi <başlık>\nKullanım: Ekşi sözlükten veri çekin."})
-CMD_HELP.update(
-    {"haber": ".haber <guncel/magazin/spor/ekonomi/politika/dunya>\nKullanım: Son dakika haberler."})
-
-CMD_HELP.update(
-    {"imdb": ".imdb <film>\nKullanım: Film hakkında bilgi verir."})
-CMD_HELP.update({
-    'rip':
-    '.ripaudio <bağlantı> veya .ripvideo <bağlantı>\
-        \nKullanım: YouTube üzerinden (veya [başka sitelerden](https://ytdl-org.github.io/youtube-dl/supportedsites.html)) video veya ses indirir.'
-})
+CmdHelp('scrapers').add_command(
+    'img', '<limit> <kelime>', 'Google üzerinde hızlı bir resim araması yapar. Limit yazmazsanız 5 tane fotoğraf getirir.', 'img10 system of a down'
+).add_command(
+    'currency', '<miktar> <dönüştürülecek birim> <dönüşecek birim>', 'Yusufun Türk Lirası Botu gibi, ama boş kaldığında kızlara yazmıyor.'
+).add_command(
+    'carbon', '<metin>', 'carbon.now.sh sitesini kullanarak yazdıklarının aşşşşşşırı şekil görünmesini sağlar.'
+).add_command(
+    'crblang', '<dil>', 'Carbon için dil ayarlar.'
+).add_command(
+    'karbon', '<metin>', 'Carbon ile aynı ama daha hızlımsı.'
+).add_command(
+    'google', '<kelime>', 'Hızlı bir Google araması yapar.'
+).add_command(
+    'wiki', '<terim>', 'Bir Vikipedi araması gerçekleştirir.'
+).add_command(
+    'ud', '<terim>', 'Urban Dictionary araması yapmanın kolay yolu?'
+).add_command(
+    'tts', '<metin>', 'Metni sese dönüştürür.'
+).add_command(
+    'lang', '<dil>', 'tts ve trt için dil ayarlayın.'
+).add_command(
+    'tts2', '<cinsiyet> <metin>', 'Metni sese dönüştürür.', 'tts2 erkek selam'
+).add_command(
+    'trt', '<metin>', 'Basit bir çeviri modülü.'
+).add_command(
+    'yt', '<metin>', 'YouTube üzerinde bir arama yapar.'
+).add_command(
+    'haber', '<guncel/magazin/spor/ekonomi/politika/dunya>', 'Son dakika haberler.'
+).add_command(
+    'imdb', '<film>', 'Film hakkında bilgi verir.'
+).add_command(
+    'ripaudio', '<bağlantı>', 'YouTube üzerinden (veya diğer siteler) ses indirir.'
+).add_command(
+    'ripvideo', '<bağlantı>', 'YouTube üzerinden (veya diğer siteler) video indirir.'
+).add_info(
+    '[Rip komutunun desteklediği siteler.](https://ytdl-org.github.io/youtube-dl/supportedsites.html)'
+).add()

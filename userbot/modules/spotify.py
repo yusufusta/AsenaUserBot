@@ -20,6 +20,7 @@ from telethon.tl.functions.account import UpdateProfileRequest
 from userbot import (BIO_PREFIX, BOTLOG, BOTLOG_CHATID, CMD_HELP, DEFAULT_BIO,
                      SPOTIFY_DC, SPOTIFY_KEY, bot)
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # =================== CONSTANT ===================
 # ██████ LANGUAGE CONSTANTS ██████ #
@@ -150,8 +151,8 @@ async def set_biodgraph(setdbio):
     await bot(UpdateProfileRequest(about=DEFAULT_BIO))
     await setdbio.edit(SPO_BIO_DISABLED)
 
-
-CMD_HELP.update({"spotify": ['Spotify',
-    " - `.enablespotify`: Enable Spotify bio updating.\n"
-    " - `.disablespotify`: Disable Spotify bio updating.\n"]
-})
+CmdHelp('spotify').add_command(
+    'enablespotify', None, 'Spotify bio aktifleştirir.'
+).add_command(
+    'disablespotify', None, 'Spotify bio devredışı bırakır.'
+).add()

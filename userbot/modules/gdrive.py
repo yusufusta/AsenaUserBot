@@ -24,6 +24,7 @@ from userbot.events import register
 from mimetypes import guess_type
 import httplib2
 from userbot.modules.upload_download import progress, humanbytes
+from userbot.cmdhelp import CmdHelp
 
 # Json dosyasının yolu, script ile aynı dizinde bulunmalıdır.
 G_DRIVE_TOKEN_FILE = "./auth_token.txt"
@@ -438,19 +439,14 @@ async def gdrive_search(http, search_query):
     msg = f"**Google Drive Araması**:\n`{search_query}`\n\n**Sonuçlar**\n\n{res}"
     return msg
 
-
-CMD_HELP.update({
-    "gdrive":
-    ".gdrive <dosya yolu / yanıtlayarak / URL|dosya-adı>\
-    \nKullanım: Belirtilen dosyayı Google Drive'a uploadlar.\
-    \n\n.gsetf <GDrive Klasör URL'si>\
-    \nKullanım: Yeni dosyaların upladlanacağı klasörü belirler.\
-    \n\n.gsetclear\
-    \nKullanım: Varsayılan upload dizinine geri döndürür.\
-    \n\n.gfolder\
-    \nKullanım: Halihazırda kullanılan upload dizinini gösterir.\
-    \n\n.list <sorgu>\
-    \nKullanım: Google Drive'da bulunan dosyalar ve dizinlerde arama yapar.\
-    \n\n.ggd <sunucudaki-klasör-yolu>\
-    \nKullanım: Belirtilen dizindeki tüm dosyaları Google Drive'a uploadlar."
-})
+CmdHelp('gdrive').add_command(
+    'gdrive', '<dosya yolu / yanıtlayarak / URL|dosya-adı>', 'Belirtilen dosyayı Google Drive\'a uploadlar.'
+).add_command(
+    'gsetf', '<GDrive Klasör URL\'si>', 'Yeni dosyaların upladlanacağı klasörü belirler.'
+).add_command(
+    'gsetclear', None, 'Halihazırda kullanılan upload dizinini gösterir.'
+).add_command(
+    'list', '<sorgu>', 'Google Drive\'da bulunan dosyalar ve dizinlerde arama yapar.'
+).add_command(
+    'ggd', '<sunucudaki-klasör-yolu>', 'Belirtilen dizindeki tüm dosyaları Google Drive\'a uploadlar.'
+).add()

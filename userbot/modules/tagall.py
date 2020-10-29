@@ -12,6 +12,7 @@
 from telethon.tl.types import ChannelParticipantsAdmins
 from userbot import CMD_HELP, bot
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 @register(outgoing=True, pattern="^.tagall$")
 async def _(event):
@@ -43,9 +44,8 @@ async def _(event):
         await event.reply(mentions)
     await event.delete()
 
-CMD_HELP.update({
-    "tagall":
-    ".tagall\
-    \nKullanım: Bu komutu kullandığınızda sohbet içerisinde ki herkesi etiketler.\n\n.admin \
-    \nKullanım: Bu komutu kullandığınızda sohbet içerisinde ki yöneticileri etiketler."
-})
+CmdHelp('tagall').add_command(
+    'tagall', None, 'Bu komutu kullandığınızda sohbet içerisinde ki herkesi etiketler.'
+).add_command(
+    'admin', None, 'Bu komutu kullandığınızda sohbet içerisinde ki yöneticileri etiketler.'
+).add()

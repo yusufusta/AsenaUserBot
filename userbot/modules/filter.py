@@ -13,6 +13,7 @@ from asyncio import sleep
 import re
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -272,19 +273,14 @@ async def filters_active(event):
 
     await event.edit(transact)
 
-
-CMD_HELP.update({
-    "filter":
-    ".filters\
-    \nKullanım: Bir sohbetteki tüm userbot filtrelerini listeler.\
-    \n\n.filter <filtrelenecek kelime> <cevaplanacak metin> ya da bir mesajı .filter <filtrelenecek kelime>\
-    \nKullanım: 'filtrelenecek kelime' olarak istenilen şeyi kaydeder.\
-    \nBot her 'filtrelenecek kelime' yi algıladığında o mesaja cevap verecektir.\
-    \nDosyalardan çıkartmalara her türlü şeyle çalışır.\
-    \n\n.stop <filtre>\
-    \nKullanım: Seçilen filtreyi durdurur.\
-    \n\n.genelfilter <filtrelenecek kelime> <cevaplanacak metin> ya da bir mesajı .genelfilter <filtrelenecek kelime>\
-    \nKullanım: Genel filtre ekler\
-    \n\n.genelstop <filtre>\
-    \nKullanım: Seçilen genel filtreyi durdurur."
-})
+CmdHelp('filter').add_command(
+    'filters', None, 'Bir sohbetteki tüm userbot filtrelerini listeler.'
+).add_command(
+    'filter', '<filtrelenecek kelime> <cevaplanacak metin> ya da bir mesajı .filter <filtrelenecek kelime>', 'Filtre ekler. Ne zaman eklediğiniz kelime/cümle yazılırsa bot cevap verir.', '.filter "merhaba" "meraba"'
+).add_command(
+    'stop', '<filtre>', 'Seçilen filtreyi durdurur.'
+).add_command(
+    'genelfilter', '<filtrelenecek kelime> <cevaplanacak metin> ya da bir mesajı .genelfilter <filtrelenecek kelime>', 'Genel filtre ekler. Tüm gruplarda çalışır.'
+).add_command(
+    '.genelstop', '<filtre>', 'Seçilen genel filtreyi durdurur.'
+).add()

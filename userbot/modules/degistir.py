@@ -11,6 +11,7 @@ import userbot.modules.sql_helper.mesaj_sql as sql
 from userbot import CMD_HELP
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR, ORJ_PLUGIN_MESAJLAR, PLUGIN_CHANNEL_ID
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -19,6 +20,7 @@ LANG = get_value("degistir")
 
 # ████████████████████████████████ #
 
+@register(outgoing=True, pattern="^.change ?(.*)")
 @register(outgoing=True, pattern="^.de[gğ]i[sş]tir ?(.*)")
 async def degistir(event):
     plugin = event.pattern_match.group(1)
@@ -68,5 +70,12 @@ async def degistir(event):
         else:
             await event.edit(LANG['NOT_FOUND'] + ":`afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`")
 
-CMD_HELP.update({'degistir': '.değiştir <modül> <mesaj>\
-        \nKullanım: **Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar.**\nÖrnek Kullanım: `.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"`\nPlugin-mesajı silme: `.değiştir afk`\nDeğiştirebileceğiniz plugin-mesajları (şu anlık): `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`'})
+CmdHelp('degistir').add_command(
+    'değiştir', '<modül> <mesaj/yanıt>', 'Değiştir, bottaki plugin-mesajlarını değiştirmenize yarar. Eğer mesaj yazmazsanız Plugin mesajını orijinal haline döndürür.', '.değiştir afk \"Şu an burda değilim... Belki hiç gelmem\"'
+).add_info(
+    '**Desteklenen Pluginler:** `afk/alive/pm/kickme/dızcı/ban/mute/approve/disapprove/block`\n**Alive Değişkenleri:** `{plugin}, {telethon}, {asena}, {python}`\n\
+    **Ban/Mute Değişkenleri:** `{id}, {username}, {first_name}, {last_name}, {mention}, {date}, {count}`\
+    **AFK Değişkenleri:** `{username}, {mention}, {first_name}, {last_name}, {last_seen_seconds}, {last_seen}, {last_seen_long}`\
+    **PMpermit Değişkenler(pm, block, approve, disapprove):** `{id}, {username}, {mention}, {first_name}, {last_name}\
+    **Kickme Değişkenleri:** `{title}`'
+).add()

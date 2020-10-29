@@ -19,6 +19,7 @@ from userbot import (AFKREASON, COUNT_MSG, CMD_HELP, ISAFK, BOTLOG,
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
 from time import time
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -26,6 +27,18 @@ from userbot.language import get_value
 LANG = get_value("afk")
 
 # ████████████████████████████████ #
+
+def time_formatter(seconds, short=True):
+    # Thanks UsergeTeam #
+    # https://github.com/UsergeTeam/Userge/blob/053786a1ed54530b305c1bfb96e70147ca99463f/userge/utils/tools.py#L70 #
+    minutes, seconds = divmod(int(seconds), 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    tmp = ((str(days) + (" gün, " if not short else "g, ")) if days else "") + \
+        ((str(hours) + (" saat, " if not short else "s, ")) if hours else "") + \
+        ((str(minutes) + (" dakika, " if not short else "d, ")) if minutes else "") + \
+        ((str(seconds) + (" saniye, " if not short else "s, ")) if seconds else "")
+    return tmp[:-2] + " önce"
 
 @register(incoming=True, disable_edited=True)
 async def mention_afk(mention):
@@ -35,29 +48,78 @@ async def mention_afk(mention):
     global ISAFK
     if mention.message.mentioned and not (await mention.get_sender()).bot:
         if ISAFK:
+            from_user = await mention.get_sender()
+            if from_user.username:
+                username = '@' + from_user.username
+            else:
+                username = f'[{from_user.first_name} {from_user.last_name}](tg://user?id={from_user.id})'
+            
+            mention_format = f'[{from_user.first_name}](tg://user?id={from_user.id})'
+            first_name = from_user.first_name
+
+            if from_user.last_name:
+                last_name = from_user.last_name
+            else:
+                last_name = ''
+
+            last_seen_seconds = round(time() - SON_GORULME)
+            last_seen = time_formatter(last_seen_seconds)
+            last_seen_long = time_formatter(last_seen_seconds, False)
+
             if mention.sender_id not in USERS:
                 if AFKREASON:
                     if type(PLUGIN_MESAJLAR['afk']) is str:
-                        await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                            \n{LANG['REASON']}: `{AFKREASON}`\n")
+                        await mention.reply(PLUGIN_MESAJLAR['afk'].format(
+                        username=username,
+                        mention=mention_format,
+                        first_name=first_name,
+                        last_name=last_name,
+                        last_seen_seconds=last_seen_seconds,
+                        last_seen=last_seen,
+                        last_seen_long=last_seen_long
+                    ) \
+                            + "\n{LANG['REASON']}: `{AFKREASON}`\n")
                     else:
                         msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
                         await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                 else:
-                    await mention.reply(PLUGIN_MESAJLAR['afk'])
+                    await mention.reply(PLUGIN_MESAJLAR['afk'].format(
+                        username=username,
+                        mention=mention_format,
+                        first_name=first_name,
+                        last_name=last_name,
+                        last_seen_seconds=last_seen_seconds,
+                        last_seen=last_seen,
+                        last_seen_long=last_seen_long
+                    ))
                 USERS.update({mention.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif mention.sender_id in USERS:
                 if USERS[mention.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
                         if PLUGIN_MESAJLAR['afk'] is str:
-                            await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                            \{LANG['REASON']}: `{AFKREASON}`")
+                            await mention.reply(PLUGIN_MESAJLAR['afk'].format(
+                            username=username,
+                            mention=mention_format,
+                            first_name=first_name,
+                            last_name=last_name,
+                            last_seen_seconds=last_seen_seconds,
+                            last_seen=last_seen,
+                            last_seen_long=last_seen_long
+                            ) \
+                                + "\{LANG['REASON']}: `{AFKREASON}`")
                         else:
                             msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
                             await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                     else:
-                        await mention.reply(PLUGIN_MESAJLAR['afk'])
+                        await mention.reply(PLUGIN_MESAJLAR['afk'].format(
+                        username=username,
+                        mention=mention_format,
+                        first_name=first_name,
+                        last_name=last_name,
+                        last_seen_seconds=last_seen_seconds,
+                        last_seen=last_seen
+                    ))
                     USERS[mention.sender_id] = USERS[mention.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
@@ -81,26 +143,77 @@ async def afk_on_pm(sender):
                 apprv = True
         else:
             apprv = True
+        
+        from_user = await sender.get_sender()
+        if from_user.username:
+            username = '@' + from_user.username
+        else:
+            username = f'[{from_user.first_name} {from_user.last_name}](tg://user?id={from_user.id})'
+        
+        mention = f'[{from_user.first_name}](tg://user?id={from_user.id})'
+        first_name = from_user.first_name
+
+        if from_user.last_name:
+            last_name = from_user.last_name
+        else:
+            last_name = ''
+
+        last_seen_seconds = round(time() - SON_GORULME)
+        last_seen = time_formatter(last_seen_seconds)
+        last_seen_long = time_formatter(last_seen_seconds, False)
+
         if apprv and ISAFK:
             if sender.sender_id not in USERS:
                 if AFKREASON:
-                    await sender.reply(f"{LANG['AFK']}\
-                    \n{LANG['REASON']}: `{AFKREASON}`")
+                    await sender.reply({LANG['AFK']}.format(
+                        username=username,
+                        mention=mention,
+                        first_name=first_name,
+                        last_name=last_name,
+                        last_seen_seconds=last_seen_seconds,
+                        last_seen=last_seen,
+                        last_seen_long=last_seen_long
+                    ) \
+                    + "\n{LANG['REASON']}: `{AFKREASON}`")
                 else:
-                    await sender.reply(PLUGIN_MESAJLAR['afk'])
+                    await sender.reply(PLUGIN_MESAJLAR['afk'].format(
+                        username=username,
+                        mention=mention,
+                        first_name=first_name,
+                        last_name=last_name,
+                        last_seen_seconds=last_seen_seconds,
+                        last_seen=last_seen,
+                        last_seen_long=last_seen_long
+                    ))
                 USERS.update({sender.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif apprv and sender.sender_id in USERS:
                 if USERS[sender.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
                         if type(PLUGIN_MESAJLAR['afk']) is str:
-                            await sender.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                            \n{LANG['REASON']}: `{AFKREASON}`")
+                            await sender.reply({PLUGIN_MESAJLAR['afk']}.format(
+                                username=username,
+                                mention=mention,
+                                first_name=first_name,
+                                last_name=last_name,
+                                last_seen_seconds=last_seen_seconds,
+                                last_seen=last_seen,
+                                last_seen_long=last_seen_long
+                            ) \
+                            + "\n{LANG['REASON']}: `{AFKREASON}`")
                         else:
                             msj = await sender.reply(PLUGIN_MESAJLAR['afk'])
                             await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                     else:
-                        await sender.reply(PLUGIN_MESAJLAR['afk'])
+                        await sender.reply(PLUGIN_MESAJLAR['afk'].format(
+                        username=username,
+                        mention=mention,
+                        first_name=first_name,
+                        last_name=last_name,
+                        last_seen_seconds=last_seen_seconds,
+                        last_seen=last_seen,
+                        last_seen_long=last_seen_long
+                    ))
                     USERS[sender.sender_id] = USERS[sender.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
@@ -115,6 +228,8 @@ async def set_afk(afk_e):
     string = afk_e.pattern_match.group(1)
     global ISAFK
     global AFKREASON
+    global SON_GORULME
+
     if string:
         AFKREASON = string
         await afk_e.edit(f"{LANG['IM_AFK']}\
@@ -158,11 +273,8 @@ async def type_afk_is_not_true(notafk):
         USERS = {}
         AFKREASON = None
 
-
-CMD_HELP.update({
-    "afk":
-    ".afk [İsteğe bağlı sebep]\
-\nKullanım: AFK olduğunuzu belirtir.\nKim size pm atarsa ya da sizi etiketlerse \
-sizin AFK olduğunuzu ve belirlediğiniz sebebi gösterir.\n\nHerhangi bir yere mesaj yazdığınızda AFK modu kapanır.\
-"
-})
+CmdHelp('afk').add_command(
+    'afk', 
+    '<İsteğe bağlı sebep>', 
+    'AFK olduğunuzu belirtir. Kim size pm atarsa ya da sizi etiketlerse sizin AFK olduğunuzu ve belirlediğiniz sebebi gösterir. Herhangi bir yere mesaj yazdığınızda AFK modu kapanır.'
+    ).add()

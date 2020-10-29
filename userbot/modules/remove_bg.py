@@ -15,6 +15,7 @@ import requests
 from userbot.events import register
 from telethon.tl.types import MessageMediaPhoto
 from userbot import CMD_HELP, REM_BG_API_KEY, TEMP_DOWNLOAD_DIRECTORY
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -101,9 +102,6 @@ async def ReTrieveURL(input_url):
                       stream=True)
     return r
 
-
-CMD_HELP.update({
-    "rbg":
-    ".rbg <Resim bağlantısı> veya herhangi bir görüntüye cevap verin (Uyarı: çıkartmalar üzerinde çalışmaz.)\
-\nKullanım: remove.bg API kullanarak görüntülerin arka planını kaldırır."
-})
+CmdHelp('rgb').add_command(
+    'rbg', '<Resim bağlantısı/yanıt>', 'remove.bg API kullanarak görüntülerin arka planını kaldırır.'
+).add()

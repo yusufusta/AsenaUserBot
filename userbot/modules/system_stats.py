@@ -14,9 +14,12 @@ from asyncio.subprocess import PIPE as asyncPIPE
 from platform import uname
 from shutil import which
 from os import remove
-from userbot import CMD_HELP
+from userbot import CMD_HELP, ASENA_VERSION
 from userbot.events import register
 from userbot.main import PLUGIN_MESAJLAR
+from telethon import version
+from platform import python_version
+from userbot.cmdhelp import CmdHelp
 
 # ================= CONSTANT =================
 DEFAULTUSER = uname().node
@@ -129,21 +132,29 @@ async def pipcheck(pip):
 @register(outgoing=True, pattern="^.alive$")
 async def amialive(e):
     if type(PLUGIN_MESAJLAR['alive']) == str:
-        await e.edit(f"{PLUGIN_MESAJLAR['alive']}")
+        await e.edit(PLUGIN_MESAJLAR['alive'].format(
+            telethon=version.__version__,
+            python=python_version(),
+            asena=ASENA_VERSION,
+            plugin=len(CMD_HELP)
+        ))
     else:
         await e.delete()
+        if not PLUGIN_MESAJLAR['alive'].text == '':
+            PLUGIN_MESAJLAR['alive'].text = PLUGIN_MESAJLAR['alive'].text.format(
+                telethon=version.__version__,
+                python=python_version(),
+                asena=ASENA_VERSION,
+                plugin=len(CMD_HELP)
+            )
         await e.respond(PLUGIN_MESAJLAR['alive'])
 
-
-CMD_HELP.update(
-    {"sysd": ".sysd\
-    \nKullanım: Neofetch modülünü kullanarak sistem bilgisi gösterir."})
-CMD_HELP.update({"botver": ".botver\
-    \nKullanım: Userbot sürümünü gösterir."})
-CMD_HELP.update(
-    {"pip": ".pip <module(s)>\
-    \nKullanım: Pip modüllerinde arama yapar."})
-CMD_HELP.update({
-    "alive": ".alive\
-    \nKullanım: Asena botunun çalışıp çalışmadığını kontrol etmek için kullanılır."
-})
+CmdHelp('system_stats').add_command(
+    'sysd', None, 'Neofetch modülünü kullanarak sistem bilgisi gösterir.'
+).add_command(
+    'botver', None, 'Userbot sürümünü gösterir.'
+).add_command(
+    'pip', '<modül(ler)>', 'Pip modüllerinde arama yapar.'
+).add_command(
+    'alive', None, 'Asena botunun çalışıp çalışmadığını kontrol etmek için kullanılır.'
+).add()

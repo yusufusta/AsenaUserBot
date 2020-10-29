@@ -15,6 +15,7 @@ from os import remove
 from sys import executable
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -36,7 +37,7 @@ async def evaluate(query):
         await query.edit(LANG['NEED_CODE'])
         return
 
-    if expression in ("userbot.session", "config.env", "env"):
+    if (expression in ("userbot.session", "config.env")) or (expression is 'env'):
         await query.edit(LANG['WARNING'])
         return
 
@@ -90,7 +91,7 @@ async def run(run_q):
         await run_q.edit(LANG['NEED_CODE'])
         return
 
-    if code in ("userbot.session", "config.env", "env"):
+    if (code in ("userbot.session", "config.env")) or code is 'env':
         await run_q.edit(LANG['WARNING'])
         return
 
@@ -196,9 +197,10 @@ async def terminal_runner(term):
             "Terminal Komutu " + command + " başarıyla yürütüldü",
         )
 
-
-CMD_HELP.update({"eval": ".eval 2 + 3\nKullanım: Mini ifadeleri değerlendirin."})
-CMD_HELP.update(
-    {"exec": ".exec print('merhaba')\nKullanım: Küçük python komutları yürütün."})
-CMD_HELP.update(
-    {"term": ".term ls\nKullanım: Sunucunuzda bash komutlarını ve komut dosyalarını çalıştırın."})
+CmdHelp('evaluators').add_command(
+    'eval', '<işlem>', 'Mini ifadeleri değerlendirin.', 'eval 2+3'
+).add_command(
+    'exec', '<python kodu>', 'Küçük python komutları yürütün.', 'eval print(\"AsenaUserbottan Selamlar!\")'
+).add_command(
+    'term', '<işlem>', 'Sunucunuzda bash komutlarını ve komut dosyalarını çalıştırın.', 'term ls'
+).add()

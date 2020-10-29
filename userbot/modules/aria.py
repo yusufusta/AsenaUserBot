@@ -13,6 +13,7 @@ from os import system
 from userbot import LOGS, CMD_HELP
 from userbot.events import register
 from requests import get
+from userbot.cmdhelp import CmdHelp
 
 # Gelişmiş indirme hızları için en iyi trackerları çağırır, bunun için K-E-N-W-A-Y'e teşekkürler.
 trackers_list = get(
@@ -200,15 +201,14 @@ async def check_progress_for_dl(gid, event, previous):
                     "İndirme otomatik olarak iptal edildi:\n`{}`\nTorrent ya da link ölü."
                     .format(file.name))
 
-
-CMD_HELP.update({
-    "aria":
-    ".aurl [URL] (ya da) .amag [Magnet Linki] (ya da) .ator [torrent dosyasının yolu]\
-    \nKullanım: Bir dosyayı userbot sunucusuna indirir.\
-    \n\n.apause (ya da) .aresume\
-    \nKullanım: Devam eden indirmeyi durdurur ya da devam ettirir.\
-    \n\n.aclear\
-    \nKullanım: İndirme kuyruğunu temizler, devam eden tüm indirmeleri siler.\
-    \n\n.ashow\
-    \nKullanım: Devam eden indirmelerin durumunu gösterir."
-})
+CmdHelp('aria').add_command(
+    'aurl', 
+    '[URL] (ya da) .amag [Magnet Linki] (ya da) .ator [torrent dosyasının yolu]', 
+    'Bir dosyayı userbot sunucusuna indirir.'
+    ).add_command(
+        'apause', None, 'Devam eden indirmeyi durdurur ya da devam ettirir.'
+    ).add_command(
+        'aclear', None, 'İndirme kuyruğunu temizler, devam eden tüm indirmeleri siler.'
+    ).add_command(
+        'ashow', None, 'Devam eden indirmelerin durumunu gösterir.'
+    ).add()

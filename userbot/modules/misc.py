@@ -17,6 +17,7 @@ import io
 import sys
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -69,7 +70,9 @@ async def sleepybot(time):
 @register(outgoing=True, pattern="^.shutdown$")
 async def shutdown(event):
     """ .shutdown komutu botu kapatır. """
-    await event.edit(LANG['GOODBYE_MFRS'])
+    await event.client.send_file(event.chat_id, 'https://www.winhistory.de/more/winstart/mp3/winxpshutdown.mp3', caption=LANG['GOODBYE_MFRS'], voice_note=True)
+    await event.delete()
+
     if BOTLOG:
         await event.client.send_message(BOTLOG_CHATID, "#SHUTDOWN \n"
                                         "Bot kapatıldı.")
@@ -153,61 +156,26 @@ async def raw(event):
             reply_to=reply_to_id,
             caption="`Çözülen mesaj`")
 
-
-CMD_HELP.update({
-    'random':
-    '.random <eşya1> <eşya2> ... <eşyaN>\
-\nKullanım: Eşya listesinden rastgele bir eşya seçer'
-})
-
-CMD_HELP.update({
-    'sleep':
-    '.sleep <saniye>\
-\nKullanım: Asena de bir insan, o da yoruluyor. Ara sıra biraz uyumasına izin ver.'
-})
-
-CMD_HELP.update({
-    "shutdown":
-    ".shutdown\
-\nKullanım: Bazen canın botunu kapatmak ister. Gerçekten o nostaljik\
-Windows XP kapanış sesini duyabileceğini zannedersin..."
-})
-
-CMD_HELP.update(
-    {'support': ".support\
-\nKullanım: Yardıma ihtiyacın olursa bu komutu kullan."
-     })
-
-CMD_HELP.update({
-    'repo':
-    '.repo\
-\nKullanım: Asena UserBot GitHub reposu'
-})
-
-CMD_HELP.update({
-    "readme":
-    ".readme\
-\nKullanım: Asena botunun GitHub'daki README.md dosyasına giden bir bağlantı."
-})
-
-CMD_HELP.update(
-    {"creator": ".creator\
-\nKullanım: Bu güzel botu kimlerin oluşturduğunu öğren :-)"})
-
-CMD_HELP.update({
-    "repeat":
-    ".repeat <sayı> <metin>\
-\nKullanım: Bir metni belli bir sayıda tekrar eder. Spam komutu ile karıştırma!"
-})
-
-CMD_HELP.update({"restart": ".restart\
-\nKullanım: Botu yeniden başlatır."})
-
-CMD_HELP.update({"resend": ".resend\
-\nKullanım: Bir medyayı yeniden gönderir."})
-
-CMD_HELP.update({
-    "raw":
-    ".raw\
-\nKullanım: Kullanılan mesaj hakkında JSON'a benzer bir şekilde detaylı bilgiler verir."
-})
+CmdHelp('misc').add_command(
+    'random', '<eşya1> <eşya2> ... <eşyaN>', 'Eşya listesinden rastgele bir eşya seçer', 'random asena uniborg userge'
+).add_command(
+    'sleep', '<süre>', 'Asena de bir insan, o da yoruluyor. Ara sıra biraz uyumasına izin ver.', 'sleep 30'
+).add_command(
+    'shutdown', None, 'Nostaljik bir şekilde botunuzu kapatın.'
+).add_command(
+    'repo', None, 'Asena botunun GitHub\'daki reposuna giden bir bağlantı.'
+).add_command(
+    'readme', None, 'Asena botunun GitHub\'daki README.md dosyasına giden bir bağlantı.'
+).add_command(
+    'creator', None, 'Bu güzel botu kimlerin oluşturduğunu öğren :-)'
+).add_command(
+    'repeat', '<sayı> <metin>', 'Bir metni belli bir sayıda tekrar eder. Spam komutu ile karıştırma!'
+).add_command(
+    'restart', None, 'Botu yeniden başlatır.'
+).add_command(
+    'resend', None, 'Bir medyayı yeniden gönderir.'
+).add_command(
+    'resend', None, 'Bir medyayı yeniden gönderir.'
+).add_command(
+    'raw', '<yanıt>', 'Yanıt verilen mesaj hakkında bilgi verir.'
+).add()

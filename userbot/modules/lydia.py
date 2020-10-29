@@ -17,6 +17,8 @@ from coffeehouse.lydia import LydiaAI
 from coffeehouse.api import API
 import asyncio
 import logging
+from userbot.cmdhelp import CmdHelp
+
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
@@ -105,12 +107,10 @@ async def user(event):
     except (KeyError, TypeError):
         return
 
-CMD_HELP.update({
-    "lydia":
-    ".addcf <kullanıcı adı/yanıtlayarak>\
-\nKullanım: Lydia'nın otomatik sohbetini etkinleştirir. \
-\n\n.remcf <kullanıcı adı/yanıtlayarak>\
-\nKullanım: Lydia'nın otomatik sohbetini devre dışı bırakır. \
-\n\n.repcf <kullanıcı adı/yanıtlayarak>\
-\nKullanım: Lydia'nın otomatik sohbetiini belli bir kişi için etkinleştirir."
-})
+CmdHelp('lydia').add_command(
+    'addcf', '<kullanıcı adı/yanıtlayarak>', 'Lydia\'nın otomatik sohbetini etkinleştirir.'
+).add_command(
+    'remcf', '<kullanıcı adı/yanıtlayarak>', 'Lydia\'nın otomatik sohbetini devre dışı bırakır.'
+).add_command(
+    'repcf', '<kullanıcı adı/yanıtlayarak>', 'Lydia\'nın otomatik sohbetiini belli bir kişi için etkinleştirir.'
+).add()

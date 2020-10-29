@@ -188,12 +188,12 @@
             "DEATH": "🌎 Ölüm:",
             "HEAL": "🌎 İyileşen:",
             "TR": "Türkiye",
-            "TR_ALL_CASES": "🇹🇷 Vaka (toplam):",
-            "TR_CASES": "🇹🇷 Vaka (bugün):",
-            "TR_CASE": "🇹🇷 Vaka (aktif):",
-            "TR_ALL_DEATHS": "🇹🇷 Ölüm (toplam):",
-            "TR_DEATHS": "🇹🇷 Ölüm (bugün):",
-            "TR_HEAL": "🇹🇷 İyileşen:"
+            "TR_ALL_CASES": "Vaka (toplam):",
+            "TR_CASES": "Vaka (bugün):",
+            "TR_CASE": "Vaka (aktif):",
+            "TR_ALL_DEATHS": "Ölüm (toplam):",
+            "TR_DEATHS": "Ölüm (bugün):",
+            "TR_HEAL": "İyileşen:"
         },
 
         "deepfry":{

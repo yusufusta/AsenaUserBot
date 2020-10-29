@@ -19,6 +19,7 @@ import asyncio
 from userbot.modules.admin import get_user_from_event
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -380,20 +381,19 @@ async def quotly(event):
             await response.forward_to(event.chat_id)
         await conv.mark_read()
         await conv.cancel_all()
-CMD_HELP.update({
-    "sangmata": 
-    ".sangmata \
-    \nKullanım: Belirtilen kullanıcının isim geçmişini görüntüleyin.\n",
-    "drweb": 
-    ".drweb \
-    \nKullanım: Belirtilen dosyada virüs var mı yok mu bakın.\n",
-    "meme": 
-    ".meme font üst;alt \
-    \nKullanım: Fotoğrafa yazı ekleyin. İsterseniz font büyüklüğünü de yazabilirsiniz.\n",
-    "voicy": 
-    ".voicy \
-    \nKullanım: Sesi yazıya çevirin.\n",
-    "quotly": 
-    ".q <sayı>\
-    \nKullanım: Metninizi çıkartmaya dönüştürün.\n"
-})
+
+CmdHelp('scrapers_bot').add_command(
+    'sangmata', '<yanıt>', 'Belirtilen kullanıcının isim geçmişini görüntüleyin.'
+).add_command(
+    'drweb', '<yanıt>', 'Belirtilen dosyada virüs var mı yok mu bakın.'
+).add_command(
+    'meme', '<font> <üst;alt>', 'Fotoğrafa yazı ekleyin. İsterseniz font büyüklüğünü de yazabilirsiniz.', 'meme 30 asena;usta'
+).add_command(
+    'voicy', '<yanıt>', 'Sesi yazıya çevirin.'
+).add_command(
+    'q', '<sayı>', 'Metninizi çıkartmaya dönüştürün.'
+).add_command(
+    'ocr2', '<yanıt>', 'Fotoğraftaki metini okuyun.'
+).add_command(
+    'creation', '<yanıt>', 'Yanıt verdiğiniz kişinin hesabı oluşturma tarihinin öğrenin.'
+).add()

@@ -12,6 +12,7 @@ import asyncio
 from userbot import CMD_HELP, ASYNC_POOL, GALERI_SURE
 from userbot.events import register
 from userbot.main import FotoDegistir
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -96,4 +97,10 @@ async def galeri(event):
     else:
         await event.edit(LANG['INVALID'])
 
-CMD_HELP["galeri"] = "Kullanım: Galeri'ye fotoğraf ekleme: `.galeri ekle https://i.resimyukle.xyz/7Qbbc9.jpeg`\nGaleri listesini görme: `.galeri liste`\nSıradan bir fotoğrafı silme: `.galeri sil <sıra sayısı>`"
+CmdHelp('galeri').add_command(
+    'galeri ekle', '<url>', 'Galeri sırasına fotoğraf ekler', 'galeri ekle https://i.hizliresim.com/wFSVKd.jpg'
+).add_command(
+    'galeri liste', None, 'Galeri sırasını gösterir.'
+).add_command(
+    'galeri sil', '<sayı>', 'Galeri sırasından bir resmi siler.', 'galeri sil 4'
+).add()

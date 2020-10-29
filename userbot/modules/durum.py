@@ -10,6 +10,7 @@ from userbot import CMD_HELP, ASYNC_POOL, tgbot, SPOTIFY_DC, G_DRIVE_CLIENT_ID, 
 from userbot.events import register
 from telethon import version
 from platform import python_version
+from userbot.cmdhelp import CmdHelp
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -54,4 +55,6 @@ async def durums(event):
 **{LANG['OK']} ✅**
     """)
 
-CMD_HELP["durum"] = ".durum\nKullanım: Eklenen Apiler ve sürümleri gösterir."
+CmdHelp('durum').add_command(
+    'durum', None, 'Eklenen Apiler ve sürümleri gösterir.'
+).add()

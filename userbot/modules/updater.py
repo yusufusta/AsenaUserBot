@@ -20,6 +20,7 @@ from git.exc import GitCommandError, InvalidGitRepositoryError, NoSuchPathError
 
 from userbot import CMD_HELP, HEROKU_APIKEY, HEROKU_APPNAME, UPSTREAM_REPO_URL
 from userbot.events import register
+from userbot.cmdhelp import CmdHelp
 
 requirements_path = path.join(
     path.dirname(path.dirname(path.dirname(__file__))), 'requirements.txt')
@@ -179,10 +180,8 @@ async def upstream(ups):
         execle(sys.executable, *args, environ)
         return
 
-CMD_HELP.update({
-    'update':
-    ".update\
-\nKullanım: Botunuza siz kurduktan sonra herhangi bir güncelleme gelip gelmediğini kontrol eder.\
-\n\n.update now\
-\nKullanım: Botunuzu günceller."
-})
+CmdHelp('update').add_command(
+    'update', None, 'Botunuza siz kurduktan sonra herhangi bir güncelleme gelip gelmediğini kontrol eder.'
+).add_command(
+    'update now', None, 'Botunuzu günceller.'
+).add()
