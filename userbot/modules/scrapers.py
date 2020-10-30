@@ -48,7 +48,7 @@ from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, YOUTUBE_API_KEY, CHROME_DRI
 from userbot.events import register
 from telethon.tl.types import DocumentAttributeAudio
 from userbot.modules.upload_download import progress, humanbytes, time_formatter
-from google_images_download import google_images_download
+from ImageDown import ImageDown
 import base64, binascii
 import random
 from userbot.cmdhelp import CmdHelp
@@ -344,8 +344,9 @@ async def img_sampler(event):
     else:
         limit = 5
     await event.edit(f"`{limit} adet {query} resimi indiriliyor...`")
-    response = google_images_download.googleimagesdownload()
-    paths = response.download({"keywords": query, "limit": limit, "print_urls":True})[0][query]
+    ig = ImageDown(query, limit)
+    ig.get_urls()
+    paths = ig.download()
     await event.edit('`Telegram\'a Yükleniyor...`')
     await event.client.send_file(event.chat_id, paths, caption=f'**İşte** `{limit}` **adet** `{query}` **resimi**')
     await event.delete()

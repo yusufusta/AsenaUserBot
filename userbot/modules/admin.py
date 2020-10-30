@@ -99,7 +99,7 @@ async def ekle(event):
                 except Exception as e:
                     await event.edit(f'`{user_id} gruba eklenemedi!`')
                     continue
-                await event.edit('`{user_id} gruba eklendi!`')
+                await event.edit(f'`{user_id} gruba eklendi!`')
         else:
             for user_id in to_add_users.split(" "):
                 await event.edit(f'`{user_id} gruba ekleniyor...`')
@@ -111,7 +111,7 @@ async def ekle(event):
                 except Exception as e:
                     await event.edit(f'`{user_id} gruba eklenemedi!`')
                     continue
-                await event.edit('`{user_id} gruba eklendi!`')
+                await event.edit(f'`{user_id} gruba eklendi!`')
 
 @register(outgoing=True, pattern="^.gban(?: |$)(.*)")
 async def gbanspider(gspdr):
