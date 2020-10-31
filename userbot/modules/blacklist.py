@@ -70,11 +70,15 @@ async def kufur(event):
 
 @register(outgoing=True, pattern="^.addblacklist(?: |$)(.*)")
 async def on_add_black_list(addbl):
-    text = addbl.pattern_match.group(1)
-    to_blacklist = list(set(trigger.strip() for trigger in text.split("\n") if trigger.strip()))
+    if addbl.is_reply:
+        reply = await addbl.get_reply_message()
+        text = reply.text
+    else:
+        text = addbl.pattern_match.group(1)
+    to_blacklist = text.split()
     for trigger in to_blacklist:
-        sql.add_to_blacklist(addbl.chat_id, trigger.lower())
-    await addbl.edit("{} **{}**".format(len(to_blacklist), LANG['ALREADY_CLOSED_KUFUR']))
+        sql.add_to_blacklist(addbl.chat_id, trigger)
+    await addbl.edit("{} **{}**".format(len(to_blacklist), LANG['ADDED']))
 
 @register(outgoing=True, pattern="^.listblacklist(?: |$)(.*)")
 async def on_view_blacklist(listbl):
@@ -113,7 +117,7 @@ async def on_delete_blacklist(rmbl):
 CmdHelp('blacklist').add_command(
     'listblacklist', None, 'Bir sohbetteki etkin kara listeyi listeler.'
 ).add_command(
-    'addblacklist', '<kelime>', 'İletiyi \'kara liste anahtar kelimesine\' kaydeder. \'Kara liste anahtar kelimesinden\' bahsedildiğinde bot iletiyi siler.', '.addblacklist amk'
+    'addblacklist', '<kelime(ler)/yanıt>', 'İletiyi \'kara liste anahtar kelimesine\' kaydeder. \'Kara liste anahtar kelimesinden\' bahsedildiğinde bot iletiyi siler.', '.addblacklist amk'
 ).add_command(
     'rmblacklist', '<kelime>', 'Belirtilen kara listeyi durdurur.', '.rmblacklist amk'
 ).add_warning('Bu işlemleri gerçekleştirmek için yönetici olmalı ve **Mesaj Silme** yetkiniz olmalı.').add()

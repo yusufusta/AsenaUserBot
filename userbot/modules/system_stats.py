@@ -131,12 +131,18 @@ async def pipcheck(pip):
 
 @register(outgoing=True, pattern="^.alive$")
 async def amialive(e):
+    me = await e.client.get_me()
     if type(PLUGIN_MESAJLAR['alive']) == str:
         await e.edit(PLUGIN_MESAJLAR['alive'].format(
             telethon=version.__version__,
             python=python_version(),
             asena=ASENA_VERSION,
-            plugin=len(CMD_HELP)
+            plugin=len(CMD_HELP),
+            id=me.id,
+            username='@' + me.username if me.username else f'[{me.first_name}](tg://user?id={me.id})',
+            first_name=me.first_name,
+            last_name=me.last_name if me.last_name else '',
+            mention=f'[{me.first_name}](tg://user?id={me.id})'
         ))
     else:
         await e.delete()
@@ -145,9 +151,23 @@ async def amialive(e):
                 telethon=version.__version__,
                 python=python_version(),
                 asena=ASENA_VERSION,
-                plugin=len(CMD_HELP)
+                plugin=len(CMD_HELP),
+                id=me.id,
+                username='@' + me.username if me.username else f'[{me.first_name}](tg://user?id={me.id})',
+                first_name=me.first_name,
+                last_name=me.last_name if me.last_name else '',
+                mention=f'[{me.first_name}](tg://user?id={me.id})'
             )
-        await e.respond(PLUGIN_MESAJLAR['alive'])
+        if e.is_reply:
+            await e.client.send_message(e.chat_id,
+                                        PLUGIN_MESAJLAR['alive'].message,
+                                        reply_to=e.message.reply_to_msg_id,
+                                        file=PLUGIN_MESAJLAR['alive'].media)
+        else:
+            await e.client.send_message(e.chat_id,
+                PLUGIN_MESAJLAR['alive'].message,
+                file=PLUGIN_MESAJLAR['alive'].media)
+
 
 CmdHelp('system_stats').add_command(
     'sysd', None, 'Neofetch modülünü kullanarak sistem bilgisi gösterir.'

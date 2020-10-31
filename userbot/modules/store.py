@@ -14,6 +14,7 @@ import userbot.cmdhelp
 from random import choice, sample
 import importlib
 import re
+from userbot.main import extractCommands
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -94,7 +95,6 @@ async def sinstall(event):
         await event.edit(LANG['PLUGIN_DOWNLOADED'] % komutlar)
     else:
         Pattern = re.findall(r"@register\(.*pattern=(r|)\"(.*)\".*\)", dosy)
-        Komutlar = []
 
         if (not type(Pattern) == list) or (len(Pattern) < 1 or len(Pattern[0]) < 1):
             CMD_HELP[dosya] = LANG['PLUGIN_WITHOUT_DESC']
@@ -106,46 +106,9 @@ async def sinstall(event):
                 return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**✅ Modül başarıyla yüklendi!**\n__ℹ️ Modülun komutları ve kullanım hakkında bilgi almak için__ `.asena {cmdhelp}` __yazınız.__')
             else:
                 dosyaAdi = plugin.file.name.replace('.py', '')
-                CmdHelp = userbot.cmdhelp.CmdHelp(dosyaAdi, False)
-                # Komutları Alıyoruz #
-                for Command in Pattern:
-                    Command = Command[1]
-                    if Command == '' or len(Command) <= 1:
-                        continue
-                    Komut = re.findall("([^.].*\w)(\W*)", Command)
-                    if (len(Komut[0]) > 1) and (not Komut[0][1] == ''):
-                        KomutStr = Command.replace(Komut[0][1], '')
-                        if KomutStr[0] == '^':
-                            KomutStr = KomutStr[1:]
-                            if KomutStr[0] == '.':
-                                KomutStr = PATTERNS[:1] + KomutStr[1:]
-                        Komutlar.append(KomutStr)
-                    else:
-                        if Command[0] == '^':
-                            KomutStr = Command[1:]
-                            if KomutStr[0] == '.':
-                                KomutStr = PATTERNS[:1] + KomutStr[1:]
-                        else:
-                            KomutStr = Command
-                        Komutlar.append(KomutStr)
-
-                # AsenaPY
-                Asenapy = re.search('\"\"\"ASENAPY(.*)\"\"\"', dosy, re.DOTALL)
-                if not Asenapy == None:
-                    Asenapy = Asenapy.group(0)
-                    for Satir in Asenapy.splitlines():
-                        if (not '"""' in Satir) and (':' in Satir):
-                            Satir = Satir.split(':')
-                            Isim = Satir[0]
-                            Deger = Satir[1][1:]
-
-                            CmdHelp.set_file_info(Isim, Deger)
-                            
-                for Komut in Komutlar:
-                    CmdHelp.add_command(Komut, None, 'Bu plugin dışarıdan yüklenmiştir. Herhangi bir açıklama tanımlanmamıştır.')
-                CmdHelp.add()
+                extractCommands(dosya)
                 await plugin.forward_to(PLUGIN_CHANNEL_ID)
-                return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**✅ Modül başarıyla yüklendi!**\n__ℹ️ Modülun komutları ve kullanım hakkında bilgi almak için` `.asena {dosyaAdi}` `yazınız.__')
+                return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**✅ Modül başarıyla yüklendi!**\n__ℹ️ Modülun komutları ve kullanım hakkında bilgi almak için__ `.asena {dosyaAdi}` __yazınız.__')
 
 userbot.cmdhelp.CmdHelp('store').add_command(
     'store', '<kelime>', 'Plugin kanalına son atılan Pluginleri getirir. Eğer kelime yazarsanız arama yapar.'

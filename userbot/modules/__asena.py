@@ -32,7 +32,7 @@ async def asena(event):
             await event.edit(LANG["NEED_PLUGIN"])
     else:
         string = ""
-        sayfa = [list(CMD_HELP)[i:i + 5] for i in range(0, len(list(CMD_HELP)), 5)]
+        sayfa = [sorted(list(CMD_HELP))[i:i + 5] for i in range(0, len(sorted(list(CMD_HELP))), 5)]
         
         for i in sayfa:
             string += f'`▶️ `'
