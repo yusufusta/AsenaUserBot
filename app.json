@@ -1,18 +1,18 @@
 {
-  "name": "Asena UserBot",
-  "description": "Asena UserBot",
-  "logo": "https://i.hizliresim.com/1UoYoT.jpg",
+  "name": "Orgut UserBot",
+  "description": "Orgut UserBot",
+  "logo": "https://imgyukle.com/i/IDBsGR",
   "keywords": [
     "telegram",
     "userbot",
-	"Asena",
+	"Orgut",
     "plugin",
     "modular",
     "productivity"
   ],
   "repository": "https://github.com/quiec/AsenaUserbot",
   "website":   "https://quiec.tech",
-  "success_url": "https://t.me/AsenaSupport",
+  "success_url": "https://t.me/orgutsupport",
   "stack": "container",
   "env": {
     "API_KEY": {
