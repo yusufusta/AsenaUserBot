@@ -97,8 +97,14 @@ async def sinstall(event):
         Pattern = re.findall(r"@register\(.*pattern=(r|)\"(.*)\".*\)", dosy)
 
         if (not type(Pattern) == list) or (len(Pattern) < 1 or len(Pattern[0]) < 1):
-            CMD_HELP[dosya] = LANG['PLUGIN_WITHOUT_DESC']
-            return await event.edit(LANG['PLUGIN_DESCLESS'])
+            if re.search(r'CmdHelp\(.*\)', dosy):
+                cmdhelp = re.findall(r"CmdHelp\([\"'](.*)[\"']\)", dosy)[0]
+                await plugin.forward_to(PLUGIN_CHANNEL_ID)
+                return await event.edit(f'**Modül başarıyla yüklendi!**\n__Modülun komutları ve kullanım hakkında bilgi almak için__ `.asena {cmdhelp}` __yazınız.__')
+            else:
+                await plugin.forward_to(PLUGIN_CHANNEL_ID)
+                userbot.cmdhelp.CmdHelp(dosya).add_warning('Komutlar bulunamadı!').add()
+                return await event.edit(LANG['PLUGIN_DESCLESS'])
         else:
             if re.search(r'CmdHelp\(.*\)', dosy):
                 cmdhelp = re.findall(r"CmdHelp\([\"'](.*)[\"']\)", dosy)[0]
