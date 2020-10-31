@@ -64,7 +64,10 @@ async def shazam(event):
             Caption += f'**Sanatçı(lar):** [{sarki["track"]["subtitle"]}](https://www.shazam.com/artist/{sarki["track"]["artists"][0]["id"]})\n'
         else:
             Caption += f'**Sanatçı(lar):** `{sarki["track"]["subtitle"]}`\n'
-        Caption += f'**Tür:** `{sarki["track"]["genres"]["primary"]}`\n'
+
+        if 'genres'in sarki['track']:
+            Caption += f'**Tür:** `{sarki["track"]["genres"]["primary"]}`\n'
+
         if sarki["track"]["sections"][0]["type"] == "SONG":
             for metadata in sarki["track"]["sections"][0]["metadata"]:
                 Caption += f'**{"Yıl" if metadata["title"] == "Sorti" else metadata["title"]}:** `{metadata["text"]}`\n'
@@ -83,7 +86,6 @@ async def shazam(event):
                 )
             else:
                 Url = provider['actions'][0]['uri']
-            print(Url)
             Caption += f'[{provider["type"].capitalize()}]({Url}) '
         for section in sarki['track']['sections']:
             if section['type'] == 'VIDEO':
@@ -93,13 +95,17 @@ async def shazam(event):
                     return
 
                 Caption += f'\n**Klip Videosu:** [Youtube]({Youtube["actions"][0]["uri"]})'
-        await event.client.send_file(
-            event.chat_id,
-            sarki["track"]["images"]["coverarthq"],
-            caption=Caption,
-            reply_to=reply_message
-            )      
-        await event.delete()    
+
+        if len(sarki["track"]["images"]) >= 1:
+            await event.delete()
+            await event.client.send_file(
+                event.chat_id,
+                sarki["track"]["images"]["coverarthq"] if 'coverarthq' in sarki["track"]["images"] else sarki["track"]["images"]["background"],
+                caption=Caption,
+                reply_to=reply_message
+                )
+        else:
+            await event.edit(Caption)  
         remove(dosya)
 
 CmdHelp('shazam').add_command(
