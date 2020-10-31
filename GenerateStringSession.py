@@ -37,7 +37,7 @@ class InteractiveTelegramClient(TelegramClient):
             proxy=proxy
         )
         self.found_media = {}
-        print('@AsenaUserBot String Alıcıya Hoş Geldiniz')
+        print('@orgutuserbot String Alıcıya Hoş Geldiniz')
         print('[i] Telegramın Sunucularına Bağlanılıyor...')
         try:
             loop.run_until_complete(self.connect())
@@ -78,7 +78,7 @@ class InteractiveTelegramClient(TelegramClient):
 
 
 if __name__ == '__main__':
-   print("[i] Asena String V3\n@AsenaUserBot\n\n")
+   print("[i] ÖRGÜT String V3\n@orgutUserBot\n\n")
    print("[1] OtoMatik API ID/HASH Alıcı")
    print("[2] String Alıcı\n")
    
