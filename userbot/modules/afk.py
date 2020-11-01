@@ -78,7 +78,7 @@ async def mention_afk(mention):
                         last_seen=last_seen,
                         last_seen_long=last_seen_long
                     ) \
-                            + "\n{LANG['REASON']}: `{AFKREASON}`\n")
+                            + f"\n{LANG['REASON']}: `{AFKREASON}`\n")
                     else:
                         msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
                         await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
@@ -107,7 +107,7 @@ async def mention_afk(mention):
                             last_seen=last_seen,
                             last_seen_long=last_seen_long
                             ) \
-                                + "\{LANG['REASON']}: `{AFKREASON}`")
+                                + f"\{LANG['REASON']}: `{AFKREASON}`")
                         else:
                             msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
                             await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
@@ -174,7 +174,7 @@ async def afk_on_pm(sender):
                         last_seen=last_seen,
                         last_seen_long=last_seen_long
                     ) \
-                    + "\n{LANG['REASON']}: `{AFKREASON}`")
+                    + f"\n{LANG['REASON']}: `{AFKREASON}`")
                 else:
                     await sender.reply(PLUGIN_MESAJLAR['afk'].format(
                         username=username,
@@ -200,7 +200,7 @@ async def afk_on_pm(sender):
                                 last_seen=last_seen,
                                 last_seen_long=last_seen_long
                             ) \
-                            + "\n{LANG['REASON']}: `{AFKREASON}`")
+                            + f"\n{LANG['REASON']}: `{AFKREASON}`")
                         else:
                             msj = await sender.reply(PLUGIN_MESAJLAR['afk'])
                             await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
