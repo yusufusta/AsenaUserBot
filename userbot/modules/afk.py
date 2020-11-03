@@ -83,7 +83,7 @@ async def mention_afk(mention):
                         msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
                         await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                 else:
-                    if PLUGIN_MESAJLAR['afk'].text:
+                    if not isinstance(PLUGIN_MESAJLAR['afk'], str):
                         PLUGIN_MESAJLAR['afk'].text = PLUGIN_MESAJLAR['afk'].text.format(
                             username=username,
                             mention=mention_format,
@@ -113,7 +113,7 @@ async def mention_afk(mention):
                             msj = await mention.reply(PLUGIN_MESAJLAR['afk'])
                             await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                     else:
-                        if PLUGIN_MESAJLAR['afk'].text:
+                        if not isinstance(PLUGIN_MESAJLAR['afk'], str):
                             PLUGIN_MESAJLAR['afk'].text = PLUGIN_MESAJLAR['afk'].text.format(
                                 username=username,
                                 mention=mention_format,
@@ -168,7 +168,7 @@ async def afk_on_pm(sender):
         if apprv and ISAFK:
             if sender.sender_id not in USERS:
                 if AFKREASON:
-                    await sender.reply({LANG['AFK']}.format(
+                    await sender.reply(LANG['AFK'].format(
                         username=username,
                         mention=mention,
                         first_name=first_name,
@@ -179,7 +179,7 @@ async def afk_on_pm(sender):
                     ) \
                     + f"\n{LANG['REASON']}: `{AFKREASON}`")
                 else:
-                    if PLUGIN_MESAJLAR['afk'].text:
+                    if not isinstance(PLUGIN_MESAJLAR['afk'], str):
                         PLUGIN_MESAJLAR['afk'].text = PLUGIN_MESAJLAR['afk'].text.format(
                             username=username,
                             mention=mention,
@@ -209,7 +209,7 @@ async def afk_on_pm(sender):
                             msj = await sender.reply(PLUGIN_MESAJLAR['afk'])
                             await msj.reply(f"{LANG['REASON']}: `{AFKREASON}`")
                     else:
-                        if PLUGIN_MESAJLAR['afk'].text:
+                        if not isinstance(PLUGIN_MESAJLAR['afk'], str):
                             PLUGIN_MESAJLAR['afk'].text = PLUGIN_MESAJLAR['afk'].text.format(
                                 username=username,
                                 mention=mention,
