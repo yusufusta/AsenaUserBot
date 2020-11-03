@@ -90,7 +90,8 @@ async def mention_afk(mention):
                             first_name=first_name,
                             last_name=last_name,
                             last_seen_seconds=last_seen_seconds,
-                            last_seen=last_seen
+                            last_seen=last_seen,
+                            last_seen_long=last_seen_long
                         )
                         await mention.reply(PLUGIN_MESAJLAR['afk'])
                     else:
@@ -100,7 +101,8 @@ async def mention_afk(mention):
                             first_name=first_name,
                             last_name=last_name,
                             last_seen_seconds=last_seen_seconds,
-                            last_seen=last_seen
+                            last_seen=last_seen,
+                            last_seen_long=last_seen_long
                         ))
                 USERS.update({mention.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
@@ -129,7 +131,8 @@ async def mention_afk(mention):
                                 first_name=first_name,
                                 last_name=last_name,
                                 last_seen_seconds=last_seen_seconds,
-                                last_seen=last_seen
+                                last_seen=last_seen,
+                                last_seen_long=last_seen_long
                             )
                             await mention.reply(PLUGIN_MESAJLAR['afk'])
                         else:
@@ -139,7 +142,8 @@ async def mention_afk(mention):
                                 first_name=first_name,
                                 last_name=last_name,
                                 last_seen_seconds=last_seen_seconds,
-                                last_seen=last_seen
+                                last_seen=last_seen,
+                                last_seen_long=last_seen_long
                             ))
 
                     USERS[mention.sender_id] = USERS[mention.sender_id] + 1
@@ -205,7 +209,8 @@ async def afk_on_pm(sender):
                             first_name=first_name,
                             last_name=last_name,
                             last_seen_seconds=last_seen_seconds,
-                            last_seen=last_seen
+                            last_seen=last_seen,
+                            last_seen_long=last_seen_long
                         )
                         await sender.reply(PLUGIN_MESAJLAR['afk'])
                     else:
@@ -215,7 +220,8 @@ async def afk_on_pm(sender):
                             first_name=first_name,
                             last_name=last_name,
                             last_seen_seconds=last_seen_seconds,
-                            last_seen=last_seen
+                            last_seen=last_seen,
+                            last_seen_long=last_seen_long
                         ))
 
                 USERS.update({sender.sender_id: 1})
@@ -245,7 +251,8 @@ async def afk_on_pm(sender):
                                 first_name=first_name,
                                 last_name=last_name,
                                 last_seen_seconds=last_seen_seconds,
-                                last_seen=last_seen
+                                last_seen=last_seen,
+                                last_seen_long=last_seen_long
                             )
 
                             await sender.reply(PLUGIN_MESAJLAR['afk'])
@@ -256,9 +263,10 @@ async def afk_on_pm(sender):
                                 first_name=first_name,
                                 last_name=last_name,
                                 last_seen_seconds=last_seen_seconds,
-                                last_seen=last_seen
+                                last_seen=last_seen,
+                                last_seen_long=last_seen_long
                             ))
-                            
+
                     USERS[sender.sender_id] = USERS[sender.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
