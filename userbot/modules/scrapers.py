@@ -344,7 +344,7 @@ async def img_sampler(event):
     else:
         limit = 5
     await event.edit(f"`{limit} adet {query} resimi indiriliyor...`")
-    ig = ImageDown(query, limit, 'tr')
+    ig = ImageDown().Yandex(query, limit)
     ig.get_urls()
     paths = ig.download()
     await event.edit('`Telegram\'a Yükleniyor...`')

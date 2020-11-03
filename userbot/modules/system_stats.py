@@ -159,14 +159,9 @@ async def amialive(e):
                 mention=f'[{me.first_name}](tg://user?id={me.id})'
             )
         if e.is_reply:
-            await e.client.send_message(e.chat_id,
-                                        PLUGIN_MESAJLAR['alive'].message,
-                                        reply_to=e.message.reply_to_msg_id,
-                                        file=PLUGIN_MESAJLAR['alive'].media)
+            await e.respond(PLUGIN_MESAJLAR['alive'], reply_to=e.message.reply_to_msg_id)
         else:
-            await e.client.send_message(e.chat_id,
-                PLUGIN_MESAJLAR['alive'].message,
-                file=PLUGIN_MESAJLAR['alive'].media)
+            await e.respond(PLUGIN_MESAJLAR['alive'])
 
 
 CmdHelp('system_stats').add_command(
