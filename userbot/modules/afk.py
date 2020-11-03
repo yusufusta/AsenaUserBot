@@ -92,7 +92,16 @@ async def mention_afk(mention):
                             last_seen_seconds=last_seen_seconds,
                             last_seen=last_seen
                         )
-                    await mention.reply(PLUGIN_MESAJLAR['afk'])
+                        await mention.reply(PLUGIN_MESAJLAR['afk'])
+                    else:
+                        await mention.reply(PLUGIN_MESAJLAR['afk'].format(
+                            username=username,
+                            mention=mention_format,
+                            first_name=first_name,
+                            last_name=last_name,
+                            last_seen_seconds=last_seen_seconds,
+                            last_seen=last_seen
+                        ))
                 USERS.update({mention.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif mention.sender_id in USERS:
@@ -122,7 +131,17 @@ async def mention_afk(mention):
                                 last_seen_seconds=last_seen_seconds,
                                 last_seen=last_seen
                             )
-                        await mention.reply(PLUGIN_MESAJLAR['afk'])
+                            await mention.reply(PLUGIN_MESAJLAR['afk'])
+                        else:
+                            await mention.reply(PLUGIN_MESAJLAR['afk'].format(
+                                username=username,
+                                mention=mention_format,
+                                first_name=first_name,
+                                last_name=last_name,
+                                last_seen_seconds=last_seen_seconds,
+                                last_seen=last_seen
+                            ))
+
                     USERS[mention.sender_id] = USERS[mention.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
@@ -188,7 +207,17 @@ async def afk_on_pm(sender):
                             last_seen_seconds=last_seen_seconds,
                             last_seen=last_seen
                         )
-                    await sender.reply(PLUGIN_MESAJLAR['afk'])
+                        await sender.reply(PLUGIN_MESAJLAR['afk'])
+                    else:
+                        await sender.reply(PLUGIN_MESAJLAR['afk'].format(
+                            username=username,
+                            mention=mention,
+                            first_name=first_name,
+                            last_name=last_name,
+                            last_seen_seconds=last_seen_seconds,
+                            last_seen=last_seen
+                        ))
+
                 USERS.update({sender.sender_id: 1})
                 COUNT_MSG = COUNT_MSG + 1
             elif apprv and sender.sender_id in USERS:
@@ -219,7 +248,17 @@ async def afk_on_pm(sender):
                                 last_seen=last_seen
                             )
 
-                        await sender.reply(PLUGIN_MESAJLAR['afk'])
+                            await sender.reply(PLUGIN_MESAJLAR['afk'])
+                        else:
+                            await sender.reply(PLUGIN_MESAJLAR['afk'].format(
+                                username=username,
+                                mention=mention,
+                                first_name=first_name,
+                                last_name=last_name,
+                                last_seen_seconds=last_seen_seconds,
+                                last_seen=last_seen
+                            ))
+                            
                     USERS[sender.sender_id] = USERS[sender.sender_id] + 1
                     COUNT_MSG = COUNT_MSG + 1
                 else:
