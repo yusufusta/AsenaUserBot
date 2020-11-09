@@ -96,7 +96,7 @@ async def shazam(event):
 
                 Caption += f'\n**Klip Videosu:** [Youtube]({Youtube["actions"][0]["uri"]})'
 
-        if len(sarki["track"]["images"]) >= 1:
+        if 'images' in sarki["track"] and len(sarki["track"]["images"]) >= 1:
             await event.delete()
             await event.client.send_file(
                 event.chat_id,
