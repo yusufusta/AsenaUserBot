@@ -24,7 +24,7 @@ from userbot.cmdhelp import CmdHelp
 # ===== CONSTANT =====
 # ██████ LANGUAGE CONSTANTS ██████ #
 
-from userbot.language import get_value
+from userbot.language import (get_value, LANGUAGE_JSON)
 LANG = get_value("weather")
 
 # ████████████████████████████████ #
@@ -88,7 +88,7 @@ async def get_weather(weather):
                 return
             CITY = newcity[0].strip() + "," + countrycode.strip()
 
-    url = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}'
+    url = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}&lang={LANGUAGE_JSON["LANGCODE"]}'
     request = get(url)
     result = json.loads(request.text)
 
@@ -102,7 +102,10 @@ async def get_weather(weather):
     min_temp = result['main']['temp_min']
     max_temp = result['main']['temp_max']
     desc = result['weather'][0]
-    desc = desc['main']
+    if "description" in desc and len(desc['description']) > 0:
+        desc = desc['description']
+    else:
+        desc = desc['main']
     country = result['sys']['country']
     sunrise = result['sys']['sunrise']
     sunset = result['sys']['sunset']
