@@ -503,7 +503,11 @@
             "BIO_ENABLED": "`Spotify plugini aktiv. Spotify-da tinglagan qo'shiqlar sizning tarjimai holingizda yoziladi.`",
             "BIO_DISABLED": "`spotify plagini o'chirilgan.  Biografiya asl shakliga qaytdi.`",
             "BIO_RUNNING": "`Spotify plagini allaqachon ishlamoqda.`",
-            "ERROR": "`Spotify plaginlari to'xtatildi.  Xatolik yuz berdi.`"
+            "ERROR": "`Spotify plaginlari to'xtatildi.  Xatolik yuz berdi.`",
+            "ERROR_NP": "`Hata! Spotify'da çalan şarkı getirilemedi!`",
+            "ERROR_TOKEN": "`Bot Spotify ayarları yapılmamış!`",
+            "NP_NONE": "`Şu anda Spotify'da bir şey dinlemiyorum!`",
+            "NP_GET": "`Spotify'da dinlediğim şarkı getiriliyor...`"			
         },
         "stickers": {
             "GIVE_STICKER": "`Menga tahrir qilish uchun stiker yoki fotosurat berishingiz kerak!`",

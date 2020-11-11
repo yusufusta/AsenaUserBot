@@ -542,7 +542,11 @@
             "BIO_ENABLED": "`Spotify plagini aktivdir. Spotify-da dinlədiyiniz mahnılar tərcümeyi-halınıza yazılacaq.`",
             "BIO_DISABLED": "`Spotify plagini deaktivdir. Bioqrafiya əvvəlki halına qayıtdı.`",
             "BIO_RUNNING": "`Spotify plagini artıq işləyir.`",
-            "ERROR": "`Spotify plagini dayandı. Xəta alındı.`"
+            "ERROR": "`Spotify plagini dayandı. Xəta alındı.`",
+            "ERROR_NP": "`Hata! Spotify'da çalan şarkı getirilemedi!`",
+            "ERROR_TOKEN": "`Bot Spotify ayarları yapılmamış!`",
+            "NP_NONE": "`Şu anda Spotify'da bir şey dinlemiyorum!`",
+            "NP_GET": "`Spotify'da dinlediğim şarkı getiriliyor...`"			
         },
 
         "stickers": {
