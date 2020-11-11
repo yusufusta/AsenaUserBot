@@ -285,7 +285,7 @@ async def nowplaying(event):
         msg = info[3]
         img = info[1]
         name = info[2]
-        for i in range(0, len(msg)):
+        for i, index in enumerate(msg):
             await event.edit(msg[i], link_preview=True)
             await sleep(1)
                     
@@ -318,7 +318,7 @@ async def getmp3(event):
                     await event.client.send_message(event.chat_id, msg, file=sarkilar.message)
                     await event.delete()
                 elif sarkilar.buttons[0][0].text == "No results":
-                    for i in range(0, len(msg0)):
+                    for i, index in enumerate(msg0):
                         await event.edit(msg0[i], link_preview=True)
                         await sleep(1)
                     return
@@ -330,7 +330,7 @@ async def getmp3(event):
                     await event.delete()
         except Exception as e:
             print(e)
-            for i in range(0, len(msg0)):
+            for i, index in enumerate(msg0):
                 await event.edit(msg0[i], link_preview=True)
                 await sleep(1)
 
