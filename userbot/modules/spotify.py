@@ -16,6 +16,7 @@ import spotify_token as st
 from requests import (get, post)
 from telethon import events
 from telethon.errors import AboutTooLongError
+from telethon.errors.rpcerrorlist import YouBlockedUserError
 from telethon.tl.functions.account import UpdateProfileRequest
 
 from userbot import (BIO_PREFIX, BOTLOG, BOTLOG_CHATID, CMD_HELP, DEFAULT_BIO,
@@ -167,10 +168,10 @@ def msToStr(time):
     return text
 
 def generatePlayerStr(now, time):
-    str = "─"
+    string = "─"
     arr = []
     for _ in range(0, 18):
-        arr.append(str)
+        arr.append(string)
     index = int((now*18)/time)
     if index >= len(arr):
         index = len(arr)-1
@@ -199,7 +200,7 @@ def get_spotify_info(TIME=5):
         try:
             url = item['external_urls']['spotify']
             url = f"[Spotify'da Aç]({url})"
-        except:
+        except Exception:
             url = "𝘴𝘱𝘰𝘵𝘪𝘧𝘺 𝘯𝘰𝘸 𝘱𝘭𝘢𝘺𝘪𝘯𝘨"  
         nowtime = int(data['progress_ms'])
         totaltime = int(item['duration_ms'])
@@ -213,15 +214,12 @@ def get_spotify_info(TIME=5):
                     f.write(r.content)    
 
                 with open('@AsenaUserBot-Spotify.jpg', 'rb') as f:
-                    try:
-                        req = post('https://telegra.ph/upload', 
-                        files={'Hey': ('Hey', f, 'image/jpeg')}  # image/gif, image/jpeg, image/jpg, image/png, video/mp4
-                        ).json()
-                        image = "[🔄](https://telegra.ph"+req[0]['src']+")"
-                    except:
-                        None
-            except:
-                None
+                    req = post('https://telegra.ph/upload', 
+                    files={'Hey': ('Hey', f, 'image/jpeg')}  # image/gif, image/jpeg, image/jpg, image/png, video/mp4
+                    ).json()
+                    image = "[🔄](https://telegra.ph"+req[0]['src']+")"
+            except Exception:
+                pass
         if path.exists("@AsenaUserBot-Spotify.jpg"):
             remove("@AsenaUserBot-Spotify.jpg") 
         art = []
@@ -241,7 +239,7 @@ def get_spotify_info(TIME=5):
             if nowtime > totaltime:
                 nowtime = totaltime
                 Stop = True
-            elif Stop == True or nowstr == totalstr:
+            elif Stop is True or nowstr == totalstr:
                 break
         arr = [message, name, art]
         return arr       
@@ -270,16 +268,16 @@ async def nowplaying(event):
         arg = event.pattern_match.group(1)
         if len(arg) > 0 and int(arg) > 0:
             ANIMTIME = int(arg)
-    except:
-        None
+    except Exception:
+        pass
         
     await event.edit(LANG['NP_GET'])
     try:
         await get_spotify_token()
-    except:
+    except Exception:
         return await event.edit(LANG['ERROR_TOKEN']) 
     info = get_spotify_info(ANIMTIME)
-    if isinstance(info, list) == False:
+    if isinstance(info, list) is False:
         await event.edit(info)
     else:
         msg = info[2]
@@ -293,10 +291,10 @@ async def getmp3(event):
     await event.edit(LANG['NP_GET'])
     try:
         await get_spotify_token()
-    except:
+    except Exception:
         return await event.reply(LANG['ERROR_TOKEN'])
     info = get_spotify_info()
-    if isinstance(info, list) == False:
+    if isinstance(info, list) is False:
         await event.edit(info)
     else:
         msg = info[0]      
