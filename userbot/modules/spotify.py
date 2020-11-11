@@ -283,8 +283,8 @@ async def nowplaying(event):
         await event.edit(info)
     else:
         msg = info[2]
-        for i in enumerate(msg):
-            await event.edit(msg[i], link_preview=True)
+        for item in enumerate(msg):
+            await event.edit(item[1], link_preview=True)
             await sleep(1)
                     
 @register(outgoing=True, pattern="^.smp3$")
@@ -316,8 +316,8 @@ async def getmp3(event):
                     await event.client.send_message(event.chat_id, msg, file=sarkilar.message)
                     await event.delete()
                 elif sarkilar.buttons[0][0].text == "No results":
-                    for i in enumerate(msgs):
-                        await event.edit(msgs[i], link_preview=True)
+                    for item in enumerate(msgs):
+                        await event.edit(item[1], link_preview=True)
                         await sleep(1)
                     return
                 else:
@@ -328,8 +328,8 @@ async def getmp3(event):
                     await event.delete()
         except Exception as e:
             print(e)
-            for i in enumerate(msgs):
-                await event.edit(msgs[i], link_preview=True)
+            for item in enumerate(msgs):
+                await event.edit(item[1], link_preview=True)
                 await sleep(1)
 
 CmdHelp('spotify').add_command(
