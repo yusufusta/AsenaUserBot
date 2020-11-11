@@ -169,7 +169,7 @@ def msToStr(time):
 def generatePlayerStr(now, time):
     str = "─"
     arr = []
-    for i in range(0, 18):
+    for _ in range(0, 18):
         arr.append(str)
     index = int((now*18)/time)
     if index >= len(arr):
@@ -227,7 +227,7 @@ def get_spotify_info(TIME=5):
         art = []
         message = ""
         Stop = False
-        for i in range(0, TIME):       
+        for _ in range(0, TIME):       
             nowstr = msToStr(nowtime)
             totalstr = msToStr(totaltime)
             progress = generatePlayerStr(nowtime, totaltime)
@@ -243,7 +243,7 @@ def get_spotify_info(TIME=5):
                 Stop = True
             elif Stop == True or nowstr == totalstr:
                 break
-        arr = [message, image, name, art, url]
+        arr = [message, name, art]
         return arr       
     except KeyError:
         print(2)
@@ -282,10 +282,8 @@ async def nowplaying(event):
     if isinstance(info, list) == False:
         await event.edit(info)
     else:
-        msg = info[3]
-        img = info[1]
-        name = info[2]
-        for i, index in enumerate(msg):
+        msg = info[2]
+        for i in enumerate(msg):
             await event.edit(msg[i], link_preview=True)
             await sleep(1)
                     
@@ -301,14 +299,14 @@ async def getmp3(event):
     if isinstance(info, list) == False:
         await event.edit(info)
     else:
-        msg0 = info[3]
-        name = info[2]
-        msg = info[0]
+        msg = info[0]      
+        songinfo = info[1]         
+        msgs = info[2]
         try:
             chat = "@DeezerMusicBot"
             async with bot.conversation(chat) as conv:
                 try:     
-                    await conv.send_message(name)
+                    await conv.send_message(songinfo)
                 except YouBlockedUserError:
                     return
                 sarkilar = await conv.wait_event(events.NewMessage(incoming=True,from_users=595898211))
@@ -318,8 +316,8 @@ async def getmp3(event):
                     await event.client.send_message(event.chat_id, msg, file=sarkilar.message)
                     await event.delete()
                 elif sarkilar.buttons[0][0].text == "No results":
-                    for i, index in enumerate(msg0):
-                        await event.edit(msg0[i], link_preview=True)
+                    for i in enumerate(msgs):
+                        await event.edit(msgs[i], link_preview=True)
                         await sleep(1)
                     return
                 else:
@@ -330,8 +328,8 @@ async def getmp3(event):
                     await event.delete()
         except Exception as e:
             print(e)
-            for i, index in enumerate(msg0):
-                await event.edit(msg0[i], link_preview=True)
+            for i in enumerate(msgs):
+                await event.edit(msgs[i], link_preview=True)
                 await sleep(1)
 
 CmdHelp('spotify').add_command(
