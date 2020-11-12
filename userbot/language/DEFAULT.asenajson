@@ -542,7 +542,11 @@
             "BIO_ENABLED": "`Spotify plugini aktif. Spotify'da dinlediğiniz şarkılar biyografinize yazılacak.`",
             "BIO_DISABLED": "`Spotify plugini devre dışı. Biyografi orijinal haline döndü.`",
             "BIO_RUNNING": "`Spotify plugini zaten çalışıyor.`",
-            "ERROR": "`Spotify plugini durdu. Bir hata alındı.`"
+            "ERROR": "`Spotify plugini durdu. Bir hata alındı.`",
+            "ERROR_NP": "`Hata! Spotify'da çalan şarkı getirilemedi!`",
+            "ERROR_TOKEN": "`Bot Spotify ayarları yapılmamış!`",
+            "NP_NONE": "`Şu anda Spotify'da bir şey dinlemiyorum!`",
+            "NP_GET": "`Spotify'da dinlediğim şarkı getiriliyor...`"
         },
 
         "stickers": {

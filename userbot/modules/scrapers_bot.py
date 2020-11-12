@@ -385,7 +385,7 @@ async def quotly(event):
 CmdHelp('scrapers_bot').add_command(
     'sangmata', '<yanıt>', 'Belirtilen kullanıcının isim geçmişini görüntüleyin.'
 ).add_command(
-    'drweb', '<yanıt>', 'Belirtilen dosyada virüs var mı yok mu bakın.'
+    'scan', '<yanıt>', 'Belirtilen dosyada virüs var mı yok mu bakın.'
 ).add_command(
     'meme', '<font> <üst;alt>', 'Fotoğrafa yazı ekleyin. İsterseniz font büyüklüğünü de yazabilirsiniz.', 'meme 30 asena;usta'
 ).add_command(

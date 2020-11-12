@@ -502,7 +502,11 @@
             "BIO_ENABLED": "`The Spotify plugin is active. The songs you listen to on Spotify will be written in your bio. `",
             "BIO_DISABLED": "`The Spotify plugin is disabled. The biography is back to original`",
             "BIO_RUNNING": "`The Spotify plugin is already running.`",
-            "ERROR": "`The Spotify plugin is stopped. An error has been received.`"
+            "ERROR": "`The Spotify plugin is stopped. An error has been received.`",
+            "ERROR_NP": "`Hata! Spotify'da çalan şarkı getirilemedi!`",
+            "ERROR_TOKEN": "`Bot Spotify ayarları yapılmamış!`",
+            "NP_NONE": "`Şu anda Spotify'da bir şey dinlemiyorum!`",
+            "NP_GET": "`Spotify'da dinlediğim şarkı getiriliyor...`"			
         },
         "stickers": {
             "GIVE_STICKER": "`I need you to give me a sticker or a picture so I can be able to!`",
