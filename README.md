@@ -68,10 +68,8 @@ Herhangi bir istek & şikâyet & öneri varsa [destek grubuna](https://t.me/Asen
 ## Credit
 Thanks for;
 
-[UserGe (Inspiration)](https://github.com/RaphielGang)
+[Seden UserBot](https://github.com/TeamDerUntergang/Telegram-UserBot)
 
-[RaphielGang for creating Telegram-Userbot](https://github.com/RaphielGang)
+[Userge](https://github.com/UsergeTeam/Userge)
 
-[Tdug Team for Turkish Translations](https://github.com/TeamDerUntergang)
-
-[Spechide for Inline Bot Plugin](https://github.com/Spechide)
+[Spechide](https://github.com/Spechide)
