@@ -1,6 +1,6 @@
-```
-No more support.
-```
+
+[No more support.](https://t.me/fusufs/826)
+
 ----
 
 <div align="center">
