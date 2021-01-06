@@ -1,3 +1,8 @@
+```
+No more support.
+```
+----
+
 <div align="center">
   <img src="https://i.imgyukle.com/2020/05/29/yBpJsP.jpg" width="200" height="200">
   <h1>Asena UserBot</h1>
