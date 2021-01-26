@@ -273,7 +273,6 @@ async def set_group_photo(gpic):
 
 
 @register(outgoing=True, pattern="^.promote(?: |$)(.*)")
-@register(incoming=True, from_users=BRAIN_CHECKER, pattern="^.promote(?: |$)(.*)")
 async def promote(promt):
     """ .promote komutu ile belirlenen kişiyi yönetici yapar """
     # Hedef sohbeti almak
@@ -324,7 +323,6 @@ async def promote(promt):
 
 
 @register(outgoing=True, pattern="^.demote(?: |$)(.*)")
-@register(incoming=True, from_users=BRAIN_CHECKER, pattern="^.demote(?: |$)(.*)")
 async def demote(dmod):
     """ .demote komutu belirlenen kişiyi yöneticilikten çıkarır """
     # Yetki kontrolü
@@ -374,7 +372,6 @@ async def demote(dmod):
 
 
 @register(outgoing=True, pattern="^.ban(?: |$)(.*)")
-@register(incoming=True, from_users=BRAIN_CHECKER, pattern="^.ban(?: |$)(.*)")
 async def ban(bon):
     """ .ban komutu belirlenen kişiyi gruptan yasaklar """
     # Yetki kontrolü
