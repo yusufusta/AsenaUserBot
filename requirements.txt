@@ -37,7 +37,7 @@ speedtest-cli>=2.0.2
 sqlalchemy>=1.2
 spotdl
 selenium>=3.141.0
-telethon>=1.10.6
+telethon>=1.24.0
 telethon-session-sqlalchemy>=0.2.6
 urbandict>=0.5
 wikipedia>=1.4.0
