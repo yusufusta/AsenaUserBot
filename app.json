@@ -5,13 +5,13 @@
   "keywords": [
     "telegram",
     "userbot",
-	"Asena",
+	  "Asena",
     "plugin",
     "modular",
     "productivity"
   ],
-  "repository": "https://github.com/quiec/AsenaUserbot",
-  "website":   "https://quiec.tech",
+  "repository": "https://github.com/yusufusta/AsenaUserbot",
+  "website":   "https://yusufusta.net/",
   "success_url": "https://t.me/AsenaSupport",
   "stack": "container",
   "env": {
@@ -54,7 +54,7 @@
     },
     "UPSTREAM_REPO_URL": {
       "description": "Fork sağlamanız durumunda repo URL'nizi buraya ekleyin. Varsayılan olarak kendi repo adresimiz eklidir.",
-      "value": "https://github.com/Quiec/AsenaUserBot",
+      "value": "https://github.com/yusufusta/AsenaUserBot",
       "required": true
     },
     "COUNTRY": {
@@ -229,6 +229,12 @@
       "description": "Botun dili. EN/TR/AZ yazabilirsiniz.",
       "value": "TR",
       "required": true
+    }
+  },
+  "formation": {
+    "web": {
+        "quantity": 1,
+        "size": "free"
     }
   },
   "addons": [{

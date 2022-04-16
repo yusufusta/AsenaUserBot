@@ -11,6 +11,11 @@
 
 import requests
 
+import aiohttp
+import asyncio
+import json
+import requests
+
 from userbot import CMD_HELP
 from userbot.events import register
 from bs4 import BeautifulSoup
@@ -67,35 +72,23 @@ def getSimilarWords(kelime, limit = 5):
 async def tdk(event): 
     inp = event.pattern_match.group(1)
     await event.edit('**Bekle!**\n__Sözlükte arıyorum...__')
-    response = requests.get(f'https://sozluk.gov.tr/gts?ara={inp}').json()
-    if 'error' in response:
-        await event.edit(f'**Kelimeniz({inp}) Büyük Türkçe Sözlük\'te Bulunamadı!**')
-        words = getSimilarWords(inp)
-        if not words == '':
-            return await event.edit(f'__Kelimeniz({inp}) Büyük Türkçe Sözlük\'te Bulunamadı!__\n\n**Benzer Kelimeler:** {words}')
-    else:
-        anlamlarStr = ""
-        for anlam in response[0]["anlamlarListe"]:
-            anlamlarStr += f"\n**{anlam['anlam_sira']}.**"
-            if ('ozelliklerListe' in anlam) and ((not anlam["ozelliklerListe"][0]["tam_adi"] == None) or (not anlam["ozelliklerListe"][0]["tam_adi"] == '')):
-                anlamlarStr += f"__({anlam['ozelliklerListe'][0]['tam_adi']})__"
-            anlamlarStr += f' ```{anlam["anlam"]}```'
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+        async with session.get('https://open-apis-rest.up.railway.app/api/tdk?word=' + str(inp)) as response:
 
-            if response[0]["cogul_mu"] == '0':
-                cogul = '❌'
+            html = await response.text()
+            html2 = json.loads(html)
+            if html2["status"] == "OK":
+                SAVE = "./soz.mp3"
+                resp = requests.get(html2["data"]["ses"])
+                with open(SAVE, "wb") as f:
+                    f.write(resp.content)
+
+                song = await event.client.send_file(event.chat_id, "./soz.mp3", voice_note=True)
+                await event.client.send_message(event.chat_id, "**Kelime:** " + "__" + inp + "__" + "\n**Anlamı:** " + "__" + html2["data"]["anlam"] + "__" + "\n**Atasözü:** " + "__" + html2["data"]["atasozu"] + "__", reply_to=song, link_preview=False)
+                await event.delete()
             else:
-                cogul = '✅'
-            
-            if response[0]["ozel_mi"] == '0':
-                ozel = '❌'
-            else:
-                ozel = '✅'
+                return await event.edit(f'__Kelimeniz({inp}) Büyük Türkçe Sözlük\'te Bulunamadı!__')
 
-
-        await event.edit(f'**Kelime:** `{inp}`\n\n**Çoğul Mu:** {cogul}\n**Özel Mi:** {ozel}\n\n**Anlamlar:**{anlamlarStr}')
-        words = getSimilarWords(inp)
-        if not words == '':
-            return await event.edit(f'**Kelime:** `{inp}`\n\n**Çoğul Mu:** `{cogul}`\n**Özel Mi:** {ozel}\n\n**Anlamlar:**{anlamlarStr}' + f'\n\n**Benzer Kelimeler:** {words}')
 
 CmdHelp('sozluk').add_command(
     'tdk', '<kelime>', 'Verdiğiniz kelimeyi TDK Sözlükte arar.'

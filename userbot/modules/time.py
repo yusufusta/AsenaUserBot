@@ -18,6 +18,10 @@ from pytz import timezone as tz
 from userbot import CMD_HELP, COUNTRY, TZ_NUMBER
 from userbot.events import register
 from userbot.cmdhelp import CmdHelp
+from googletrans import LANGUAGES, Translator
+translator = Translator(service_urls=[
+      'translate.google.cn',
+])
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -58,11 +62,18 @@ async def time_func(tdata):
         2. Varsayılan userbot bölgesi (.settime komutuyla ayarlanabilir)
         3. UserBot'un barındığı sunucunun tarihi.
     """
+    txt = tdata.pattern_match.group(1)
     con = tdata.pattern_match.group(1).title()
     tz_num = tdata.pattern_match.group(2)
 
     t_form = "%H:%M"
     c_name = None
+
+    if txt != "" or txt != " ":
+        ars = translator.translate(txt, dest="en")
+        con = ars.text
+    else:
+        return tdata.edit("**Lütfen Ülke İsmi Girin!**")
 
     if len(con) > 4:
         try:

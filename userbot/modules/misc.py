@@ -15,7 +15,7 @@ from os import execl
 import sys
 import io
 import sys
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
+from userbot import BOTLOG, BOTLOG_CHATID, bot
 from userbot.events import register
 from userbot.cmdhelp import CmdHelp
 
@@ -25,6 +25,42 @@ from userbot.language import get_value
 LANG = get_value("misc")
 
 # ████████████████████████████████ #
+
+ASKSHUTDOWN2 = "n"
+ASKSHUTDOWN1 = "n"
+
+@register(outgoing=True, disable_edited=True)
+async def txt(msg):
+    global ASKSHUTDOWN2 
+    if ASKSHUTDOWN2 == "y":
+        message = msg.raw_text
+        user_id = msg.sender.id
+        if (message == "y" or message == "Y") and user_id == msg.sender.id:
+            await msg.client.send_file(msg.chat_id, 'https://www.winhistory.de/more/winstart/mp3/winxpshutdown.mp3', caption=LANG['GOODBYE_MFRS'], voice_note=True)
+            await msg.delete()
+
+            if BOTLOG:
+                await msg.client.send_message(BOTLOG_CHATID, "#SHUTDOWN \n"
+                                            "Bot kapatıldı.")
+            try:
+                await bot.disconnect()
+            except:
+                pass
+        else: 
+            ASKSHUTDOWN = False
+            ASKSHUTDOWN2 = "n"
+            return await msg.edit("**Kapatma İşlemi Durduruldu!**")
+    else:
+        return True
+
+@register(outgoing=True, pattern="^.shutdown$")
+async def shutdown(event):
+    """ .shutdown komutu botu kapatır. """
+    global ASKSHUTDOWN2 
+    ASKSHUTDOWN2 = "y"
+    await event.edit("**Dikkat Bu İşlem Geri Döndürülemez**\n**Userbot'u Kapatmak İçin** `Y` **Yazın.**")
+
+
 
 @register(outgoing=True, pattern="^.resend")
 async def resend(event):
@@ -65,21 +101,6 @@ async def sleepybot(time):
             )
         await sleep(counter)
         await time.edit(LANG['GOODMORNIN_YALL'])
-
-
-@register(outgoing=True, pattern="^.shutdown$")
-async def shutdown(event):
-    """ .shutdown komutu botu kapatır. """
-    await event.client.send_file(event.chat_id, 'https://www.winhistory.de/more/winstart/mp3/winxpshutdown.mp3', caption=LANG['GOODBYE_MFRS'], voice_note=True)
-    await event.delete()
-
-    if BOTLOG:
-        await event.client.send_message(BOTLOG_CHATID, "#SHUTDOWN \n"
-                                        "Bot kapatıldı.")
-    try:
-        await bot.disconnect()
-    except:
-        pass
 
 
 @register(outgoing=True, pattern="^.restart$")

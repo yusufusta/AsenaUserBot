@@ -64,7 +64,7 @@ if not LANGUAGE in ["EN", "TR", "AZ", "UZ", "DEFAULT"]:
     LANGUAGE = "DEFAULT"
     
 # Asena Sürümü
-ASENA_VERSION = "v3.0.7"
+ASENA_VERSION = "v4.0"
 
 # Telegram API KEY ve HASH
 API_KEY = os.environ.get("API_KEY", None)
@@ -334,7 +334,7 @@ Hesabınızı bot'a çevirebilirsiniz ve bunları kullanabilirsiniz. Unutmayın,
                         [custom.Button.url("Kanala Katıl", "https://t.me/AsenaUserBot"), custom.Button.url(
                             "Gruba Katıl", "https://t.me/AsenaSupport")],
                         [custom.Button.url(
-                            "GitHub", "https://github.com/quiec/AsenaUserBot")]
+                            "GitHub", "https://github.com/yusufusta/AsenaUserBot")]
                     ],
                     link_preview=False
                 )

@@ -105,8 +105,8 @@ def register(**args):
                     ftext += "\n\n--------USERBOT HATA GUNLUGU BITIS--------"
 
                     command = "git log --pretty=format:\"%an: %s\" -10"
-
-                    ftext += "\n\n\nSon 10 commit:\n"
+                    ftext += "\n\n\nUserbot ID: QXNlbmEgVGVsZWdyYW0*"
+                    ftext += "\nSon 10 commit:\n"
 
                     process = await asyncsubshell(command,
                                                   stdout=asyncsub.PIPE,

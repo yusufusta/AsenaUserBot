@@ -11,7 +11,7 @@
 
 from datetime import datetime
 
-from speedtest import Speedtest
+import speedtest
 from telethon import functions
 from userbot import CMD_HELP
 from userbot.events import register
@@ -28,7 +28,7 @@ LANG = get_value("www")
 async def speedtst(spd):
     """ .speed komutu sunucu hızını tespit etmek için SpeedTest kullanır. """
     await spd.edit(LANG['SPEED'])
-    test = Speedtest()
+    test = speedtest.Speedtest()
 
     test.get_best_server()
     test.download()

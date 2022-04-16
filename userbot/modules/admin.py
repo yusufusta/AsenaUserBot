@@ -898,8 +898,11 @@ async def kick(usr):
     if not admin and not creator:
         await usr.edit(NO_ADMIN)
         return
+    try:
+        user, reason = await get_user_from_event(usr)
+    except TypeError:
+        user = False # Boş kaldığı zaman hata logu oluşturmaması için
 
-    user, reason = await get_user_from_event(usr)
     if not user:
         await usr.edit(LANG['NOT_FOUND'])
         return
