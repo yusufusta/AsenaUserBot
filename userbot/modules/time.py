@@ -18,10 +18,10 @@ from pytz import timezone as tz
 from userbot import CMD_HELP, COUNTRY, TZ_NUMBER
 from userbot.events import register
 from userbot.cmdhelp import CmdHelp
-from googletrans import LANGUAGES, Translator
-translator = Translator(service_urls=[
-      'translate.google.cn',
-])
+from googletrans import LANGUAGES
+import aiohttp
+import asyncio
+import os
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -70,8 +70,11 @@ async def time_func(tdata):
     c_name = None
 
     if txt != "" or txt != " ":
-        ars = translator.translate(txt, dest="en")
-        con = ars.text
+        con = ""
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+            async with session.get(f"https://translate.google.com/m?hl=auto&sl=auto&tl=en&ie=UTF-8&prev=_m&q={txt}") as response:
+                html = await response.text()
+                con = html.split('result-container">')[1].split('</div>')[0]
     else:
         return tdata.edit("**Lütfen Ülke İsmi Girin!**")
 

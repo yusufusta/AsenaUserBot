@@ -14,7 +14,11 @@ from userbot.cmdhelp import CmdHelp
 async def info(event):
     await event.edit("`Grup analiz ediliyor...`")
     chat = await get_chatinfo(event)
-    caption = await fetch_info(chat, event)
+    try:
+        caption = await fetch_info(chat, event)
+    except AttributeError:
+        return await event.edit("__Bu modül yanlızca gruplarda kullanılabilir.__")
+        
     try:
         await event.edit(caption, parse_mode="html")
     except Exception as e:
@@ -183,7 +187,7 @@ async def fetch_info(chat, event):
         else:
             caption += "\n"
     if hasattr(chat_obj_info, "scam") and chat_obj_info.scam:
-    	caption += "Scam: <b>Evet</b>\n\n"
+        caption += "Scam: <b>Evet</b>\n\n"
     if hasattr(chat_obj_info, "verified"):
         caption += f"Telegram tarafından doğrulandı: {verified}\n\n"
     if description:
