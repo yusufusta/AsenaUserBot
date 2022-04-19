@@ -104,9 +104,9 @@ async def txt(msg):
                 message = message.replace("asena", "", 1)
             else:
                 message = message.replace("Asena", "", 1)
-                
+
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
-                aftext = translate_to_msg(deEmojify(message), "en")
+                aftext = await translate_to_msg(deEmojify(message), "en")
                 if aftext == message or aftext == deEmojify(message):
                     return await msg.edit(random.choice((
                         "__Yazdığın cümleyi anlayamıyorum.__",
@@ -138,7 +138,7 @@ async def txt(msg):
                     html = await response.text()
                     html2 = json.loads(html)
                     if html2["status"] == "OK":
-                        outtext = translate_to_msg(html2["data"], "tr")
+                        outtext = await translate_to_msg(html2["data"], "tr")
                         await msg.client.send_message(msg.chat_id, f"{outtext}", reply_to=msg, link_preview=False)
                     else:
                         if "Message" in html2["error"]:
