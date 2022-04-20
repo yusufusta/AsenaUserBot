@@ -2,11 +2,18 @@ import aiohttp
 import asyncio
 import json
 import os
+import requests
 from userbot import CMD_HELP, bot
 from userbot.events import register
 from userbot.cmdhelp import CmdHelp
 # from userbot.language import get_value
 
+def download(url):
+    response = requests.get(url)
+    file = open("./tp.png", "wb")
+    file.write(response.content)
+    file.close()
+    return True
 
 @register(outgoing=True, pattern="^.textpro ?(.*)")
 async def apis(event):
@@ -58,9 +65,9 @@ async def apis(event):
             html2 = json.loads(html)
             if html2["status"] == "OK":
                 img = html2["data"]
-                os.system("wget -O {0} {1}".format("./tp.jpg", img))
-                await event.client.send_file(event.chat_id, './tp.jpg', caption="@AsenaUserBot ile Yüklendi.")
-                os.remove("./tp.jpg")
+                download(img)
+                await event.client.send_file(event.chat_id, './tp.png', caption="@AsenaUserBot ile Yüklendi.")
+                os.remove("./tp.png")
                 await event.delete()
                 return True
             else:
@@ -69,7 +76,7 @@ async def apis(event):
 Help = CmdHelp('textpro')
 Help.add_command('textpro',
                  '<stil> <metin>',
-                 'Farklı Stillerde Görseller Üretir.',
+                 'Farklı Stillerde Görseller Üretir. (Tüm stilleri görmek için boş bırakın)',
                  'textpro devil phaticusthiccy'
                  )
 Help.add_info("@phaticusthiccy tarafından yapılmıştır.")

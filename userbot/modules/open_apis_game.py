@@ -2,11 +2,19 @@ import aiohttp
 import asyncio
 import json
 import os
+import requests
 from userbot import CMD_HELP, bot
 from userbot.events import register
 from userbot.cmdhelp import CmdHelp
 # from userbot.language import get_value
 
+
+def download(url):
+    response = requests.get(url)
+    file = open("./avatar.jpg", "wb")
+    file.write(response.content)
+    file.close()
+    return True
 
 @register(outgoing=True, pattern="^.game ?(.*)")
 async def apis(event):
@@ -57,12 +65,9 @@ async def apis(event):
                 innovations = html2["data"]["reviews"]["innovations"]
                 overall = html2["data"]["reviews"]["overall"]
 
-                if "Very" in popularity:
-                    popularity = popularity.split("[")[1].split("]")[0]
-
-                os.system("wget -O {0} {1}".format("./avatar.jpg", avatar))
+                download(avatar)
                 await event.client.send_file(
-                    event.chat_id, './avatar.jpg',
+                    event.chat_id, './avatar.png',
                     caption="__Oyun:__ " + name +
                     "\n__Yayın Tarihi:__ " + release_date +
                     "\n__Tür:__ " + genre +
@@ -92,7 +97,7 @@ async def apis(event):
                     "\n__Yenilik:__ " + innovations +
                     "\n__Genel:__ " + overall
                 )
-                os.remove("./avatar.jpg")
+                os.remove("./avatar.png")
                 await event.delete()
             else:
                 return await event.edit("__" + game + " Adında bir oyun bulunamadı.__")

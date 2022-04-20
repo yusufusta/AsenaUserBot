@@ -1,12 +1,19 @@
 import aiohttp
 import asyncio
 import json
+import requests
 import os
 from userbot import CMD_HELP, bot
 from userbot.events import register
 from userbot.cmdhelp import CmdHelp
 # from userbot.language import get_value
 
+def download(url):
+    response = requests.get(url)
+    file = open("./gh.png", "wb")
+    file.write(response.content)
+    file.close()
+    return True
 
 @register(outgoing=True, pattern="^.github ?(.*)")
 async def apis(event):
@@ -121,7 +128,7 @@ async def apis(event):
                     iss_comm, total_add, total_rem, licenses, relases, packages, used_space,
                     repo_lang, all_lang, most_used
                 )
-                os.system("wget -O {0} {1}".format("./gh.png", img))
+                download(img)
                 reply = await event.client.send_file(event.chat_id, './gh.png')
                 os.remove("./gh.png")
                 await event.client.send_message(event.chat_id, sonuc, reply_to=reply, link_preview=False)
