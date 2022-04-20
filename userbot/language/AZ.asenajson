@@ -209,17 +209,17 @@
             "PASTED": "Uğurla yapıştırıldı!",
             "URL": "Qısaldılmış URL:",
             "ORG_URL": "Original (qısaldılmamış) URL",
-            "DOGBIN_URL": "Dogbin URL",
+            "DOGBIN_URL": "Nekobin URL",
             "URL_BUT_ENG": "Uğurla yapışdırıldı!",
-            "DOGBIN_NOT_RESPOND": "Dogbine çata bilmədik",
-            "BOTLOG_SENDING": "Dogbine mətn yapışdırması uğurla icra edildi",
-            "DATA_CHECKING": "`Dogbin məzmunu alınır...`",
-            "UNSUPPORTED_URL": "`Bu bir dogbin adressidirmi?`",
+            "DOGBIN_NOT_RESPOND": "Nekobine çata bilmədik",
+            "BOTLOG_SENDING": "Nekobine mətn yapışdırması uğurla icra edildi",
+            "DATA_CHECKING": "`Nekobin məzmunu alınır...`",
+            "UNSUPPORTED_URL": "`Bu bir Throwbin adressidirmi?`",
             "HTTP_ERROR": "İstək uğursuz bir status kodunu qaytardı.",
             "TIMEOUT": "İstək vaxtı gözlədiyimizdən gec oldu.",
             "TOO_MANY_REDIRECTS": "İstək maksimum konfiqurasiya edilmiş yönləndirmələri keçdi.",
-            "DOGBIN_DATA": "`Dogbin URL məzmunu uğurla gətirildi!`\n\n`Məzmun:`",
-            "DOGBIN_ENDED": "Dogbin məzmun ötürülməsi uğurla həyata keçirildi"
+            "DOGBIN_DATA": "`Nekobin URL məzmunu uğurla gətirildi!`\n\n`Məzmun:`",
+            "DOGBIN_ENDED": "Nekobin məzmun ötürülməsi uğurla həyata keçirildi"
         },
 
         "durum": {

@@ -93,7 +93,8 @@ async def barcode_read(event):
                                      reply_to=reply_msg_id)
         os.remove(filename)
     except Exception as e:
-        await event.edit(str(e))
+        await event.edit("Lütfen `.barcode www.google.com` şeklinde(internet sitesi) kullanın. Herhangi bir mesajı barkod yapmak için `.makeqr` komutunu kullanabilirsiniz.")
+        print(str(e))
         return
     await event.delete()
 

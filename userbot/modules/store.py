@@ -9,7 +9,7 @@
 import os
 from telethon.tl.types import InputMessagesFilterDocument
 from userbot.events import register
-from userbot import BOT_USERNAME, PATTERNS, CMD_HELP, PLUGIN_CHANNEL_ID
+from userbot import BOT_USERNAME, PATTERNS, CMD_HELP, PLUGIN_CHANNEL_ID, ASENA_VERSION
 import userbot.cmdhelp
 from random import choice, sample
 import importlib
@@ -28,7 +28,7 @@ LANG = get_value("__plugin")
 @register(outgoing=True, pattern="^.ma[gğ]aza ?(.*)")
 async def magaza(event):
     plugin = event.pattern_match.group(1)
-    await event.edit('**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n`🔎 Plugin\'i arıyorum... Lütfen biraz bekle.`')
+    await event.edit('**🐺 Asena Plugin Mağazası**\n__Versiyon ' + ASENA_VERSION + '__\n\n' + '`🔎 Plugin\'i arıyorum... Lütfen biraz bekle.`')
     split = plugin.split()
     if plugin == '':
         plugin = 'Son Yüklenen'
@@ -43,7 +43,7 @@ async def magaza(event):
         random = choice(random)
         random_file = random.file.name
 
-    result = f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**🔎 Arama:** `{plugin}`\n**🔢 Sonuçlar: __({len(plugins)})__**\n➖➖➖➖➖\n\n'
+    result = f'**🐺 Asena Plugin Mağazası**\n__Versiyon {ASENA_VERSION}__\n\n**🔎 Arama:** `{plugin}`\n**🔢 Sonuçlar: __({len(plugins)})__**\n➖➖➖➖➖\n\n'
     
     if len(plugins) == 0:
         result += f'**Hiçbir şey bulamadım...**\n`{random_file}` __pluginine ne dersin?__'
@@ -66,13 +66,13 @@ async def sinstall(event):
     try:
         plugin = int(plugin)
     except:
-        return await event.edit('**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**⚠️ Hata:** `Lütfen sadece sayı yazın. Eğer Plugin aramak istiyorsanız .store komutunu kullanın.`')
+        return await event.edit('**🐺 Asena Plugin Mağazası**\n__Versiyon ' + ASENA_VERSION + '__\n\n**⚠️ Hata:** `Lütfen sadece sayı yazın. Eğer Plugin aramak istiyorsanız .store komutunu kullanın.`')
     
-    await event.edit('**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n`🔎 Plugin\'i getiriyorum... Lütfen biraz bekle.`')
+    await event.edit('**🐺 Asena Plugin Mağazası**\n__Versiyon ' + ASENA_VERSION + '__\n\n`🔎 Plugin\'i getiriyorum... Lütfen biraz bekle.`')
     plugin = await event.client.get_messages('@asenaplugin', ids=plugin)
-    await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n`✅ {plugin.file.name} plugini getirildi!`\n`⬇️ Plugini indiriyorum... Lütfen bekleyiniz.`')
+    await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon {ASENA_VERSION}__\n\n`✅ {plugin.file.name} plugini getirildi!`\n`⬇️ Plugini indiriyorum... Lütfen bekleyiniz.`')
     dosya = await plugin.download_media('./userbot/modules/')
-    await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n`✅ {plugin.file.name} indirme başarılı!`\n`⬇️ Plugini yüklüyorum... Lütfen bekleyiniz.`')
+    await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon {ASENA_VERSION}__\n\n`✅ {plugin.file.name} indirme başarılı!`\n`⬇️ Plugini yüklüyorum... Lütfen bekleyiniz.`')
     
     try:
         spec = importlib.util.spec_from_file_location(dosya, dosya)
@@ -80,7 +80,7 @@ async def sinstall(event):
         spec.loader.exec_module(mod)
     except Exception as e:
         os.remove("./userbot/modules/" + dosya)
-        return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**⚠️ Hata:** `Plugin hatalı. {e}`\n**LÜTFEN BUNU ADMİNLERE BİLDİRİN!**')
+        return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon {ASENA_VERSION}__\n\n**⚠️ Hata:** `Plugin hatalı. {e}`\n**LÜTFEN BUNU ADMİNLERE BİLDİRİN!**')
 
     dosy = open(dosya, "r").read()
     if re.search(r"@tgbot\.on\(.*pattern=(r|)\".*\".*\)", dosy):
@@ -109,12 +109,12 @@ async def sinstall(event):
             if re.search(r'CmdHelp\(.*\)', dosy):
                 cmdhelp = re.findall(r"CmdHelp\([\"'](.*)[\"']\)", dosy)[0]
                 await plugin.forward_to(PLUGIN_CHANNEL_ID)
-                return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**✅ Modül başarıyla yüklendi!**\n__ℹ️ Modülun komutları ve kullanım hakkında bilgi almak için__ `.asena {cmdhelp}` __yazınız.__')
+                return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon {ASENA_VERSION}__\n\n**✅ Modül başarıyla yüklendi!**\n__ℹ️ Modülun komutları ve kullanım hakkında bilgi almak için__ `.asena {cmdhelp}` __yazınız.__')
             else:
                 dosyaAdi = plugin.file.name.replace('.py', '')
                 extractCommands(dosya)
                 await plugin.forward_to(PLUGIN_CHANNEL_ID)
-                return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon 1.0__\n\n**✅ Modül başarıyla yüklendi!**\n__ℹ️ Modülun komutları ve kullanım hakkında bilgi almak için__ `.asena {dosyaAdi}` __yazınız.__')
+                return await event.edit(f'**🐺 Asena Plugin Mağazası**\n__Versiyon {ASENA_VERSION}__\n\n**✅ Modül başarıyla yüklendi!**\n__ℹ️ Modülun komutları ve kullanım hakkında bilgi almak için__ `.asena {dosyaAdi}` __yazınız.__')
 
 userbot.cmdhelp.CmdHelp('store').add_command(
     'store', '<kelime>', 'Plugin kanalına son atılan Pluginleri getirir. Eğer kelime yazarsanız arama yapar.'

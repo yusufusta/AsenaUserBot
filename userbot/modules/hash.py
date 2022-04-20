@@ -19,7 +19,17 @@ from userbot.cmdhelp import CmdHelp
 @register(outgoing=True, pattern="^.hash (.*)")
 async def gethash(hash_q):
     """ .hash komutu md5, sha1, sha256, sha512 dizelerini bulur. """
-    hashtxt_ = hash_q.pattern_match.group(1)
+    textx = await gethash.get_reply_message()
+    hashtxt_ = gethash.pattern_match.group(1)
+    if hashtxt_:
+        pass
+    elif textx:
+        hashtxt_ = textx.text
+    else:
+        await gethash.edit("`Bana çevirilecek bir metin ver!`")
+        return
+        
+    # hashtxt_ = hash_q.pattern_match.group(1)
     hashtxt = open("hashdis.txt", "w+")
     hashtxt.write(hashtxt_)
     hashtxt.close()

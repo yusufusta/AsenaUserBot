@@ -135,7 +135,11 @@ async def upstream(ups):
         import heroku3
         heroku = heroku3.from_key(HEROKU_APIKEY)
         heroku_app = None
-        heroku_applications = heroku.apps()
+        try:
+            heroku_applications = heroku.apps()
+        except:
+            return ups.edit("Lütfen **HEROKU_APIKEY**'inizi kontrol edin. Herhangi bir sorun yoksa uygulama ismi ile **HEROKU_APPNAME**'nin aynı olduğuna emin olun.")
+            
         if not HEROKU_APPNAME:
             await ups.edit(LANG['INVALID_APPNAME'])
             repo.__del__()

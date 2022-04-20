@@ -35,6 +35,9 @@ from search_engine_parser import GoogleSearch
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googletrans import LANGUAGES, Translator
+translator = Translator(service_urls=[
+      'translate.google.cn',
+])
 from gtts import gTTS
 from gtts.lang import tts_langs
 from emoji import get_emoji_regexp
@@ -52,6 +55,9 @@ from ImageDown import ImageDown
 import base64, binascii
 import random
 from userbot.cmdhelp import CmdHelp
+import requests
+import urllib.parse
+import aiohttp
 
 CARBONLANG = "auto"
 TTS_LANG = "tr"
@@ -63,6 +69,8 @@ import subprocess
 from telethon.errors import MessageEmptyError, MessageTooLongError, MessageNotModifiedError
 import io
 import glob
+from json import loads
+from requests import get
 
 @register(pattern="^.tts2 (.*)", outgoing=True)
 async def tts2(query):
@@ -490,7 +498,6 @@ async def urban_dict(ud_e):
 
 @register(outgoing=True, pattern=r"^.tts(?: |$)([\s\S]*)")
 async def text_to_speech(query):
-    """ .tts komutu ile Google'ın metinden yazıya dönüştürme servisi kullanılabilir. """
     textx = await query.get_reply_message()
     message = query.pattern_match.group(1)
     if message:
@@ -502,36 +509,18 @@ async def text_to_speech(query):
             "`Yazıdan sese çevirmek için bir metin gir.`")
         return
 
-    try:
-        gTTS(message, lang=TTS_LANG)
-    except AssertionError:
-        await query.edit(
-            'Metin boş.\n'
-            'Ön işleme, tokenizasyon ve temizlikten sonra konuşacak hiçbir şey kalmadı.'
-        )
-        return
-    except ValueError:
-        await query.edit('Bu dil henüz desteklenmiyor.')
-        return
-    except RuntimeError:
-        await query.edit('Dilin sözlüğünü görüntülemede bir hata gerçekleşti.')
-        return
-    tts = gTTS(message, lang=TTS_LANG)
-    tts.save("h.mp3")
-    with open("h.mp3", "rb") as audio:
-        linelist = list(audio)
-        linecount = len(linelist)
-    if linecount == 1:
-        tts = gTTS(message, lang=TTS_LANG)
-        tts.save("h.mp3")
-    with open("h.mp3", "r"):
-        await query.client.send_file(query.chat_id, "h.mp3", voice_note=True)
-        os.remove("h.mp3")
-        if BOTLOG:
-            await query.client.send_message(
-                BOTLOG_CHATID, "Metin başarıyla sese dönüştürüldü!")
-        await query.delete()
+    URL = "https://translate.google.com/translate_tts?ie=UTF-8&q=" + deEmojify(message) + "&tl=" + TTS_LANG + "&client=tw-ob"
+    SAVE = "./tts.mp3"
+    resp = requests.get(URL)
+    with open(SAVE, "wb") as f:
+        f.write(resp.content)
 
+    await query.client.send_file(query.chat_id, "./tts.mp3", voice_note=True)
+    if BOTLOG:
+        await query.client.send_message(
+            BOTLOG_CHATID, "Metin başarıyla sese dönüştürüldü!")
+    await query.delete()
+    os.remove("./tts.mp3")
 
 @register(outgoing=True, pattern="^.imdb (.*)")
 async def imdb(e):
@@ -616,36 +605,44 @@ async def imdb(e):
         await e.edit("Geçerli bir film ismi gir.")
 
 
-@register(outgoing=True, pattern=r"^.trt(?: |$)([\s\S]*)")
+
+@register(pattern="^.trt ?(.*)", outgoing=True)
 async def translateme(trans):
     """ .trt komutu verilen metni Google Çeviri kullanarak çevirir. """
-    translator = Translator()
-    textx = await trans.get_reply_message()
+
     message = trans.pattern_match.group(1)
+    textx = await trans.get_reply_message()
+
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await trans.edit("`Bana çevirilecek bir metin wer!`")
-        return
+        return await trans.edit("`Bana çevirilecek bir metin ver!`")
 
-    try:
-        reply_text = translator.translate(deEmojify(message), dest=TRT_LANG)
-    except ValueError:
-        await trans.edit("Ayarlanan hedef dil geçersiz.")
-        return
+    message = deEmojify(message)
+    if len(message) > 2048:
+        return await trans.edit("__Bu mesaj fazla uzun. Maxiumum 2048 karakter kullanın.__")
 
-    source_lan = LANGUAGES[f'{reply_text.src.lower()}']
-    transl_lan = LANGUAGES[f'{reply_text.dest.lower()}']
-    reply_text = f"Şu dilden:**{source_lan.title()}**\nŞu dile:**{transl_lan.title()}:**\n\n{reply_text.text}"
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+        async with session.get(f"https://translate.google.com/m?hl=auto&sl=auto&tl={TRT_LANG}&ie=UTF-8&prev=_m&q={message}") as response:
 
-    await trans.edit(reply_text)
-    if BOTLOG:
-        await trans.client.send_message(
-            BOTLOG_CHATID,
-            f"Biraz {source_lan.title()} kelime az önce {transl_lan.title()} diline çevirildi.",
-        )
+            html = await response.text()
+            fin = html.split('result-container">')[1].split('</div>')[0]
+            if fin == message:
+                return await trans.edit("__Üzgünüm Bu Metni Çeviremedim. Lütfen Daha Anlaşılır Bir Şekilde Yazın.__")
+    
+
+            transl_lan = LANGUAGES[f'{TRT_LANG.lower()}']
+            reply_text = f"**Şu dile çevrildi**: __{transl_lan.title()}__\n**Sonuç:**\n\n{fin}"
+
+            await trans.edit(reply_text)
+            if BOTLOG:
+                await trans.client.send_message(
+                    BOTLOG_CHATID,
+                    f"Şu kelime az önce {transl_lan.title()} diline çevirildi.\n\n{message}",
+                )
+
 
 
 @register(pattern=".lang (trt|tts) (.*)", outgoing=True)

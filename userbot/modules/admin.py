@@ -79,7 +79,7 @@ MUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=True)
 
 UNMUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=False)
 # ================================================
-@register(outgoing=True, pattern="^.ekle ?(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.ekle ?(.*)")
 async def ekle(event):
     if event.fwd_from:
         return
@@ -113,7 +113,7 @@ async def ekle(event):
                     continue
                 await event.edit(f'`{user_id} gruba eklendi!`')
 
-@register(outgoing=True, pattern="^.gban(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.gban(?: |$)(.*)")
 async def gbanspider(gspdr):
     """ .gban komutu belirlenen kişiyi küresel olarak yasaklar """
     # Yetki kontrolü
@@ -193,7 +193,7 @@ async def gbanmsg(moot):
         except:
             return
 
-@register(outgoing=True, pattern="^.ungban(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.ungban(?: |$)(.*)")
 async def ungban(un_gban):
     """ .ungban komutu belirlenen kişinin küresel susturulmasını kaldırır """
     # Yetki kontrolü
@@ -272,7 +272,7 @@ async def set_group_photo(gpic):
             await gpic.edit(PP_ERROR)
 
 
-@register(outgoing=True, pattern="^.promote(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.promote(?: |$)(.*)")
 async def promote(promt):
     """ .promote komutu ile belirlenen kişiyi yönetici yapar """
     # Hedef sohbeti almak
@@ -322,7 +322,7 @@ async def promote(promt):
             f"GRUP: {promt.chat.title}(`{promt.chat_id}`)")
 
 
-@register(outgoing=True, pattern="^.demote(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.demote(?: |$)(.*)")
 async def demote(dmod):
     """ .demote komutu belirlenen kişiyi yöneticilikten çıkarır """
     # Yetki kontrolü
@@ -371,7 +371,7 @@ async def demote(dmod):
             f"GRUP: {dmod.chat.title}(`{dmod.chat_id}`)")
 
 
-@register(outgoing=True, pattern="^.ban(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.ban(?: |$)(.*)")
 async def ban(bon):
     """ .ban komutu belirlenen kişiyi gruptan yasaklar """
     # Yetki kontrolü
@@ -438,7 +438,7 @@ async def ban(bon):
             f"GRUP: {bon.chat.title}(`{bon.chat_id}`)")
 
 
-@register(outgoing=True, pattern="^.unban(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.unban(?: |$)(.*)")
 async def nothanos(unbon):
     """ .unban komutu belirlenen kişinin yasağını kaldırır """
     # Yetki kontrolü
@@ -482,7 +482,7 @@ async def nothanos(unbon):
         await unbon.edit(LANG['EXCUSE_ME_WTF'])
 
 
-@register(outgoing=True, pattern="^.mute(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.mute(?: |$)(.*)")
 async def spider(spdr):
     """
     Bu fonksiyon temelde susturmaya yarar
@@ -565,7 +565,7 @@ async def mutmsg(spdr, user, reason, chat):
             f"GRUP: {spdr.chat.title}(`{spdr.chat_id}`)")
 
 
-@register(outgoing=True, pattern="^.unmute(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.unmute(?: |$)(.*)")
 async def unmoot(unmot):
     """ .unmute komutu belirlenin kişinin sesini açar (yani grupta tekrardan konuşabilir) """
     # Yetki kontrolü
@@ -664,7 +664,7 @@ async def muter(moot):
             if i.sender == str(moot.sender_id):
                 await moot.delete()
 
-@register(outgoing=True, pattern="^.ungmute(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.ungmute(?: |$)(.*)")
 async def ungmoot(un_gmute):
     """ .ungmute komutu belirlenen kişinin küresel susturulmasını kaldırır """
     # Yetki kontrolü
@@ -706,7 +706,7 @@ async def ungmoot(un_gmute):
                 f"GRUP: {un_gmute.chat.title}(`{un_gmute.chat_id}`)")
 
 
-@register(outgoing=True, pattern="^.gmute(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.gmute(?: |$)(.*)")
 async def gspider(gspdr):
     """ .gmute komutu belirlenen kişiyi küresel olarak susturur """
     # Yetki kontrolü
@@ -755,7 +755,7 @@ async def gspider(gspdr):
                 f"CHAT: {gspdr.chat.title}(`{gspdr.chat_id}`)")
 
 
-@register(outgoing=True, pattern="^.zombies(?: |$)(.*)", groups_only=False)
+@register(outgoing=True, pattern="^.zombies(?: |$)(.*)", groups_only = False)
 async def rm_deletedacc(show):
     """ .zombies komutu bir sohbette tüm hayalet / silinmiş / zombi hesaplarını listeler. """
 
@@ -821,7 +821,7 @@ async def rm_deletedacc(show):
             \nGRUP: {show.chat.title}(`{show.chat_id}`)")
 
 
-@register(outgoing=True, pattern="^.admins$")
+@register(outgoing=True, groups_only = True, pattern="^.admins$")
 async def get_admin(show):
     """ .admins komutu girilen gruba ait yöneticileri listeler """
     info = await show.client.get_entity(show.chat_id)
@@ -886,7 +886,7 @@ async def pin(msg):
             f"LOUD: {not is_silent}")
 
 
-@register(outgoing=True, pattern="^.kick(?: |$)(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.kick(?: |$)(.*)")
 async def kick(usr):
     """ .kick komutu belirlenen kişiyi gruptan çıkartır """
     # Yetki kontrolü
@@ -898,8 +898,11 @@ async def kick(usr):
     if not admin and not creator:
         await usr.edit(NO_ADMIN)
         return
+    try:
+        user, reason = await get_user_from_event(usr)
+    except TypeError:
+        user = False # Boş kaldığı zaman hata logu oluşturmaması için
 
-    user, reason = await get_user_from_event(usr)
     if not user:
         await usr.edit(LANG['NOT_FOUND'])
         return
@@ -935,7 +938,7 @@ async def kick(usr):
             f"GRUP: {usr.chat.title}(`{usr.chat_id}`)\n")
 
 
-@register(outgoing=True, pattern="^.users ?(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.users ?(.*)")
 async def get_users(show):
     """ .users komutu girilen gruba ait kişileri listeler """
     info = await show.client.get_entity(show.chat_id)
@@ -1024,7 +1027,7 @@ async def get_user_from_id(user, event):
 
     return user_obj
 
-@register(outgoing=True, pattern="^.unwarn ?(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.unwarn ?(.*)")
 async def unwarn(event):
     """ .unwarn kullanıcıyı uyarıyı kaldırmaya işe yarar """
     # Yetki kontrolü
@@ -1067,7 +1070,7 @@ async def unwarn(event):
             f"USER: [{user.first_name}](tg://user?id={user.id})\n"
             f"CHAT: {event.chat.title}(`{event.chat_id}`)")
 
-@register(outgoing=True, pattern="^.warn ?(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.warn ?(.*)")
 async def warn(event):
     """ .warn kullanıcıyı uyarmaya işe yarar """
     # Yetki kontrolü
@@ -1172,7 +1175,7 @@ async def Warn_Gban(event, warn, user, reason = None):
                 f"CHAT: {event.chat.title}(`{event.chat_id}`)")
     warn.toplu_sil_warn(user.id)
 
-@register(outgoing=True, pattern="^.usersdel ?(.*)")
+@register(outgoing=True, groups_only = True, pattern="^.usersdel ?(.*)")
 async def get_usersdel(show):
     """ .usersdel komutu grup içinde ki silinen hesapları gösterir """
     info = await show.client.get_entity(show.chat_id)
@@ -1262,7 +1265,7 @@ async def get_userdel_from_id(user, event):
     return user_obj
 
 
-@register(outgoing=True, pattern="^.bots$", groups_only=True)
+@register(outgoing=True, pattern="^.bots$", groups_only =True)
 async def get_bots(show):
     """ .bots komutu gruba ait olan botları listeler """
     info = await show.client.get_entity(show.chat_id)

@@ -79,8 +79,11 @@ async def sticklet(event):
 
     # mesajı sil
     await event.delete()
+    try:
+        await event.client.send_file(event.chat_id, image_stream, reply_to=event.message.reply_to_msg_id)
+    except:
+        await event.edit("__Bu grupta sticker gönderimine izin verilmiyor.__")
 
-    await event.client.send_file(event.chat_id, image_stream, reply_to=event.message.reply_to_msg_id)
     # Temizlik
     try:
         os.remove(FONT_FILE)

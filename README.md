@@ -4,7 +4,7 @@
 ----
 
 <div align="center">
-  <img src="https://i.imgyukle.com/2020/05/29/yBpJsP.jpg" width="200" height="200">
+  <img src="https://s7.gifyu.com/images/indird70e354866f587b4.gif" width="200" height="200">
   <h1>Asena UserBot</h1>
 </div>
 <p align="center">

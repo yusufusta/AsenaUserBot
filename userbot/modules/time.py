@@ -18,6 +18,10 @@ from pytz import timezone as tz
 from userbot import CMD_HELP, COUNTRY, TZ_NUMBER
 from userbot.events import register
 from userbot.cmdhelp import CmdHelp
+from googletrans import LANGUAGES
+import aiohttp
+import asyncio
+import os
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -58,11 +62,21 @@ async def time_func(tdata):
         2. Varsayılan userbot bölgesi (.settime komutuyla ayarlanabilir)
         3. UserBot'un barındığı sunucunun tarihi.
     """
+    txt = tdata.pattern_match.group(1)
     con = tdata.pattern_match.group(1).title()
     tz_num = tdata.pattern_match.group(2)
 
     t_form = "%H:%M"
     c_name = None
+
+    if txt != "" or txt != " ":
+        con = ""
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+            async with session.get(f"https://translate.google.com/m?hl=auto&sl=auto&tl=en&ie=UTF-8&prev=_m&q={txt}") as response:
+                html = await response.text()
+                con = html.split('result-container">')[1].split('</div>')[0]
+    else:
+        return tdata.edit("**Lütfen Ülke İsmi Girin!**")
 
     if len(con) > 4:
         try:
