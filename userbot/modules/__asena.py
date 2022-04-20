@@ -99,7 +99,7 @@ async def txt(msg):
 
     if BOT == "Y":
         message = msg.raw_text
-        user_id = msg.sender.id
+        user_id = msg.sender_id
         if message.startswith("asena") or message.startswith("Asena"):
             if message.startswith("asena"):
                 message = message.replace("asena", "", 1)
@@ -139,7 +139,11 @@ async def txt(msg):
                     html = await response.text()
                     html2 = json.loads(html)
                     if html2["status"] == "OK":
-                        fin_msg = html.unescape(html2["data"])
+                        try:
+                            fin_msg = html.unescape(html2["data"])
+                        except:
+                            fin_msg = html2["data"]
+                            
                         outtext = await translate_to_msg(fin_msg, "tr")
                         await msg.client.send_message(msg.chat_id, f"{outtext}", reply_to=msg, link_preview=False)
                     else:
