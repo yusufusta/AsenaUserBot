@@ -20,6 +20,7 @@ import os
 from googletrans import LANGUAGES
 from emoji import get_emoji_regexp
 import random
+import html
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -138,7 +139,8 @@ async def txt(msg):
                     html = await response.text()
                     html2 = json.loads(html)
                     if html2["status"] == "OK":
-                        outtext = await translate_to_msg(html2["data"], "tr")
+                        fin_msg = html.unescape(html2["data"])
+                        outtext = await translate_to_msg(fin_msg, "tr")
                         await msg.client.send_message(msg.chat_id, f"{outtext}", reply_to=msg, link_preview=False)
                     else:
                         if "Message" in html2["error"]:
