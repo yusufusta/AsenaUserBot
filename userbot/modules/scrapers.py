@@ -621,14 +621,15 @@ async def translateme(trans):
         return await trans.edit("`Bana çevirilecek bir metin ver!`")
 
     message = deEmojify(message)
-    if len(message) > 2048:
+    if len(message) > 5000:
         return await trans.edit("__Bu mesaj fazla uzun. Maxiumum 2048 karakter kullanın.__")
 
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
-        async with session.get(f"https://translate.google.com/m?hl=auto&sl=auto&tl={TRT_LANG}&ie=UTF-8&prev=_m&q={message}") as response:
+        async with session.get(f"https://open-apis-rest.up.railway.app/api/translate?to={TRT_LANG}&text={message}") as response:
 
             html = await response.text()
-            fin = html.split('result-container">')[1].split('</div>')[0]
+            html2 = json.loads(html)
+            fin = html["data"]["text"]
             if fin == message:
                 return await trans.edit("__Üzgünüm Bu Metni Çeviremedim. Lütfen Daha Anlaşılır Bir Şekilde Yazın.__")
     

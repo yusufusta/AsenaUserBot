@@ -42,10 +42,11 @@ async def paste(pstl):
     elif reply_id:
         message = (await pstl.get_reply_message())
         if message.media:
-            downloaded_file_name = await pstl.client.download_media(
-                message,
-                TEMP_DOWNLOAD_DIRECTORY,
-            )
+            try:
+                downloaded_file_name = await pstl.client.download_media(message,TEMP_DOWNLOAD_DIRECTORY)
+            except IsADirectoryError: 
+                return await pstl.edit("__Lütfen Sadece Yazıya Cevap Verin. Medya Desteklenmemektedir.__")
+                
             m_list = None
             with open(downloaded_file_name, "rb") as fd:
                 m_list = fd.readlines()
