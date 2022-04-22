@@ -21,6 +21,7 @@ from googletrans import LANGUAGES
 from emoji import get_emoji_regexp
 import random
 import html
+import time
 
 # ██████ LANGUAGE CONSTANTS ██████ #
 
@@ -83,20 +84,21 @@ async def asena(event):
 
 async def translate_to_msg(text_msg, to):
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
-        async with session.get(f"https://translate.google.com/m?hl=auto&sl=auto&tl={to}&ie=UTF-8&prev=_m&q={text_msg}") as response:
+        async with session.get(f"https://open-apis-rest.up.railway.app/api/translate?to={to}&text={text_msg}") as response:
 
             html = await response.text()
-            fin = html.split('result-container">')[1].split('</div>')[0]
+            html2 = json.loads(html)
+            fin = html2["data"]["text"]
             return fin
 
 @register(outgoing=True, disable_edited=False)
 async def txt(msg):
     global BOT
     if msg.chat_id == -1001420605284:
-        return False
-    if msg.chat_id == -1001363514260:
-        return False
-
+        await msg.edit("__Burda konuşamam.. Başka bir sohbette beni tekrar çağır.__")
+        time.sleep(5)
+        return await msg.delete()
+        
     if BOT == "Y":
         message = msg.raw_text
         user_id = msg.sender_id
